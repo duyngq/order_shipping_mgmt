@@ -20,3 +20,5 @@ Steps to enable rewrite URL:
 	</Directory>
 - Enable module rewrite and restart apache
 	sudo a2enmod rewrite && sudo /etc/init.d/apache2 restart
+
+- Slim demo example (http://coenraets.org/blog/2011/12/restful-services-with-jquery-php-and-the-slim-framework/)
