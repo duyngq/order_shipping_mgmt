@@ -1,129 +1,175 @@
 <?php
-
+error_reporting ( E_ALL );
+ini_set ( 'display_errors', 1 );
 require 'Slim/Slim.php';
+require_once 'db/DbOperation.php';
 
 $app = new Slim();
 
-$app->get('/wines', 'getWines');
-$app->get('/wines/:id',	'getWine');
-$app->get('/wines/search/:query', 'findByName');
-$app->post('/wines', 'addWine');
-$app->put('/wines/:id', 'updateWine');
-$app->delete('/wines/:id',	'deleteWine');
+$app->get ( '/wines', 'getWines' );
+$app->get ( '/wines/:id', 'getWine' );
+$app->get ( '/wines/search/:query', 'findByName' );
+$app->post ( '/wines', 'addWine' );
+$app->put ( '/wines/:id', 'updateWine' );
+$app->delete ( '/wines/:id', 'deleteWine' );
+$app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
+	try {
+		// get DB connection
+		$db = new DbOperation();
+		$user = $db->checkUser ( $name, $pass );
+		if ( $user != null ) {
+			$id = $user->id;
+			// Register $myusername, $mypassword and redirect to file "login_success.php"
+			$_SESSION[ "username" ] = $name;
+			$_SESSION[ "loggedIn" ] = true;
+			$roles = $db->getUserRoles ( $id );
+			foreach ( $roles as $role ) {
+				$_SESSION[ 'role_id' ] = $role->id;
+			}
 
-$app->run();
+			/**
+			 * TODO:
+			 * 1. implement lock after a number of failed login
+			 * 2. implement timeout session as:
+			 *     Ending a session in 30 minutes from the starting time.
+			 *   $_SESSION['expire'] = time() + (30 * 60);
+			 *
+			 */
+			// Update last successful login
+			if ( !$db->updateLastLogin ( $id ) ) {
+				echo "Can not access the DB. Maybe the system has some problems, Please try again!!!";
+			}
+		} else {
+			loginFailed ();
+		}
+		echo "true";
+		return;
+//		header ( "location:index.php" );
+	} catch ( Exception $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
+	}
 
-function getWines() {
+	function loginFailed () {
+		$_SESSION[ "username" ] = 'Guess';
+		$_SESSION[ "loggedIn" ] = false;
+		header ( "location:index" );
+		exit;
+	}
+} );
+
+$app->run ();
+
+function getWines () {
 	$sql = "select * FROM wine ORDER BY name";
 	try {
-		$db = getConnection();
-		$stmt = $db->query($sql);  
-		$wines = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = getConnection ();
+		$stmt = $db->query ( $sql );
+		$wines = $stmt->fetchAll ( PDO::FETCH_OBJ );
 		$db = null;
-		echo '{"wine": ' . json_encode($wines) . '}';
-	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo '{"wine": ' . json_encode ( $wines ) . '}';
+	} catch ( PDOException $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function getWine($id) {
+function getWine ( $id ) {
 	$sql = "SELECT * FROM wine WHERE id=:id";
 	try {
-		$db = getConnection();
-		$stmt = $db->prepare($sql);  
-		$stmt->bindParam("id", $id);
-		$stmt->execute();
-		$wine = $stmt->fetchObject();  
+		$db = getConnection ();
+		$stmt = $db->prepare ( $sql );
+		$stmt->bindParam ( "id", $id );
+		$stmt->execute ();
+		$wine = $stmt->fetchObject ();
 		$db = null;
-		echo json_encode($wine); 
-	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo json_encode ( $wine );
+	} catch ( PDOException $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function addWine() {
-	error_log('addWine\n', 3, '/var/tmp/php.log');
-	$request = Slim::getInstance()->request();
-	$wine = json_decode($request->getBody());
+function addWine () {
+	error_log ( 'addWine\n', 3, '/var/tmp/php.log' );
+	$request = Slim::getInstance ()->request ();
+	$wine = json_decode ( $request->getBody () );
 	$sql = "INSERT INTO wine (name, grapes, country, region, year, description) VALUES (:name, :grapes, :country, :region, :year, :description)";
 	try {
-		$db = getConnection();
-		$stmt = $db->prepare($sql);  
-		$stmt->bindParam("name", $wine->name);
-		$stmt->bindParam("grapes", $wine->grapes);
-		$stmt->bindParam("country", $wine->country);
-		$stmt->bindParam("region", $wine->region);
-		$stmt->bindParam("year", $wine->year);
-		$stmt->bindParam("description", $wine->description);
-		$stmt->execute();
-		$wine->id = $db->lastInsertId();
+		$db = getConnection ();
+		$stmt = $db->prepare ( $sql );
+		$stmt->bindParam ( "name", $wine->name );
+		$stmt->bindParam ( "grapes", $wine->grapes );
+		$stmt->bindParam ( "country", $wine->country );
+		$stmt->bindParam ( "region", $wine->region );
+		$stmt->bindParam ( "year", $wine->year );
+		$stmt->bindParam ( "description", $wine->description );
+		$stmt->execute ();
+		$wine->id = $db->lastInsertId ();
 		$db = null;
-		echo json_encode($wine); 
-	} catch(PDOException $e) {
-		error_log($e->getMessage(), 3, '/var/tmp/php.log');
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo json_encode ( $wine );
+	} catch ( PDOException $e ) {
+		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function updateWine($id) {
-	$request = Slim::getInstance()->request();
-	$body = $request->getBody();
-	$wine = json_decode($body);
+function updateWine ( $id ) {
+	$request = Slim::getInstance ()->request ();
+	$body = $request->getBody ();
+	$wine = json_decode ( $body );
 	$sql = "UPDATE wine SET name=:name, grapes=:grapes, country=:country, region=:region, year=:year, description=:description WHERE id=:id";
 	try {
-		$db = getConnection();
-		$stmt = $db->prepare($sql);  
-		$stmt->bindParam("name", $wine->name);
-		$stmt->bindParam("grapes", $wine->grapes);
-		$stmt->bindParam("country", $wine->country);
-		$stmt->bindParam("region", $wine->region);
-		$stmt->bindParam("year", $wine->year);
-		$stmt->bindParam("description", $wine->description);
-		$stmt->bindParam("id", $id);
-		$stmt->execute();
+		$db = getConnection ();
+		$stmt = $db->prepare ( $sql );
+		$stmt->bindParam ( "name", $wine->name );
+		$stmt->bindParam ( "grapes", $wine->grapes );
+		$stmt->bindParam ( "country", $wine->country );
+		$stmt->bindParam ( "region", $wine->region );
+		$stmt->bindParam ( "year", $wine->year );
+		$stmt->bindParam ( "description", $wine->description );
+		$stmt->bindParam ( "id", $id );
+		$stmt->execute ();
 		$db = null;
-		echo json_encode($wine); 
-	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo json_encode ( $wine );
+	} catch ( PDOException $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function deleteWine($id) {
+function deleteWine ( $id ) {
 	$sql = "DELETE FROM wine WHERE id=:id";
 	try {
-		$db = getConnection();
-		$stmt = $db->prepare($sql);  
-		$stmt->bindParam("id", $id);
-		$stmt->execute();
+		$db = getConnection ();
+		$stmt = $db->prepare ( $sql );
+		$stmt->bindParam ( "id", $id );
+		$stmt->execute ();
 		$db = null;
-	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+	} catch ( PDOException $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function findByName($query) {
+function findByName ( $query ) {
 	$sql = "SELECT * FROM wine WHERE UPPER(name) LIKE :query ORDER BY name";
 	try {
-		$db = getConnection();
-		$stmt = $db->prepare($sql);
-		$query = "%".$query."%";  
-		$stmt->bindParam("query", $query);
-		$stmt->execute();
-		$wines = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = getConnection ();
+		$stmt = $db->prepare ( $sql );
+		$query = "%" . $query . "%";
+		$stmt->bindParam ( "query", $query );
+		$stmt->execute ();
+		$wines = $stmt->fetchAll ( PDO::FETCH_OBJ );
 		$db = null;
-		echo '{"wine": ' . json_encode($wines) . '}';
-	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo '{"wine": ' . json_encode ( $wines ) . '}';
+	} catch ( PDOException $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
 
-function getConnection() {
-	$dbhost="127.0.0.1";
-	$dbuser="root";
-	$dbpass="";
-	$dbname="cellar";
-	$dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);	
-	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+function getConnection () {
+	$dbhost = "127.0.0.1";
+	$dbuser = "root";
+	$dbpass = "";
+	$dbname = "cellar";
+	$dbh = new PDO( "mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass );
+	$dbh->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 	return $dbh;
 }
 
