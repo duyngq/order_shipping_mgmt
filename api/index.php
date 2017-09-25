@@ -19,14 +19,6 @@ $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 		$user = $db->checkUser ( $name, $pass );
 		if ( $user != null ) {
 			$id = $user->id;
-			// Register $myusername, $mypassword and redirect to file "login_success.php"
-			$_SESSION[ "username" ] = $name;
-			$_SESSION[ "loggedIn" ] = true;
-			$roles = $db->getUserRoles ( $id );
-			foreach ( $roles as $role ) {
-				$_SESSION[ 'role_id' ] = $role->id;
-			}
-
 			/**
 			 * TODO:
 			 * 1. implement lock after a number of failed login
@@ -38,6 +30,14 @@ $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 			// Update last successful login
 			if ( !$db->updateLastLogin ( $id ) ) {
 				echo "Can not access the DB. Maybe the system has some problems, Please try again!!!";
+			} else {
+				// Register $myusername, $mypassword and redirect to file "login_success.php"
+				$_SESSION[ "username" ] = $name;
+				$_SESSION[ "loggedIn" ] = true;
+				$roles = $db->getUserRoles ( $id );
+				foreach ( $roles as $role ) {
+					$_SESSION[ 'role_id' ] = $role->id;
+				}
 			}
 		} else {
 			loginFailed ();
@@ -47,13 +47,6 @@ $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 //		header ( "location:index.php" );
 	} catch ( Exception $e ) {
 		echo '{"error":{"text":' . $e->getMessage () . '}}';
-	}
-
-	function loginFailed () {
-		$_SESSION[ "username" ] = 'Guess';
-		$_SESSION[ "loggedIn" ] = false;
-		header ( "location:index" );
-		exit;
 	}
 } );
 
@@ -171,6 +164,15 @@ function getConnection () {
 	$dbh = new PDO( "mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass );
 	$dbh->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 	return $dbh;
+}
+
+
+function loginFailed () {
+	$_SESSION[ "username" ] = 'Guess';
+	$_SESSION[ "loggedIn" ] = false;
+//	header ( "location:index" );
+	echo "failed";
+	exit;
 }
 
 ?>
