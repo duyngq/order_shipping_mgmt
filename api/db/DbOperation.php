@@ -30,7 +30,7 @@ class DbOperation {
 		if ( $stmt->rowCount () == 1 ) {
 			//move to the page user wants later
 			//get ID to update last date access
-			while ( $user = $stmt->fetchObject () ) {
+			while ( $user = $stmt->fetchObject ( User::class ) ) {
 				$dbPW = $user->password;
 				$loginStatus = password_verify ( $password, $dbPW );
 				if ( $loginStatus ) { // check hashed coded password with input one if match or not

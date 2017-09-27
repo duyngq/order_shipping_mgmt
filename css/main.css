@@ -1,0 +1,102 @@
+.sga-nav-color > li > a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #FEE;
+    white-space: nowrap
+}
+
+.sga-nav-color > li > a:focus, .dropdown-menu > li > a:hover {
+    color: #FFF;
+    text-decoration: none;
+    background-color: #000
+}
+
+.submenu a {
+    /*background-color: #999;*/
+}
+
+/* hover behaviour for links inside .submenu */
+.submenu a:hover {
+    background-color: #666;
+}
+
+.submenu > li > a {
+    padding: 7px 0 9px 43px;
+}
+
+/* this is the initial state of all submenus.
+  we set it to max-height: 0, and hide the overflowed content.
+*/
+.submenu {
+    overflow: hidden;
+    max-height: 0;
+    -webkit-transition: all 0.5s ease-out;
+}
+
+.mainmenu li:hover .submenu {
+    display: block;
+    max-height: 200px;
+}
+
+/* reset our lists to remove bullet points and padding */
+.mainmenu, .submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* make ALL links (main and submenu) have padding and background color */
+.mainmenu a {
+    display: block;
+    /*background-color: #CCC;*/
+    text-decoration: none;
+    padding: 10px;
+    /*color: #000;*/
+}
+
+/* add hover behaviour */
+/*.mainmenu a:hover {*/
+/*background-color: #C5C5C5;*/
+/*}*/
+
+/**
+ * Header and menu section
+ */
+/*ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+li {
+    float: left;
+    border-right: 1px solid #bbb;
+}
+
+li:last-child {
+    border-right: none;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
+}*/
