@@ -10,6 +10,7 @@
     <script src="js/jquery.min.js"></script>
     <!-- Latest compiled JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/sga-main.js"></script>
 </head>
 
 <body>
@@ -85,16 +86,76 @@
                                 </ul>--
                             </ul>
                         </li-->
+                    <!--
+                    <ul class="mainmenu">
+                        <li><a href="#">Add</a></li>
+                        <ul class="submenu">
+                            <li><a href=""> Order</a></li>
+                            <li><a href=""> Customer</a></li>
+                            <ul class="submenu">
+                                <li><a href=""> Sender</a></li>
+                                <li><a href=""> Receiver</a></li>
+                            </ul>
+                        </ul>
+                        </li>
+                    </ul>
+                    <li><a href="#">Search</a></li>
+                    -->
                     <li><a href="#">Add</a></li>
                     <li><a href="#">Search</a></li>
-                    <!--<li><a href="#"><span class="glyphicon glyphicon-log-in">Logout</span></a></li> get image for login/logout-->
-                    <li><a href="#">Logout</span></a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-out">Logout</span></a></li>
+                    <!--get image for login/logout-->
+                    <!--<li><a href="#">Logout</span></a></li>-->
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+
+    <div class="container-fluid">
+        <h3 class="text-primary text-center">jQuery Playground</h3>
+        <div class="row bg-primary">
+            <div class="col-xs-1">
+                <h4 class="text-center">No.</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Date</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Sender</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Phone</h4>
+            </div>
+            <div class="col-xs-2">
+                <h4 class="text-center">Address</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Receiver</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Phone</h4>
+            </div>
+            <div class="col-xs-2">
+                <h4 class="text-center">Address</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Weight</h4>
+            </div>
+            <div class="col-xs-1">
+                <h4 class="text-center">Amount</h4>
+            </div>
+        </div>
+        <div id="data-primary"></div>
+        <div class="col-xs-12" style="height:10px"></div>
+        <div class="row ">
+            <div class="col-xs-10 data-row-border">TOTAL</div>
+            <div class="col-xs-1 data-row-border" id="total-weight">0.0
+            </div>
+            <div class="col-xs-1 data-row-border" id="total-amount">0.0
+            </div>
+        </div>
+    </div>
 </div> <!-- end div container -->
-</div>
 <!--
 <div class="header">
 <input type="text" id="searchKey"/>

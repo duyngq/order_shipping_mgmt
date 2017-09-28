@@ -76,6 +76,15 @@ class DbOperation {
 		}
 	}
 
+	/**
+	 * Get all orders and related customer (sender/receiver)
+	 */
+	public function getAllOrders () {
+		$ordersQuery = $this->con->query ( "select * from orders o join recvcustomers r join sendcustomers s on o.send_cust_id = s.id and o.recv_cust_id = r.id" );
+		$orders = $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
+		return $orders;
+	}
+
 	//Method to register a new student
 	public function createStudent ( $name, $username, $pass ) {
 		if ( !$this->isStudentExists ( $username ) ) {

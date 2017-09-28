@@ -12,6 +12,7 @@ $app->get ( '/wines/search/:query', 'findByName' );
 $app->post ( '/wines', 'addWine' );
 $app->put ( '/wines/:id', 'updateWine' );
 $app->delete ( '/wines/:id', 'deleteWine' );
+$app->get ( '/orders/all', 'getAllOrders' );
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
 		// get DB connection
@@ -44,13 +45,27 @@ $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 		}
 		echo "true";
 		return;
-//		header ( "location:index.php" );
 	} catch ( Exception $e ) {
 		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 } );
 
 $app->run ();
+
+function getAllOrders () {
+	try {
+		// get DB connection
+		$db = new DbOperation();
+		$orders = $db->getAllOrders ();
+		if ( $orders != null ) {
+			echo '{"orders":' . json_encode ( $orders ) . '}';
+		}else {
+			echo '{"error":{"text":' . "Failed to get orders data" . '}}';
+		}
+	} catch ( Exception $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
+	}
+}
 
 function getWines () {
 	$sql = "select * FROM wine ORDER BY name";
