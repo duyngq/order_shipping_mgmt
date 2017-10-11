@@ -25,7 +25,7 @@ function findAll() {
         url: rootURL + "/orders/all",
         dataType: "json", // data type of response
         success: renderList,
-        error: alert("failed")
+        // error: alert("failed")
     });
 }
 
@@ -39,17 +39,35 @@ function renderList(data) {
 
     $('#data-primary div').remove();
     $.each(list, function (index, order) {
-        $('#data-primary ').append('<div class="row data-row-border" data-identity="' + order.id + '">');
-        $('#data-primary ').append('<div class="col-xs-1">'+order.id+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.date+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.cust_name+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.phone+'</div>');
-        $('#data-primary ').append('<div class="col-xs-2 word-wrap">'+order.address+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.recv_name+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.phone+'</div>');
-        $('#data-primary ').append('<div class="col-xs-2 word-wrap">'+order.address+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1">'+order.weight+'</div>');
-        $('#data-primary ').append('<div class="col-xs-1">'+order.id+'</div>');
-        $('#data-primary ').append('</div>');
+        var eachData = '<div class="row data-row-border" data-identity="' + order.id + '">' +
+            '        <div class="col-xs-1">' +
+            '        <div class="row">'+
+            '        <div class="col-xs-4 nopadding">'+order.id+'</div>' +
+            '        <div class="col-xs-4 nopadding">'+order.date+'</div>' +
+            '        </div></div>' +
+            '        <div class="col-xs-1 word-wrap">'+order.cust_name+'</div>' +
+            '        <div class="col-xs-1 word-wrap">'+order.phone+'</div>' +
+            '        <div class="col-xs-2 word-wrap">'+order.address+'</div>' +
+            '        <div class="col-xs-1 word-wrap">'+order.recv_name+'</div>' +
+            '        <div class="col-xs-1 word-wrap">'+order.phone+'</div>' +
+            '        <div class="col-xs-2 word-wrap">'+order.address+'</div>' +
+            '        <div class="col-xs-1">'+order.weight+'</div>' +
+            '        <div class="col-xs-1">'+order.id+'</div>' +
+            '        </div>';
+        $('#data-primary ').append(eachData);
+        // $('#data-primary ').append('<div class="row data-row-border" data-identity="' + order.id + '">');
+        // $('#data-primary ').append('<div class="col-xs-1">');
+        // $('#data-primary ').append('<div class="col-xs-1">'+order.id+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1">'+order.date+'</div>');
+        // $('#data-primary ').append('</div>');
+        // $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.cust_name+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.phone+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-2 word-wrap">'+order.address+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.recv_name+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1 word-wrap">'+order.phone+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-2 word-wrap">'+order.address+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1">'+order.weight+'</div>');
+        // $('#data-primary ').append('<div class="col-xs-1">'+order.id+'</div>');
+        // $('#data-primary ').append('</div>');
     });
 }

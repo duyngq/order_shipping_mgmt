@@ -64,6 +64,13 @@
     border: 1px solid;
 }
 
+/*Since there is padding with boostrap column --> add nopadding to remove them if needed*/
+/*> [class*='col-'] --> can add this to all col- class*/
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 /* add hover behaviour */
 /*.mainmenu a:hover {*/
 /*background-color: #C5C5C5;*/
