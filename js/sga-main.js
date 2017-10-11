@@ -8,6 +8,11 @@ var currentOrder;
 // Retrieve wine list when application starts
 findAll();
 
+// Start table at boot
+$(document).ready(function() {
+    $('#example').DataTable();
+} );
+
 /**
  * Config action for button/event
  */
