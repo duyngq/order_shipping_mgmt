@@ -9,9 +9,9 @@ var currentOrder;
 findAll();
 
 // Start table at boot
-$(document).ready(function() {
-    $('#example').DataTable();
-} );
+// $(document).ready(function() {
+//     $('#example').DataTable();
+// } );
 
 /**
  * Config action for button/event
@@ -29,11 +29,25 @@ function findAll() {
         type: 'GET',
         url: rootURL + "/orders/all",
         dataType: "json", // data type of response
-        success: renderList,
+        success: renderTableData,
         // error: alert("failed")
     });
 }
 
+/**
+ * Render JSON data getting from server and render to html table
+ * @param data
+ */
+function renderTableData(data) {
+    // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
+    var list = data == null ? [] : (data.orders instanceof Array ? data.orders : [data.orders]);
+    var table = $('#example').DataTable();
+
+    table.clear().draw();
+    $.each(list, function (index, order) {
+        table.row.add(order.id, order.date, order.cust_name, order.phone, order.address, order.recv_name, oreder.phone, order.address, order.weight, order.id).draw();
+    });
+}
 /**
  * Render JSON data getting from server and render to html
  * @param data
