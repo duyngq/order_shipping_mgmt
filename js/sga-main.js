@@ -23,7 +23,8 @@ $('#btnDelete').hide();
 /**
  * Define action to connect/get data from server
  */
-function findAll() {
+
+/*function findAll() {
     console.log('find all orders');
     $.ajax({
         type: 'GET',
@@ -31,6 +32,19 @@ function findAll() {
         dataType: "json", // data type of response
         success: renderTableData,
         // error: alert("failed")
+    });
+}*/
+
+function findAll() {
+    console.log('find all orders');
+    $('#example').DataTable({
+        "ajax": {
+            type: 'GET',
+            url: rootURL + "/orders/all",
+            // dataType: "json", // data type of response
+            // success: renderTableData,
+            // error: alert("failed")
+        }
     });
 }
 
@@ -48,6 +62,7 @@ function renderTableData(data) {
         table.row.add(order.id, order.date, order.cust_name, order.phone, order.address, order.recv_name, oreder.phone, order.address, order.weight, order.id).draw();
     });
 }
+
 /**
  * Render JSON data getting from server and render to html
  * @param data
@@ -60,18 +75,18 @@ function renderList(data) {
     $.each(list, function (index, order) {
         var eachData = '<div class="row data-row-border" data-identity="' + order.id + '">' +
             '        <div class="col-xs-1">' +
-            '        <div class="row">'+
-            '        <div class="col-xs-4 nopadding">'+order.id+'</div>' +
-            '        <div class="col-xs-4 nopadding">'+order.date+'</div>' +
+            '        <div class="row">' +
+            '        <div class="col-xs-4 nopadding">' + order.id + '</div>' +
+            '        <div class="col-xs-4 nopadding">' + order.date + '</div>' +
             '        </div></div>' +
-            '        <div class="col-xs-1 word-wrap">'+order.cust_name+'</div>' +
-            '        <div class="col-xs-1 word-wrap">'+order.phone+'</div>' +
-            '        <div class="col-xs-2 word-wrap">'+order.address+'</div>' +
-            '        <div class="col-xs-1 word-wrap">'+order.recv_name+'</div>' +
-            '        <div class="col-xs-1 word-wrap">'+order.phone+'</div>' +
-            '        <div class="col-xs-2 word-wrap">'+order.address+'</div>' +
-            '        <div class="col-xs-1">'+order.weight+'</div>' +
-            '        <div class="col-xs-1">'+order.id+'</div>' +
+            '        <div class="col-xs-1 word-wrap">' + order.cust_name + '</div>' +
+            '        <div class="col-xs-1 word-wrap">' + order.phone + '</div>' +
+            '        <div class="col-xs-2 word-wrap">' + order.address + '</div>' +
+            '        <div class="col-xs-1 word-wrap">' + order.recv_name + '</div>' +
+            '        <div class="col-xs-1 word-wrap">' + order.phone + '</div>' +
+            '        <div class="col-xs-2 word-wrap">' + order.address + '</div>' +
+            '        <div class="col-xs-1">' + order.weight + '</div>' +
+            '        <div class="col-xs-1">' + order.id + '</div>' +
             '        </div>';
         $('#data-primary ').append(eachData);
         // $('#data-primary ').append('<div class="row data-row-border" data-identity="' + order.id + '">');
