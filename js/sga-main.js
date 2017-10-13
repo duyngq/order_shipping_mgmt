@@ -37,14 +37,12 @@ $('#btnDelete').hide();
 
 function findAll() {
     console.log('find all orders');
-    $('#example').DataTable({
-        "ajax": {
-            type: 'GET',
-            url: rootURL + "/orders/all",
-            // dataType: "json", // data type of response
-            // success: renderTableData,
-            // error: alert("failed")
-        }
+    $.ajax({
+        type: 'GET',
+        url: rootURL + "/orders/all",
+        dataType: "json", // data type of response
+        success: renderTableData
+        // error: alert("failed")
     });
 }
 
@@ -58,9 +56,27 @@ function renderTableData(data) {
     var table = $('#example').DataTable();
 
     table.clear().draw();
+    var totalWeight = 0, totalAmount = 0;
     $.each(list, function (index, order) {
-        table.row.add(order.id, order.date, order.cust_name, order.phone, order.address, order.recv_name, oreder.phone, order.address, order.weight, order.id).draw();
+        var weight = order.weight;
+        var total = order.total;
+        /* this will validate if value is not:
+            null
+            undefined
+            NaN
+            empty string ("")
+            false
+            0
+        */
+        if (weight)
+            totalWeight += parseFloat(weight);
+        if (total)
+            totalAmount += parseFloat(total);
+        table.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total]).draw();
     });
+    $("#example tfoot th#orderedWeight").html(totalWeight);
+    // $("#weight").html(totalWeight); same result
+    $("#example tfoot th#orderedAmount").html(totalAmount);
 }
 
 /**

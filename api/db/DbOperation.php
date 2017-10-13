@@ -80,7 +80,7 @@ class DbOperation {
 	 * Get all orders and related customer (sender/receiver)
 	 */
 	public function getAllOrders () {
-		$ordersQuery = $this->con->query ( "select * from orders o join recvcustomers r join sendcustomers s on o.send_cust_id = s.id and o.recv_cust_id = r.id" );
+		$ordersQuery = $this->con->query ( "select o.*, r.cust_name as r_name, r.phone as r_phone, r.address as r_address, s.cust_name as s_name, s.phone as s_phone, s.address as s_address from orders o join recvcustomers r join sendcustomers s on o.send_cust_id = s.id and o.recv_cust_id = r.id" );
 		$orders = $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
 		return $orders;
 	}
