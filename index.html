@@ -23,9 +23,121 @@
                 "columnDefs": [ {
                     "targets": -1,
                     "data": null,
-                    "defaultContent": "<button>Edit</button> <button>Delete</button>"
-                } ]
+                    "orderable": false,
+                    // make links in one line
+                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='order-edit glyphicon glyphicon-pencil'></a> <a href='#' class='order-delete glyphicon glyphicon-trash'></a> </span>"
+                } ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    /*var total = function(api, calCol) {
+                        api
+                            .column( calCol )
+                            .data()
+                            .reduce( function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0 );
+                    }
+
+                    var totalPerPage = function(api, calCol) {
+                        api
+                            .column( calCol, { page: 'current'} )
+                            .data()
+                            .reduce( function (a, b) {
+                                return intVal(a) + intVal(b);
+                            }, 0 );
+                    }*/
+                    // Total over all pages
+                    totalWeight = api.column( 8 ).data().reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // Total over this page
+                    totalWeightPerPage = api.column( 8, { page: 'current'} ).data().reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // Update footer
+                    $( api.column( 8 ).footer() ).html(
+                        +totalWeightPerPage +' ( '+ totalWeight +' total)'
+                    );
+
+                    // Total amount
+                    totalAmount = api.column( 9 ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Total over this page
+                    totalAmountPerPage = api.column( 9, { page: 'current'} ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Update footer
+                    $( api.column( 9 ).footer() ).html(
+                        '$'+totalAmountPerPage +' ( $'+ totalAmount +' total)'
+                    );
+                }
             });
+            $('#shippingTbl').DataTable();
+            $('#deliveredTbl').DataTable({
+                "columnDefs": [ {
+                    "targets": -1,
+                    "data": null,
+                    "orderable": false,
+                    // make links in one line
+                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='delivered-edit glyphicon glyphicon-pencil'></a> <a href='#' class='delivered-delete glyphicon glyphicon-trash'></a> </span>"
+                } ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over all pages
+                    totalWeight = api.column( 8 ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Total over this page
+                    totalWeightPerPage = api.column( 8, { page: 'current'} ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Update footer
+                    $( api.column( 8 ).footer() ).html(
+                        +totalWeightPerPage +' ( '+ totalWeight +' total)'
+                    );
+
+                    // Total amount
+                    totalAmount = api.column( 9 ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Total over this page
+                    totalAmountPerPage = api.column( 9, { page: 'current'} ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                    // Update footer
+                    $( api.column( 9 ).footer() ).html(
+                        '$'+totalAmountPerPage +' ( $'+ totalAmount +' total)'
+                    );
+                }
+            });
+
             // work with tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $($.fn.dataTable.tables(true)).DataTable()
@@ -140,55 +252,6 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-
-    <!--div class="container">
-        <h3 class="text-primary text-center">jQuery Playground</h3>
-        <div class="row bg-primary">
-            <div class="col-xs-1">
-                <div class="row">
-                    <div class="col-xs-4 nopadding">
-                        <h4 class="text-center">No.</h4>
-                    </div>
-                    <div class="col-xs-4 nopadding">
-                        <h4 class="text-center">Date</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Sender</h4>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Phone</h4>
-            </div>
-            <div class="col-xs-2">
-                <h4 class="text-center">Address</h4>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Receiver</h4>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Phone</h4>
-            </div>
-            <div class="col-xs-2">
-                <h4 class="text-center">Address</h4>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Weight</h4>
-            </div>
-            <div class="col-xs-1">
-                <h4 class="text-center">Amount</h4>
-            </div>
-        </div>
-        <div id="data-primary"></div>
-        <div class="col-xs-12" style="height:10px"></div>
-        <div class="row ">
-            <div class="col-xs-10 data-row-border">TOTAL</div>
-            <div class="col-xs-1 data-row-border" id="total-weight">0.0
-            </div>
-            <div class="col-xs-1 data-row-border" id="total-amount">0.0
-            </div>
-        </div>
-    </div-->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#orderedTab" data-toggle="tab">Ordered</a></li>
         <li><a href="#shippingTab" data-toggle="tab">Shipping</a></li>
@@ -240,14 +303,6 @@
                     <th>Amount</th>
                 </tr>
                 </thead>
-
-                <tfoot>
-                <tr>
-                    <th colspan="8">Total</th>
-                    <th id="shippingWeight">0</th>
-                    <th id="shippingAmount">0</th>
-                </tr>
-                </tfoot>
             </table>
         </div>
         <!-- data table to show all delivered orders -->
@@ -265,9 +320,9 @@
                     <th>Address</th>
                     <th>Weight</th>
                     <th>Amount</th>
+                    <th></th>
                 </tr>
                 </thead>
-
                 <tfoot>
                 <tr>
                     <th colspan="8">Total</th>
