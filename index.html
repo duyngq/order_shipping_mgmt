@@ -19,7 +19,14 @@
     <script src="js/sga-main.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
-            $('#example').DataTable();
+            $('#example').DataTable({
+                "columnDefs": [ {
+                    "targets": -1,
+                    "data": null,
+                    "defaultContent": "<button>Edit</button> <button>Delete</button>"
+                } ]
+            });
+            // work with tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $($.fn.dataTable.tables(true)).DataTable()
                     .columns.adjust();
@@ -203,6 +210,7 @@
                     <th>Address</th>
                     <th>Weight</th>
                     <th>Amount</th>
+                    <th></th>
                 </tr>
                 </thead>
 
