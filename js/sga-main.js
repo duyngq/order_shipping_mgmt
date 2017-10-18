@@ -4,10 +4,10 @@
 
 //For wamp, there is an issue, so the host should be as:
 // refer this link: https://stackoverflow.com/questions/29945153/php-slim-api-404-not-found
-var HOST="localhost/order"
+var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://localhost/order/api"
+var rootURL = "http://localhost:8808/api"
 var currentOrder;
 
 // Retrieve wine list when application starts
@@ -35,7 +35,7 @@ function findAll() {
         url: rootURL + "/orders/all",
         dataType: "json", // data type of response
         success: renderTableData,
-        error: function(data) {
+        error: function (data) {
             console.log("failed", data);
         }
     });
@@ -75,10 +75,12 @@ function renderTableData(data) {
         //     totalWeight += parseFloat(weight);
         // if (total)
         //     totalAmount += parseFloat(total);
-        if (order.status == 1)
-            table.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total]).draw();
-        else if (order.status == 0)
-            deliveredTable.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total]).draw();
+        // divide data to 2 parts: ordered/delivered (0/1)
+        extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
+        if (order.status == 0)
+            table.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total, extraButton]).draw();
+        else if (order.status == 1)
+            deliveredTable.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total, extraButton]).draw();
     });
     // $("#example tfoot th#orderedWeight").html(totalWeight);
     // $("#weight").html(totalWeight); same result
