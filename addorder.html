@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Add New Order</title>
+    <style type="text/css">
+        tr {
+            background-color: transparent;
+            color: #000;
+            text-decoration: none;
+        }
+
+        p.hidden {
+            border-style: hidden;
+        }
+
+        .rTable {
+            display: table;
+            width: 100%;
+        }
+
+        .rTableRow {
+            display: table-row;
+        }
+
+        .rTableHeading {
+            display: table-header-group;
+            background-color: #ddd;
+        }
+
+        .rTableCell, .rTableHead {
+            display: table-cell;
+            padding: 3px 10px;
+            border: 1px solid #999999;
+        }
+
+        .rTableHeading {
+            display: table-header-group;
+            background-color: #ddd;
+            font-weight: bold;
+        }
+
+        .rTableFoot {
+            display: table-footer-group;
+            font-weight: bold;
+            background-color: #ddd;
+        }
+
+        .rTableBody {
+            display: table-row-group;
+        }
+
+        .href-right {
+            text-align: right;
+        }
+
+        .link {
+            display: inline;
+        }
+
+        .sub-element {
+            margin-left: 10px;
+            padding: 5px;
+        }
+    </style>
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- use dialog -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <!-- jQuery library -->
+    <script src="js/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/validate.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/upload.js"></script>
+    <script>
+        $(document).ready(function(){
+            for (var i = 1; i <= 10; i++){
+                $ ("#feeTable").append ('<tr><td><input name="proDesc'+i+'" type="text" id="proDesc'+i+'" class="proDesc'+i+'" size="30" style="border:0"/></td> ' +
+                    '<td><input name="weight'+i+'" type="text" id="weight'+i+'" class="weight'+i+'" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPrice'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
+                    '<td><input name="unit'+i+'" type="text" id="unit'+i+' class="unit'+i+' value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPrice'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>'+
+                    '<td><input name="price'+i+'" type="text" id="price'+i+'" class="price'+i+'" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPric'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');"/></td>'+
+                    '<td><input name="total'+i+'" type="text" id="total'+i+'" class="total'+i+'" value="0" size="10" style="border:0" readonly="readonly"/></td>'+
+                '</tr>');
+            }
+        });
+        $ (function () {
+//            $ ("#datepicker").datepicker ({
+//                dateFormat: "dd/mm/yy"
+//            });
+        });
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <form name="addOrder" onsubmit="return validation()" method="post">
+            <!-- data table to show all orders -->
+            <!--<div class="table-respons?ive tab-pane">-->
+                <div class="col-xs-12 row"><p align="left">
+                    <strong>Add Order</strong>
+                </p></div>
+        <div class="row">
+            <div class="col-xs-5"><strong>- Sender</strong></div>
+            <div class="col-xs-7"><strong>- Receiver</strong></div>
+        </div>
+        <div class="row">
+            <!-- sender phone number-->
+            <div class="col-xs-5">
+            <div class="row">
+            <div class="col-xs-2 sub-element">Phone :</div>
+            <div class="col-xs-5">
+                <input name="custPhone" type="text" id="custPhone" size="50"
+                       list="custPhoneList" required/>
+                <!-- drop down list that can be search/add new text -->
+                <script type="text/javascript">
+                    $("input[name=custPhone]").focusout(function(){
+                        var ptamzzNamespace = ['a','b','c'];//<?php if (isset($_SESSION['sender'])) {echo json_encode($_SESSION['sender']);}?>;
+                        var custPhone = $(this).val();
+                        $('input[name="custName"]').val(ptamzzNamespace[custPhone]['cust_name']);
+                        $('input[name="custAddr"]').val(ptamzzNamespace[custPhone]['address']);
+                    });
+                </script>
+                <datalist id="custPhoneList">
+                    <!--<?php-->
+                    <!--if (isset($_SESSION['sender'])) {-->
+                    <!--foreach ($_SESSION['sender'] as $sender) {-->
+                    <!--echo "<option data-id=\"".$sender['phone']."\" value=\"".$sender['phone']."\"></option>-->
+                    <!--";-->
+                    <!--}-->
+                    <!--}-->
+                    <!--?>-->
+                </datalist></div>
+            </div>
+            </div>
+            <!-- Receiver phone number -->
+            <div class="col-xs-7">
+            <div class="row">
+            <div class="col-xs-2 sub-element">Phone :</div>
+            <div class="col-xs-7">
+                <input name="recvPhone" type="text" id="recvPhone" size="50"
+                       list="recvPhoneList" required/>
+                <!-- drop down list that can be search/add new text -->
+                <script type="text/javascript">
+                    $ ("input[name=recvPhone]").focusout (function () {
+                        var recvs =['1','2','3'];//<?php if (isset ($_SESSION['recv'])) { echo json_encode ($_SESSION['recv']); }?>;
+                        var recvPhone = $ (this).val ();
+                        $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
+                        $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
+                    });
+                </script>
+                <datalist id="recvPhoneList">
+                    <!--<?php-->
+                    <!--if (isset($_SESSION['recv'])) {-->
+                    <!--foreach ($_SESSION['recv'] as $receiver) {-->
+                    <!--echo "<option data-id=\"".$receiver['phone']."\" value=\"".$receiver['phone']."\"></option>-->
+                    <!--";-->
+                    <!--}-->
+                    <!--}-->
+                    <!--?>-->
+                </datalist>
+            </div></div>
+        </div>
+        </div>
+        <div class="row">
+            <!-- sender name-->
+            <div class="col-xs-5">
+            <div class="row">
+            <div class="col-xs-2 sub-element">Name :</div>
+            <div class="col-xs-5"><input list="custName" name="custName" id="custName" size="50"/></div>
+            </div>
+            </div>
+            <!-- Receiver Name-->
+            <div class="col-xs-7">
+            <div class="row">
+            <div class="col-xs-2 sub-element">Name :</div>
+            <div class="col-xs-5"><input list="recvName" name="recvName" id="recvName" size="50"/></div>
+            </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- sender name-->
+            <div class="col-xs-5">
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Address :</div>
+                    <div class="col-xs-5"><input name="custAddr" type="text" id="custAddr" size="50" required/></div>
+                </div>
+            </div>
+            <!-- Receiver Name-->
+            <div class="col-xs-7">
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Address :</div>
+                    <div class="col-xs-5"><input name="recvAddr" type="text" id="recvAddr" size="50" required/></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- sender name-->
+
+            <div class="col-xs-1"><strong>- Date :</strong></div>
+                    <div class="col-xs-5 sub-element">
+                        <select name="day" id="day">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                        </select>
+                        <select name="month" id="month">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <select name="year" id="year">
+                            <option value="2016">2016</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                        <!-- input name="orderDate" type="text"
+                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
+                        <input name="orderDate" type="text"
+                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
+                        <script type="text/javascript">
+                            //                                        validateDate();
+                            //                                         validate_date();
+                            selectDate ();
+                        </script>
+                    </div>
+
+        </div>
+        <!-- last element: description and details -->
+        <div class="row">
+            <!-- Descriptor -->
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-3"></div>
+                    <div class="col-xs-5"><strong>Description</strong></div>
+                </div>
+            </div>
+            <!-- Details-->
+            <div class="col-xs-6">
+            </div>
+        </div>
+        <div class="row">
+            <!-- Descriptor -->
+            <div class="col-xs-5">
+                <p id="product_desc_para"><textarea name="product_desc" id="product_desc" cols="65" rows="22"
+                                                    style="border: 1px solid black" placeholder="Click and write product description"></textarea></p>
+                <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
+                    <input name="file[]" type="file" multiple="multiple" id="uploadFile"/>
+                    <div id="uploadedFiles"></div>
+                    <input name="uploaded" id="uploaded" type="hidden"/>
+                </form>
+                <script>
+                    // Add events
+                    $ (':file').on ('change', prepareUpload);
+                    //                                    $("#upload").on( 'click', uploadFiles);
+                    $ ("#uploadedFiles").on ('click', 'a', removeUploadedFile); // To do ajax call for dynamic component. Refer http://api.jquery.com/on/ delegated events part
+                </script>
+            </div>
+            <!-- Details-->
+            <div class="col-xs-7">
+                <table class="table table-bordered" id="feeTable">
+                    <thead>
+                    <tr bgcolor="bg-primary">
+                        <th>Description</th>
+                        <th>Weigh (Lbs)</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th><strong>Total</strong></th>
+                        <th id="weight">0</th>
+                        <th></th>
+                        <th></th>
+                        <th id="amount">0</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div id="dialog-form" title="Product description">
+        <textarea name="product_desc_dlg" id="product_desc_dlg"
+                  style="border: 1px solid black; width: 100%; height: 95%"
+                  placeholder="Click and write product description"></textarea>
+        </div>
+        <script>
+            $ (function () {
+                //$('.rTable').clone().appendTo('#feeTable');
+                //$('#feeTable').find('input').attr('readonly', 'readonly');
+                var productDescDlg = $ ("#dialog-form").dialog ({
+                    autoOpen: false,
+                    height: 800,
+                    width: 800,
+                    modal: true,
+                    buttons: {
+                        Close: function () {
+                            productDescDlg.dialog ("close");
+                            $ ("#product_desc").val ($ ("#product_desc_dlg").val ());
+                        }
+                    },
+                    close: function () {
+                        $ ("#product_desc").val ($ ("#product_desc_dlg").val ());
+                    }
+                });
+
+                $ ("#product_desc").on ("click", function () {
+                    productDescDlg.dialog ("open");
+                    $ ("#product_desc_dlg").val ($ ("#product_desc").val ());
+                });
+            });
+        </script>
+                                <!--</table>-->
+                                <p>&nbsp;</p>
+                                <div align="center">
+                                    <!--								<form id="form1" name="form1" method="post"-->
+                                    <!--									style="text-align: center">-->
+                                    <input type="submit" name="submit" id="submit" value="Add"/>
+                                </div>
+                                <p align="left">&nbsp;</p>
+                        </tr>
+                    </tr>
+                </table>
+            <!--</div>-->
+    </form>
+</div>
+</BODY>
+</HTML>
