@@ -80,14 +80,14 @@
     <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="js/upload.js"></script>
     <script>
-        $(document).ready(function(){
-            for (var i = 1; i <= 10; i++){
-                $ ("#feeTable").append ('<tr><td><input name="proDesc'+i+'" type="text" id="proDesc'+i+'" class="proDesc'+i+'" size="30" style="border:0"/></td> ' +
-                    '<td><input name="weight'+i+'" type="text" id="weight'+i+'" class="weight'+i+'" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPrice'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
-                    '<td><input name="unit'+i+'" type="text" id="unit'+i+' class="unit'+i+' value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPrice'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>'+
-                    '<td><input name="price'+i+'" type="text" id="price'+i+'" class="price'+i+'" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight'+i+'\', \'price'+i+'\', \'unit'+i+'\', \'unitPric'+i+'\', \'total'+i+'\');calTotal(\'feeTable\');"/></td>'+
-                    '<td><input name="total'+i+'" type="text" id="total'+i+'" class="total'+i+'" value="0" size="10" style="border:0" readonly="readonly"/></td>'+
-                '</tr>');
+        $ (document).ready (function () {
+            for (var i = 1; i <= 10; i++) {
+                $ ("#feeTable").append ('<tr><td><input name="proDesc' + i + '" type="text" id="proDesc' + i + '" class="proDesc' + i + '" size="30" style="border:0"/></td> ' +
+                    '<td><input name="weight' + i + '" type="text" id="weight' + i + '" class="weight' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPrice' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
+                    '<td><input name="unit' + i + '" type="text" id="unit' + i + ' class="unit' + i + ' value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPrice' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>' +
+                    '<td><input name="price' + i + '" type="text" id="price' + i + '" class="price' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPric' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');"/></td>' +
+                    '<td><input name="total' + i + '" type="text" id="total' + i + '" class="total' + i + '" value="0" size="10" style="border:0" readonly="readonly"/></td>' +
+                    '</tr>');
             }
         });
         $ (function () {
@@ -101,11 +101,11 @@
 <body>
 <div class="container">
     <form name="addOrder" onsubmit="return validation()" method="post">
-            <!-- data table to show all orders -->
-            <!--<div class="table-respons?ive tab-pane">-->
-                <div class="col-xs-12 row"><p align="left">
-                    <strong>Add Order</strong>
-                </p></div>
+        <!-- data table to show all orders -->
+        <!--<div class="table-respons?ive tab-pane">-->
+        <div class="col-xs-12 row"><p align="left">
+            <strong>Add Order</strong>
+        </p></div>
         <div class="row">
             <div class="col-xs-5"><strong>- Sender</strong></div>
             <div class="col-xs-7"><strong>- Receiver</strong></div>
@@ -113,75 +113,77 @@
         <div class="row">
             <!-- sender phone number-->
             <div class="col-xs-5">
-            <div class="row">
-            <div class="col-xs-2 sub-element">Phone :</div>
-            <div class="col-xs-5">
-                <input name="custPhone" type="text" id="custPhone" size="50"
-                       list="custPhoneList" required/>
-                <!-- drop down list that can be search/add new text -->
-                <script type="text/javascript">
-                    $("input[name=custPhone]").focusout(function(){
-                        var ptamzzNamespace = ['a','b','c'];//<?php if (isset($_SESSION['sender'])) {echo json_encode($_SESSION['sender']);}?>;
-                        var custPhone = $(this).val();
-                        $('input[name="custName"]').val(ptamzzNamespace[custPhone]['cust_name']);
-                        $('input[name="custAddr"]').val(ptamzzNamespace[custPhone]['address']);
-                    });
-                </script>
-                <datalist id="custPhoneList">
-                    <!--<?php-->
-                    <!--if (isset($_SESSION['sender'])) {-->
-                    <!--foreach ($_SESSION['sender'] as $sender) {-->
-                    <!--echo "<option data-id=\"".$sender['phone']."\" value=\"".$sender['phone']."\"></option>-->
-                    <!--";-->
-                    <!--}-->
-                    <!--}-->
-                    <!--?>-->
-                </datalist></div>
-            </div>
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Phone :</div>
+                    <div class="col-xs-5">
+                        <input name="custPhone" type="text" id="custPhone" size="50"
+                               list="custPhoneList" required/>
+                        <!-- drop down list that can be search/add new text -->
+                        <script type="text/javascript">
+                            $ ("input[name=custPhone]").focusout (function () {
+                                var ptamzzNamespace = ['a', 'b', 'c'];//<?php if (isset($_SESSION['sender'])) {echo json_encode($_SESSION['sender']);}?>;
+                                var custPhone = $ (this).val ();
+                                $ ('input[name="custName"]').val (ptamzzNamespace[custPhone]['cust_name']);
+                                $ ('input[name="custAddr"]').val (ptamzzNamespace[custPhone]['address']);
+                            });
+                        </script>
+                        <datalist id="custPhoneList">
+                            <!--<?php-->
+                            <!--if (isset($_SESSION['sender'])) {-->
+                            <!--foreach ($_SESSION['sender'] as $sender) {-->
+                            <!--echo "<option data-id=\"".$sender['phone']."\" value=\"".$sender['phone']."\"></option>-->
+                            <!--";-->
+                            <!--}-->
+                            <!--}-->
+                            <!--?>-->
+                        </datalist>
+                    </div>
+                </div>
             </div>
             <!-- Receiver phone number -->
             <div class="col-xs-7">
-            <div class="row">
-            <div class="col-xs-2 sub-element">Phone :</div>
-            <div class="col-xs-7">
-                <input name="recvPhone" type="text" id="recvPhone" size="50"
-                       list="recvPhoneList" required/>
-                <!-- drop down list that can be search/add new text -->
-                <script type="text/javascript">
-                    $ ("input[name=recvPhone]").focusout (function () {
-                        var recvs =['1','2','3'];//<?php if (isset ($_SESSION['recv'])) { echo json_encode ($_SESSION['recv']); }?>;
-                        var recvPhone = $ (this).val ();
-                        $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
-                        $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
-                    });
-                </script>
-                <datalist id="recvPhoneList">
-                    <!--<?php-->
-                    <!--if (isset($_SESSION['recv'])) {-->
-                    <!--foreach ($_SESSION['recv'] as $receiver) {-->
-                    <!--echo "<option data-id=\"".$receiver['phone']."\" value=\"".$receiver['phone']."\"></option>-->
-                    <!--";-->
-                    <!--}-->
-                    <!--}-->
-                    <!--?>-->
-                </datalist>
-            </div></div>
-        </div>
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Phone :</div>
+                    <div class="col-xs-7">
+                        <input name="recvPhone" type="text" id="recvPhone" size="50"
+                               list="recvPhoneList" required/>
+                        <!-- drop down list that can be search/add new text -->
+                        <script type="text/javascript">
+                            $ ("input[name=recvPhone]").focusout (function () {
+                                var recvs = ['1', '2', '3'];//<?php if (isset ($_SESSION['recv'])) { echo json_encode ($_SESSION['recv']); }?>;
+                                var recvPhone = $ (this).val ();
+                                $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
+                                $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
+                            });
+                        </script>
+                        <datalist id="recvPhoneList">
+                            <!--<?php-->
+                            <!--if (isset($_SESSION['recv'])) {-->
+                            <!--foreach ($_SESSION['recv'] as $receiver) {-->
+                            <!--echo "<option data-id=\"".$receiver['phone']."\" value=\"".$receiver['phone']."\"></option>-->
+                            <!--";-->
+                            <!--}-->
+                            <!--}-->
+                            <!--?>-->
+                        </datalist>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <!-- sender name-->
             <div class="col-xs-5">
-            <div class="row">
-            <div class="col-xs-2 sub-element">Name :</div>
-            <div class="col-xs-5"><input list="custName" name="custName" id="custName" size="50"/></div>
-            </div>
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Name :</div>
+                    <div class="col-xs-5"><input list="custName" name="custName" id="custName" size="50"/></div>
+                </div>
             </div>
             <!-- Receiver Name-->
             <div class="col-xs-7">
-            <div class="row">
-            <div class="col-xs-2 sub-element">Name :</div>
-            <div class="col-xs-5"><input list="recvName" name="recvName" id="recvName" size="50"/></div>
-            </div>
+                <div class="row">
+                    <div class="col-xs-2 sub-element">Name :</div>
+                    <div class="col-xs-5"><input list="recvName" name="recvName" id="recvName" size="50"/></div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -204,81 +206,81 @@
             <!-- sender name-->
 
             <div class="col-xs-1"><strong>- Date :</strong></div>
-                    <div class="col-xs-5 sub-element">
-                        <select name="day" id="day">
-                            <option value="01">01</option>
-                            <option value="02">02</option>
-                            <option value="03">03</option>
-                            <option value="04">04</option>
-                            <option value="05">05</option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31">31</option>
-                        </select>
-                        <select name="month" id="month">
-                            <option value="01">01</option>
-                            <option value="02">02</option>
-                            <option value="03">03</option>
-                            <option value="04">04</option>
-                            <option value="05">05</option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                        <select name="year" id="year">
-                            <option value="2016">2016</option>
-                            <option value="2017">2017</option>
-                            <option value="2018">2018</option>
-                            <option value="2019">2019</option>
-                            <option value="2020">2020</option>
-                            <option value="2021">2021</option>
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                        </select>
-                        <!-- input name="orderDate" type="text"
-                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
-                        <input name="orderDate" type="text"
-                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
-                        <script type="text/javascript">
-                            //                                        validateDate();
-                            //                                         validate_date();
-                            selectDate ();
-                        </script>
-                    </div>
+            <div class="col-xs-5 sub-element">
+                <select name="day" id="day">
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+                <select name="month" id="month">
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                <select name="year" id="year">
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
+                <!-- input name="orderDate" type="text"
+                size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
+                <input name="orderDate" type="text"
+                size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
+                <script type="text/javascript">
+                    //                                        validateDate();
+                    //                                         validate_date();
+                    selectDate ();
+                </script>
+            </div>
 
         </div>
         <!-- last element: description and details -->
@@ -298,7 +300,8 @@
             <!-- Descriptor -->
             <div class="col-xs-5">
                 <p id="product_desc_para"><textarea name="product_desc" id="product_desc" cols="65" rows="22"
-                                                    style="border: 1px solid black" placeholder="Click and write product description"></textarea></p>
+                                                    style="border: 1px solid black"
+                                                    placeholder="Click and write product description"></textarea></p>
                 <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
                     <input name="file[]" type="file" multiple="multiple" id="uploadFile"/>
                     <div id="uploadedFiles"></div>
@@ -368,18 +371,18 @@
                 });
             });
         </script>
-                                <!--</table>-->
-                                <p>&nbsp;</p>
-                                <div align="center">
-                                    <!--								<form id="form1" name="form1" method="post"-->
-                                    <!--									style="text-align: center">-->
-                                    <input type="submit" name="submit" id="submit" value="Add"/>
-                                </div>
-                                <p align="left">&nbsp;</p>
-                        </tr>
-                    </tr>
-                </table>
-            <!--</div>-->
+        <!--</table>-->
+        <p>&nbsp;</p>
+        <div align="center">
+            <!--								<form id="form1" name="form1" method="post"-->
+            <!--									style="text-align: center">-->
+            <input type="submit" name="submit" id="submit" value="Add"/>
+        </div>
+        <p align="left">&nbsp;</p>
+        </tr>
+        </tr>
+        </table>
+        <!--</div>-->
     </form>
 </div>
 </BODY>

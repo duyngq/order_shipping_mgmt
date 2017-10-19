@@ -15,13 +15,20 @@
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+    <!-- use dialog -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
     <!--<script src="js/dataTables.bootstrap.min.js"></script>-->
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="js/sga-main.js"></script>
     <script type="text/javascript" charset="utf-8">
         $ (document).ready (function () {
-            editor = new $.fn.dataTable.Editor ({
+            /*editor = new $.fn.dataTable.Editor ({
                 //https://editor.datatables.net/examples/styling/envelopeInTable.html
                 //https://editor.datatables.net/examples/simple/inTableControls.html
                 //https://editor.datatables.net/examples/styling/bootstrap.html
@@ -61,7 +68,7 @@
                         "name": "amount"
                     }
                 ]
-            });
+            });*/
 
             $ ('#example').on ('click', 'a.order-edit', function (e) {
                 e.preventDefault ();
@@ -245,7 +252,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">Add<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Order</a></li>
+                            <li><a href="#" id="addOrder">Order</a></li>
                             <li><a href="#">Shipping</a></li>
                             <li class="dropdown-submenu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Customer</a>
@@ -394,6 +401,60 @@
             </table>
         </div>
     </div> <!-- end tab-content-->
+
+    <script>
+
+        $ (function () {
+
+            /*var width = $ (window).width > 480 ? 440 : 280,
+                height = $ (window).width > 480 ? 440 : 440;
+
+            // Initialize the open button with igButton
+//            $ ("#openDialog").igButton ({labelText: "Open Dialog"});
+
+            // Initialize the igDialog
+            $ ("#dialog").igDialog ({
+                height: height,
+                width: width,
+                headerText: "addorder.html",
+                showMinimizeButton: true,
+                showMaximizeButton: true,
+                showPinButton: true
+            });
+
+            $ ("#addOrder").on ({
+                click: function (e) {
+                    // Open the igDialog
+                    $ ("#dialog").igDialog ("open");
+                }
+            });*/
+            $ ("#addOrder").on ({
+                click: function (e) {
+                    var dialog = $ ('<div></div>')
+                        .html ('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>')
+                        .dialog ({
+                            autoOpen: false,
+                            modal: true,
+                            height: 600,
+                            width: 800,
+                            title: "Add Order"
+                        });
+
+                    dialog.dialog ('open');
+                }
+            });
+
+//            $(window).resize(function () {
+//                $('.ui-dialog').css({
+//                    'width': $(window).width(),
+//                    'height': $(window).height(),
+//                    'left': '0px',
+//                    'top':'0px'
+//                });
+//            }).resize();
+
+        });
+    </script>
 </div> <!-- end div container -->
 <!--
 <div class="header">
