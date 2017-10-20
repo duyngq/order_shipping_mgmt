@@ -212,6 +212,32 @@
                 $ ($.fn.dataTable.tables (true)).DataTable ()
                     .columns.adjust ();
             });
+
+            $ ("#addOrder").on ({
+                click: function (e) {
+                    var dialog = $ ('<div></div>')
+                        .html ('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>')
+                        .dialog ({
+                            autoOpen: false,
+                            modal: true,
+                            position: ["left","top"],
+                            width:"100%",
+                            height:$(window).height(),
+                            zIndex: 1000,
+                            title: "Add Order"
+//                            buttons: {
+//                                Add: function () {
+//                                    dialog.dialog ("close");
+//                                },
+//                                Close: function () {
+//                                    dialog.dialog ("close");
+//                                }
+//                            },
+                        });
+
+                    dialog.dialog ('open');
+                }
+            });
         });
     </script>
 
@@ -244,9 +270,6 @@
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse sga-nav-color">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#" target="_blank"><span class="glyphicon glyphicon-log-out">Logout</span></a></li>
-                </ul>
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -263,6 +286,12 @@
                             </li>
                         </ul>
                     </li>
+                </ul>
+                <ul class="nav navbar-nav ">
+                    <li><a href="#" target="_blank"><span class="glyphicon glyphicon-search">Search</span></a></li>
+                </ul>
+                <ul class="nav navbar-nav ">
+                    <li><a href="#" target="_blank"><span class="glyphicon glyphicon-log-out">Logout</span></a></li>
                 </ul>
                 <!--<ul class="nav navbar-nav navbar-right sga-nav-color">-->
                 <!--&lt;!&ndash; TODO: good menu but maybe noneed&ndash;&gt;-->
@@ -401,60 +430,6 @@
             </table>
         </div>
     </div> <!-- end tab-content-->
-
-    <script>
-
-        $ (function () {
-
-            /*var width = $ (window).width > 480 ? 440 : 280,
-                height = $ (window).width > 480 ? 440 : 440;
-
-            // Initialize the open button with igButton
-//            $ ("#openDialog").igButton ({labelText: "Open Dialog"});
-
-            // Initialize the igDialog
-            $ ("#dialog").igDialog ({
-                height: height,
-                width: width,
-                headerText: "addorder.html",
-                showMinimizeButton: true,
-                showMaximizeButton: true,
-                showPinButton: true
-            });
-
-            $ ("#addOrder").on ({
-                click: function (e) {
-                    // Open the igDialog
-                    $ ("#dialog").igDialog ("open");
-                }
-            });*/
-            $ ("#addOrder").on ({
-                click: function (e) {
-                    var dialog = $ ('<div></div>')
-                        .html ('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>')
-                        .dialog ({
-                            autoOpen: false,
-                            modal: true,
-                            height: 600,
-                            width: 800,
-                            title: "Add Order"
-                        });
-
-                    dialog.dialog ('open');
-                }
-            });
-
-//            $(window).resize(function () {
-//                $('.ui-dialog').css({
-//                    'width': $(window).width(),
-//                    'height': $(window).height(),
-//                    'left': '0px',
-//                    'top':'0px'
-//                });
-//            }).resize();
-
-        });
-    </script>
 </div> <!-- end div container -->
 <!--
 <div class="header">
