@@ -7,8 +7,8 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://localhost:8808/api"
-// var rootURL = "http://" + HOST + "/api";
+// var rootURL = "http://localhost:8808/api"
+var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 
 // Retrieve wine list when application starts
@@ -42,6 +42,23 @@ function findAll () {
     });
 }
 
+function addOrder() {
+    console.log('Add a new order');
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: rootURL,
+        dataType: "json",
+        data: formToJSON(),
+        success: function(data, textStatus, jqXHR){
+            alert('Order created successfully');
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert('addWine error: ' + textStatus);
+        }
+    });
+}
+
 /**
  * Render JSON data getting from server and render to html table
  * Will render for:
@@ -64,8 +81,11 @@ function renderTableData (data) {
     extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
     $.each (list, function (index, order) {
-        // var total = order.total;
-        // if (weight)
+        //     totalWeight += parseFloat(weight);
+        //     totalAmount += parseFloat(total);
+        var weight = order.weight;
+        var amount = order.total;
+
         /* this will validate if value is not:
             null
             undefined
@@ -74,16 +94,42 @@ function renderTableData (data) {
             false
             0
         */
-        //     totalWeight += parseFloat(weight);
-        // if (total)
-        //     totalAmount += parseFloat(total);
+        if (!weight)
+            weight = 0;
+        if (!amount)
+            amount = 0;
         // divide data to 2 parts: ordered/delivered (0/1)
         if (order.status == 0)
-            table.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total, extraButton]).draw ();
+            table.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount, extraButton]).draw ();
         else if (order.status == 1)
-            deliveredTable.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, order.weight, order.total, extraButton]).draw ();
+            deliveredTable.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount, extraButton]).draw ();
     });
     // $("#example tfoot th#orderedWeight").html(totalWeight);
     // $("#weight").html(totalWeight); same result
     // $("#example tfoot th#orderedAmount").html(totalAmount);
+}
+
+// Helper function to serialize all the form fields into a JSON string
+function formToJSON() {
+    var productDetails = new Array();
+    for (var i = 1; i <= 10 ; i++) {
+        var productDetail = new Object();
+        productDetail.desc = $('#productDesc'+i).val();
+        productDetail.weight = $('#weight'+i).val();
+        productDetail.unit = $('#unit'+i).val();
+        productDetail.price = $('#price'+i).val();
+        productDetail.total = $('#total'+i).val();
+        productDetails[i-1] = productDetail;
+    }
+    return JSON.stringify({
+        "custName": $('#custName').val(),
+        "custPhone": $('#custPhone').val(),
+        "custAddr": $('#custAddr').val(),
+        "recvName": $('#recvName').val(),
+        "recvPhone": $('#recvPhone').val(),
+        "recvAddr": $('#recvAddr').val(),
+        "productDesc": $('#productDesc').val(),
+        "file": $('#uploaded').val(),
+        "productDetails" : productDetails
+    });
 }

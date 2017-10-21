@@ -1,63 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>Add New Order</title>
     <style type="text/css">
-        tr {
-            background-color: transparent;
-            color: #000;
-            text-decoration: none;
-        }
-
-        p.hidden {
-            border-style: hidden;
-        }
-
-        .rTable {
-            display: table;
-            width: 100%;
-        }
-
-        .rTableRow {
-            display: table-row;
-        }
-
-        .rTableHeading {
-            display: table-header-group;
-            background-color: #ddd;
-        }
-
-        .rTableCell, .rTableHead {
-            display: table-cell;
-            padding: 3px 10px;
-            border: 1px solid #999999;
-        }
-
-        .rTableHeading {
-            display: table-header-group;
-            background-color: #ddd;
-            font-weight: bold;
-        }
-
-        .rTableFoot {
-            display: table-footer-group;
-            font-weight: bold;
-            background-color: #ddd;
-        }
-
-        .rTableBody {
-            display: table-row-group;
-        }
-
-        .href-right {
-            text-align: right;
-        }
-
-        .link {
-            display: inline;
-        }
-
         .sub-element {
             margin-left: 10px;
             padding: 5px;
@@ -82,7 +28,7 @@
     <script>
         $ (document).ready (function () {
             for (var i = 1; i <= 10; i++) {
-                $ ("#feeTable").append ('<tr><td><input name="proDesc' + i + '" type="text" id="proDesc' + i + '" class="proDesc' + i + '" size="30" style="border:0"/></td> ' +
+                $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="proDesc' + i + '" class="proDesc' + i + '" size="30" style="border:0"/></td> ' +
                     '<td><input name="weight' + i + '" type="text" id="weight' + i + '" class="weight' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPrice' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
                     '<td><input name="unit' + i + '" type="text" id="unit' + i + ' class="unit' + i + ' value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPrice' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>' +
                     '<td><input name="price' + i + '" type="text" id="price' + i + '" class="price' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'unitPric' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');"/></td>' +
@@ -100,7 +46,7 @@
 
 <body>
 <div class="container">
-    <form name="addOrder" onsubmit="return validation()" method="post">
+    <form name="addOrder" id="addOrder" onsubmit="return validation(); addOrder()" method="post">
         <!-- data table to show all orders -->
         <!--<div class="table-respons?ive tab-pane">-->
         <div class="row">
@@ -111,7 +57,7 @@
             <!-- sender phone number-->
             <div class="col-xs-5">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Phone :</div>
+                    <div class="col-xs-2 sub-element">Phone</div>
                     <div class="col-xs-5">
                         <input name="custPhone" type="text" id="custPhone" size="45"
                                list="custPhoneList" required/>
@@ -140,7 +86,7 @@
             <!-- Receiver phone number -->
             <div class="col-xs-7">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Phone :</div>
+                    <div class="col-xs-2 sub-element">Phone</div>
                     <div class="col-xs-7">
                         <input name="recvPhone" type="text" id="recvPhone" size="50"
                                list="recvPhoneList" required/>
@@ -171,14 +117,14 @@
             <!-- sender name-->
             <div class="col-xs-5">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Name :</div>
+                    <div class="col-xs-2 sub-element">Name</div>
                     <div class="col-xs-5"><input list="custName" name="custName" id="custName" size="45"/></div>
                 </div>
             </div>
             <!-- Receiver Name-->
             <div class="col-xs-7">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Name :</div>
+                    <div class="col-xs-2 sub-element">Name</div>
                     <div class="col-xs-5"><input list="recvName" name="recvName" id="recvName" size="50"/></div>
                 </div>
             </div>
@@ -187,23 +133,22 @@
             <!-- sender name-->
             <div class="col-xs-5">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Address :</div>
+                    <div class="col-xs-2 sub-element">Address</div>
                     <div class="col-xs-5"><input name="custAddr" type="text" id="custAddr" size="45" required/></div>
                 </div>
             </div>
             <!-- Receiver Name-->
             <div class="col-xs-7">
                 <div class="row">
-                    <div class="col-xs-2 sub-element">Address :</div>
+                    <div class="col-xs-2 sub-element">Address</div>
                     <div class="col-xs-5"><input name="recvAddr" type="text" id="recvAddr" size="50" required/></div>
                 </div>
             </div>
         </div>
         <div class="row">
             <!-- sender name-->
-
-            <div class="col-xs-1"><strong>- Date :</strong></div>
-            <div class="col-xs-5 sub-element">
+            <div class="col-xs-1"><strong>- Date</strong></div>
+            <div class="col-xs-5">
                 <select name="day" id="day">
                     <option value="01">01</option>
                     <option value="02">02</option>
@@ -296,7 +241,7 @@
         <div class="row">
             <!-- Descriptor -->
             <div class="col-xs-5">
-                <p id="product_desc_para"><textarea name="product_desc" id="product_desc" cols="55" rows="22"
+                <p id="productDescPara"><textarea name="productDesc" id="productDesc" cols="55" rows="22"
                                                     style="border: 1px solid black"
                                                     placeholder="Click and write product description"></textarea></p>
                 <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
@@ -315,7 +260,7 @@
             <div class="col-xs-7">
                 <table class="table table-bordered" id="feeTable">
                     <thead>
-                    <tr bgcolor="bg-primary">
+                    <tr>
                         <th>Description</th>
                         <th>Weigh (Lbs)</th>
                         <th>Qty</th>
@@ -337,16 +282,22 @@
                 </table>
             </div>
         </div>
-        <div id="dialog-form" title="Product description">
-        <textarea name="product_desc_dlg" id="product_desc_dlg"
+        <div id="dialogForm" title="Product description">
+        <textarea name="productDescDlg" id="productDescDlg"
                   style="border: 1px solid black; width: 100%; height: 95%"
                   placeholder="Click and write product description"></textarea>
         </div>
+
+        <p>&nbsp;</p>
+        <div align="center">
+            <input class="btn btn-success" type="submit" name="submit" id="submit" value="Add" form="addOrder"/>
+        </div>
+        <p align="left">&nbsp;</p>
         <script>
             $ (function () {
                 //$('.rTable').clone().appendTo('#feeTable');
                 //$('#feeTable').find('input').attr('readonly', 'readonly');
-                var productDescDlg = $ ("#dialog-form").dialog ({
+                var productDescDlg = $ ("#dialogForm").dialog ({
                     autoOpen: false,
                     height: 800,
                     width: 800,
@@ -354,32 +305,20 @@
                     buttons: {
                         Close: function () {
                             productDescDlg.dialog ("close");
-                            $ ("#product_desc").val ($ ("#product_desc_dlg").val ());
+                            $ ("#productDesc").val ($ ("#productDescDlg").val ());
                         }
                     },
                     close: function () {
-                        $ ("#product_desc").val ($ ("#product_desc_dlg").val ());
+                        $ ("#productDesc").val ($ ("#productDescDlg").val ());
                     }
                 });
 
-                $ ("#product_desc").on ("click", function () {
+                $ ("#productDesc").on ("click", function () {
                     productDescDlg.dialog ("open");
-                    $ ("#product_desc_dlg").val ($ ("#product_desc").val ());
+                    $ ("#productDescDlg").val ($ ("#productDesc").val ());
                 });
             });
         </script>
-        <!--</table>-->
-        <p>&nbsp;</p>
-        <div align="center">
-            <!--								<form id="form1" name="form1" method="post"-->
-            <!--									style="text-align: center">-->
-            <input type="submit" name="submit" id="submit" value="Add"/>
-        </div>
-        <p align="left">&nbsp;</p>
-        </tr>
-        </tr>
-        </table>
-        <!--</div>-->
     </form>
 </div>
 </BODY>
