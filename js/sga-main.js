@@ -7,8 +7,8 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-// var rootURL = "http://localhost:8808/api"
-var rootURL = "http://" + HOST + "/api";
+var rootURL = "http://localhost:8808/api"
+// var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 
 // Retrieve wine list when application starts
@@ -47,7 +47,7 @@ function addOrder() {
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
-        url: rootURL,
+        url: rootURL + "/orders/add",
         dataType: "json",
         data: formToJSON(),
         success: function(data, textStatus, jqXHR){
@@ -128,8 +128,9 @@ function formToJSON() {
         "recvName": $('#recvName').val(),
         "recvPhone": $('#recvPhone').val(),
         "recvAddr": $('#recvAddr').val(),
+        "date": $('#year').val() + "-" + $("#month").val() + "-" + $("#day").val(),
         "productDesc": $('#productDesc').val(),
-        "file": $('#uploaded').val(),
+        "fileNames": $('#uploaded').val(),
         "productDetails" : productDetails
     });
 }

@@ -48,7 +48,7 @@
 <div class="container">
     <form name="addOrder" id="addOrder" onsubmit="return validation(); addOrder()" method="post">
         <!-- data table to show all orders -->
-        <!--<div class="table-respons?ive tab-pane">-->
+        <!--<div class="table-responsive tab-pane">-->
         <div class="row">
             <div class="col-xs-5"><strong>- Sender</strong></div>
             <div class="col-xs-7"><strong>- Receiver</strong></div>
@@ -64,7 +64,7 @@
                         <!-- drop down list that can be search/add new text -->
                         <script type="text/javascript">
                             $ ("input[name=custPhone]").focusout (function () {
-                                var ptamzzNamespace = ['a', 'b', 'c'];//<?php if (isset($_SESSION['sender'])) {echo json_encode($_SESSION['sender']);}?>;
+                                var ptamzzNamespace = <?php if (isset($_SESSION['sender'])) {echo json_encode($_SESSION['sender']);}?>;
                                 var custPhone = $ (this).val ();
                                 $ ('input[name="custName"]').val (ptamzzNamespace[custPhone]['cust_name']);
                                 $ ('input[name="custAddr"]').val (ptamzzNamespace[custPhone]['address']);

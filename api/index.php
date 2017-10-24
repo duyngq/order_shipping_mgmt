@@ -13,6 +13,7 @@ $app->post ( '/wines', 'addWine' );
 $app->put ( '/wines/:id', 'updateWine' );
 $app->delete ( '/wines/:id', 'deleteWine' );
 $app->get ( '/orders/all', 'getAllOrders' );
+$app->post ( '/orders/add', 'addOrder' );
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
 		// get DB connection
@@ -63,6 +64,31 @@ function getAllOrders () {
 			echo '{"error":{"text":' . "Failed to get orders data" . '}}';
 		}
 	} catch ( Exception $e ) {
+		echo '{"error":{"text":' . $e->getMessage () . '}}';
+	}
+}
+
+function addOrder () {
+	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+	$request = Slim::getInstance ()->request ();
+	$order = json_decode ( $request->getBody () );
+//	$sql = "INSERT INTO wine (name, grapes, country, region, year, description) VALUES (:name, :grapes, :country, :region, :year, :description)";
+	try {
+		$db = new DbOperation();
+		$db -> addOrder($order);
+//		$stmt = $db->prepare ( $sql );
+//		$stmt->bindParam ( "name", $order->name );
+//		$stmt->bindParam ( "grapes", $order->grapes );
+//		$stmt->bindParam ( "country", $order->country );
+//		$stmt->bindParam ( "region", $order->region );
+//		$stmt->bindParam ( "year", $order->year );
+//		$stmt->bindParam ( "description", $order->description );
+//		$stmt->execute ();
+//		$order->id = $db->lastInsertId ();
+//		$db = null;
+		echo json_encode ( $order );
+	} catch ( Exception $e ) {
+		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }

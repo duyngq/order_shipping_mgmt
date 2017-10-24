@@ -85,6 +85,52 @@ class DbOperation {
 		return $orders;
 	}
 
+	/**
+ 	 * Add order and update order details except customer datas since they will be update separately
+	 * @param $order
+	 * @throws Exception
+	 */
+	public function addOrder ( $order ) {
+		$this->con->beginTransaction ();
+		try {
+			//Query 1: Attempt to insert order
+			$sql = "INSERT INTO orders(send_cust_id, recv_cust_id, user_id, status, date, code, product_desc, weight, total, file_name) VALUES (?, ?)";
+			$stmt = $this->con->prepare ( $sql );
+			$stmt->execute ( array (
+					$order->sendId,
+					$order->recvId,
+					$order->userId,
+					0,
+					$order->date,
+					'test',
+					$order->productDesc,
+					$order->weight,
+					$order->total,
+					$order->fileNames
+				)
+			);
+			$orderId = $this->con->lastInsertId ();
+
+			//Query 2: Attempt to update the order details
+			$sql = "insert into orderdetails (order_id, p_desc, weight, price_weight, unit, price_unit) values";
+			$orderDetails = "";
+			foreach ($order->productDetails as $product) {
+				$orderDetails.="($orderId, '$product[0]', $product[1], $product[2], $product[3], $product[4]),";
+			}
+			$stmt = $this->con->prepare ( $sql.substr($orderDetails, 0, -1) );
+			$stmt->execute ();
+
+			//We've got this far without an exception, so commit the changes.
+			$this->con->commit ();
+		} catch ( Exception $e ) {
+			//Our catch block will handle any exceptions that are thrown.
+			//Rollback the transaction.
+			$this->con->rollBack ();
+			throw $e;
+//			echo $e->getMessage();
+		}
+	}
+
 	//Method to register a new student
 	public function createStudent ( $name, $username, $pass ) {
 		if ( !$this->isStudentExists ( $username ) ) {

@@ -27,7 +27,7 @@
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="js/sga-main.js"></script>
     <script type="text/javascript" charset="utf-8">
-        $ (document).ready (function () {
+        $(document).ready(function () {
             /*editor = new $.fn.dataTable.Editor ({
                 //https://editor.datatables.net/examples/styling/envelopeInTable.html
                 //https://editor.datatables.net/examples/simple/inTableControls.html
@@ -70,24 +70,24 @@
                 ]
             });*/
 
-            $ ('#example').on ('click', 'a.order-edit', function (e) {
-                e.preventDefault ();
+            $('#example').on('click', 'a.order-edit', function (e) {
+                e.preventDefault();
 
 //                editor.edit($(this).closest('tr'), {
 //                    title: 'Edit order',
 //                    buttons: 'Update'
 //                });
                 editor
-                    .title ('Edit record')
-                    .buttons ({
+                    .title('Edit record')
+                    .buttons({
                         "label": "Update", "fn": function () {
-                            editor.submit ()
+                            editor.submit()
                         }
                     })
-                    .edit ($ (this).closest ('tr'));
+                    .edit($(this).closest('tr'));
             });
 
-            $ ('#example').DataTable ({
+            $('#example').DataTable({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
@@ -96,12 +96,12 @@
 //                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='order-edit glyphicon glyphicon-pencil'></a> <a href='#' class='order-delete glyphicon glyphicon-trash'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api (), data;
+                    var api = this.api(), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace (/[\$,]/g, '') * 1 :
+                            i.replace(/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
@@ -124,39 +124,39 @@
                             }, 0 );
                     }*/
                     // Total over all pages
-                    totalWeight = api.column (8).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeight = api.column(8).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (8).footer ()).html (
+                    $(api.column(8).footer()).html(
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column (9).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmount = api.column(9).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (9).footer ()).html (
+                    $(api.column(9).footer()).html(
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
-            $ ('#shippingTbl').DataTable ();
-            $ ('#deliveredTbl').DataTable ({
+            $('#shippingTbl').DataTable();
+            $('#deliveredTbl').DataTable({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
@@ -165,82 +165,84 @@
                     "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='delivered-edit glyphicon glyphicon-pencil'></a> <a href='#' class='delivered-delete glyphicon glyphicon-trash'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api (), data;
+                    var api = this.api(), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace (/[\$,]/g, '') * 1 :
+                            i.replace(/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // Total over all pages
-                    totalWeight = api.column (8).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeight = api.column(8).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (8).footer ()).html (
+                    $(api.column(8).footer()).html(
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column (9).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmount = api.column(9).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (9).footer ()).html (
+                    $(api.column(9).footer()).html(
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
             // work with tab
-            $ ('a[data-toggle="tab"]').on ('shown.bs.tab', function (e) {
-                $ ($.fn.dataTable.tables (true)).DataTable ()
-                    .columns.adjust ();
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
             });
 
 
         });
 
         $(function () {
-            $ ("#addOrder").on ("click", function () {
-//                    var $dialog = $ ('<div></div>')
-//                        .html ('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>')
-                    var dlg = $('#addOrderDlg').dialog ({
+            $("#addOrder").on({
+                click: function (e) {
+                    var dlg = $('<div></div>')
+                        .html('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>').dialog({
+//                    var dlg = $('#addOrderDlg').dialog ({
                             title: "Add Order",
                             autoOpen: false,
                             modal: true,
                             position: ["left", "top"],
                             width: "100%",
-                            height: $ (window).height (),
-                            zIndex: 1000,
-                            buttons: {
-                                Add: function () {
-                                    dlg.dialog ("close");
-                                },
-                                Close: function () {
-                                    dlg.dialog ("close");
-                                }
-                            },
+                            height: $(window).height(),
+                            zIndex: 1000
+//                            ,
+//                            buttons: {
+//                                Add: function () {
+//                                    dlg.dialog("close");
+//                                },
+//                                Close: function () {
+//                                    dlg.dialog("close");
+//                                }
+//                            },
                         });
 
-                    dlg .dialog ('open');
+                    dlg.dialog('open');
                 }
-            );
+            });
         });
     </script>
 
@@ -291,9 +293,10 @@
                         <!--&lt;!&ndash;</ul>&ndash;&gt;-->
                         <!--&lt;!&ndash;</li>&ndash;&gt;-->
                         <!--</ul>-->
-                        <a href="" class="btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add<span class="caret"></span></a>
+                        <a href="" class="btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">Add<span class="caret"></span></a>
                         <!--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add-->
-                            <!--<span class="caret"></span></button>-->
+                        <!--<span class="caret"></span></button>-->
                         <ul class="dropdown-menu">
                             <li><a href="" id="addOrder">Order</a></li>
                             <li><a href="#">Shipping</a></li>
@@ -445,6 +448,7 @@
 
         </div> <!-- end div container -->
     </div> <!-- end tab-content-->
+</div> <!-- end container -->
 <!--
 <div class="header">
 <input type="text" id="searchKey"/>
