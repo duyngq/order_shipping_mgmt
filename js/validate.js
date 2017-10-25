@@ -43,17 +43,17 @@ function checknumber (value) {
 }
 
 function validation () {
-    if (document.getElementById ("custName").value.length == 0) {
-        alert ("Please enter customer name.");
-        document.getElementById ("custName").focus ();
+    if (document.getElementById ("sendName").value.length == 0) {
+        alert ("Please enter sender name.");
+        document.getElementById ("sendName").focus ();
         return false;
-    } else if (document.getElementById ("custPhone").value.length == 0) {
-        alert ("Please enter customer phone.");
-        document.getElementById ("custPhone").focus ();
+    } else if (document.getElementById ("sendPhone").value.length == 0) {
+        alert ("Please enter sender phone.");
+        document.getElementById ("sendPhone").focus ();
         return false;
-    } else if (document.getElementById ("custAddr").value.length == 0) {
-        alert ("Please enter customer address.");
-        document.getElementById ("custAddr").focus ();
+    } else if (document.getElementById ("sendAddr").value.length == 0) {
+        alert ("Please enter sender address.");
+        document.getElementById ("sendAddr").focus ();
         return false;
     } else if (document.getElementById ("recvName").value.length == 0) {
         alert ("Please enter receiver name.");

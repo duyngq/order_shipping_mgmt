@@ -7,12 +7,14 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://localhost:8808/api"
-// var rootURL = "http://" + HOST + "/api";
+// var rootURL = "http://localhost:8808/api"
+var rootURL = "http://" + HOST + "/api";
 var currentOrder;
+var sCustomers;
+var rCustomers;
 
 // Retrieve wine list when application starts
-findAll ();
+// findAll ();
 
 // Start table at boot
 // $(document).ready(function() {
@@ -44,6 +46,10 @@ function findAll () {
 
 function addOrder() {
     console.log('Add a new order');
+    if (!validation()) {
+        alert ('Add order fail at validation');
+        return;
+    }
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
@@ -54,7 +60,47 @@ function addOrder() {
             alert('Order created successfully');
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert('addWine error: ' + textStatus);
+            console.log(jqXHR);
+            console.log (errorThrown);
+            alert('add order error: ');
+        }
+    });
+}
+
+/**
+ * Get all sender customers
+ */
+function getSCustomers() {
+    console.log ('Get all sender customers');
+    $.ajax ({
+        type: 'GET',
+        url: rootURL + "/customer/senders",
+        dataType: "json", // data type of response
+        success: function(data) {
+            sCustomers = data;
+            rederDataList(sCustomers, 'sendPhoneList');
+        },
+        error: function (data) {
+            console.log ("failed to load or render senders", data);
+        }
+    });
+}
+
+/**
+ * Get all receiver customers
+ */
+function getRCustomers() {
+    console.log ('Get all receiver customers');
+    $.ajax ({
+        type: 'GET',
+        url: rootURL + "/customer/receivers",
+        dataType: "json", // data type of response
+        success: function(data) {
+            rCustomers = data;
+            rederDataList(rCustomers, 'recvPhoneList');
+        },
+        error: function (data) {
+            console.log ("failed to load or render receivers", data);
         }
     });
 }
@@ -76,16 +122,11 @@ function renderTableData (data) {
 
     table.clear ().draw ();
     deliveredTable.clear ().draw ();
-    // 1. ordered data
-// var totalWeight = 0, totalAmount = 0;
     extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
     $.each (list, function (index, order) {
-        //     totalWeight += parseFloat(weight);
-        //     totalAmount += parseFloat(total);
         var weight = order.weight;
         var amount = order.total;
-
         /* this will validate if value is not:
             null
             undefined
@@ -114,6 +155,8 @@ function formToJSON() {
     var productDetails = new Array();
     for (var i = 1; i <= 10 ; i++) {
         var productDetail = new Object();
+        if (!$('#productDesc'+i).val())
+            continue;
         productDetail.desc = $('#productDesc'+i).val();
         productDetail.weight = $('#weight'+i).val();
         productDetail.unit = $('#unit'+i).val();
@@ -122,9 +165,11 @@ function formToJSON() {
         productDetails[i-1] = productDetail;
     }
     return JSON.stringify({
-        "custName": $('#custName').val(),
-        "custPhone": $('#custPhone').val(),
-        "custAddr": $('#custAddr').val(),
+        "sendId": $("#sendPhoneList option[value='" + $('#sendPhone').val() + "']").attr('data-id'),
+        "sendName": $('#sendName').val(),
+        "sendPhone": $('#sendPhone').val(),
+        "sendAddr": $('#sendAddr').val(),
+        "recvId": $("#recvPhoneList option[value='" + $('#recvPhone').val() + "']").attr('data-id'),
         "recvName": $('#recvName').val(),
         "recvPhone": $('#recvPhone').val(),
         "recvAddr": $('#recvAddr').val(),
@@ -133,4 +178,24 @@ function formToJSON() {
         "fileNames": $('#uploaded').val(),
         "productDetails" : productDetails
     });
+}
+
+/**
+ * Render JSON data to datalist
+ */
+function rederDataList(data, datalist) {
+    // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
+    var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
+    $.each (list, function (index, customer) {
+        $('#'+datalist+'').append("<option data-id='"+customer.id+"'value='" + customer.phone + "'>"); // Not working.
+    });
+}
+
+function getCustomersAsJson(data) {
+    var list =  data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
+    var returnMap ={};
+    $.each (list, function (index, customer) {
+        returnMap[customer.phone] = customer;
+    });
+    return JSON.stringify(returnMap);
 }

@@ -30,7 +30,7 @@ function uploadFiles() {
     });
 
     $.ajax({
-        url: 'upload.php?files',
+        url: 'api/upload.php?files',
         type: 'POST',
         data: data,
         cache: false,
@@ -82,7 +82,7 @@ function removeUploadedFile() {
 	$fileName=$currentSpan.text();
 	var dataString = 'file=' + $fileName + '&remove=true';
 	$.ajax({
-        url: 'upload.php',
+        url: 'api/upload.php',
         type: 'POST',
         data: dataString,
 //        cache: false,

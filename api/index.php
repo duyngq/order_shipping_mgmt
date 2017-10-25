@@ -13,6 +13,9 @@ $app->post ( '/wines', 'addWine' );
 $app->put ( '/wines/:id', 'updateWine' );
 $app->delete ( '/wines/:id', 'deleteWine' );
 $app->get ( '/orders/all', 'getAllOrders' );
+$app->get ( '/customer/senders', 'getAllSenders' );
+$app->get ( '/customer/receivers', 'getAllReceivers' );
+$app->get ( '/orders/upload', 'uploadFiles' );
 $app->post ( '/orders/add', 'addOrder' );
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
@@ -67,6 +70,51 @@ function getAllOrders () {
 		echo '{"error":{"text":' . $e->getMessage () . '}}';
 	}
 }
+
+/**
+ * Get all senders
+ */
+function getAllSenders() {
+    try {
+        // get DB connection
+        $db = new DbOperation();
+        $customers = $db->getData ('sendcustomers');
+        if ( $customers != null ) {
+            echo '{"customers":' . json_encode ( $customers ) . '}';
+        }else {
+            echo '{"error":{"text":' . "Failed to get senders data" . '}}';
+        }
+    } catch ( Exception $e ) {
+        echo '{"error":{"text":' . $e->getMessage () . '}}';
+    }
+}
+
+/**
+ * Get all senders
+ */
+function getAllReceivers() {
+    try {
+        // get DB connection
+        $db = new DbOperation();
+        $customers = $db->getData ('recvcustomers');
+        if ( $customers != null ) {
+            echo '{"customers":' . json_encode ( $customers ) . '}';
+        }else {
+            echo '{"error":{"text":' . "Failed to get receivers data" . '}}';
+        }
+    } catch ( Exception $e ) {
+        echo '{"error":{"text":' . $e->getMessage () . '}}';
+    }
+}
+
+/**
+ * TODO: will implement later, til now, use the old one
+ * Upload files
+ */
+function uploadFiles() {
+
+}
+
 
 function addOrder () {
 	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
