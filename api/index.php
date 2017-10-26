@@ -6,17 +6,20 @@ require_once 'db/DbOperation.php';
 
 $app = new Slim();
 
+$app->config('debug', true);
+
 $app->get ( '/wines', 'getWines' );
 $app->get ( '/wines/:id', 'getWine' );
 $app->get ( '/wines/search/:query', 'findByName' );
 $app->post ( '/wines', 'addWine' );
 $app->put ( '/wines/:id', 'updateWine' );
 $app->delete ( '/wines/:id', 'deleteWine' );
+
 $app->get ( '/orders/all', 'getAllOrders' );
+$app->post ( '/orders/add', 'addOrder' );
+$app->get ( '/orders/upload', 'uploadFiles' );
 $app->get ( '/customer/senders', 'getAllSenders' );
 $app->get ( '/customer/receivers', 'getAllReceivers' );
-$app->get ( '/orders/upload', 'uploadFiles' );
-$app->post ( '/orders/add', 'addOrder' );
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
 		// get DB connection
@@ -117,7 +120,7 @@ function uploadFiles() {
 
 
 function addOrder () {
-	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+//	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
 	$request = Slim::getInstance ()->request ();
 	$order = json_decode ( $request->getBody () );
 //	$sql = "INSERT INTO wine (name, grapes, country, region, year, description) VALUES (:name, :grapes, :country, :region, :year, :description)";
