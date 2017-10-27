@@ -140,7 +140,7 @@ function addOrder () {
 		echo json_encode ( $order );
 	} catch ( Exception $e ) {
 		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
-		echo '{"error":{"text":' . $e->getMessage () . '}}';
+		echo '{"error":{"text":' . $e->getMessage () . $e.'}}';
 	}
 }
 
@@ -175,7 +175,7 @@ function getWine ( $id ) {
 function addWine () {
 	error_log ( 'addWine\n', 3, '/var/tmp/php.log' );
 	$request = Slim::getInstance ()->request ();
-	$wine = json_decode ( $request->getBody () );
+	$wine = json_decode ( $request->getBody (), true );
 	$sql = "INSERT INTO wine (name, grapes, country, region, year, description) VALUES (:name, :grapes, :country, :region, :year, :description)";
 	try {
 		$db = getConnection ();

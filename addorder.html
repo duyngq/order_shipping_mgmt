@@ -29,7 +29,7 @@
         $ (document).ready (
             function () {
                 for (var i = 1; i <= 10; i++) {
-                    $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="proDesc' + i + '" class="proDesc' + i + '" size="30" style="border:0"/></td> ' +
+                    $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="productDesc' + i + '" class="productDesc' + i + '" size="30" style="border:0"/></td> ' +
                         '<td><input name="weight' + i + '" type="text" id="weight' + i + '" class="weight' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
                         '<td><input name="unit' + i + '" type="text" id="unit' + i + '" class="unit' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>' +
                         '<td><input name="price' + i + '" type="text" id="price' + i + '" class="price' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\',\'total' + i + '\');calTotal(\'feeTable\');"/></td>' +

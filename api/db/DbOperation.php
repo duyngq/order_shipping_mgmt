@@ -94,10 +94,10 @@ class DbOperation {
 		$this->con->beginTransaction ();
 		try {
 			//Query 1: Attempt to insert order
-			$sql = "INSERT INTO orders(send_cust_id, recv_cust_id, user_id, status, date, code, product_desc, weight, total, file_name) VALUES (?, ?)";
+			$sql = "INSERT INTO orders(send_cust_id, recv_cust_id, user_id, status, date, code, product_desc, weight, total, file_name) VALUES (?,?,?,?,?,?,?,?,?,?)"; //VALUES (:sendId, :recvIid, :userId, :status, :date, :code, :productDesc, :weight, :total, :file_name)";
 			$stmt = $this->con->prepare ( $sql );
 			$stmt->execute ( array (
-					$order->senderId,
+					$order->sendId,
 					$order->recvId,
 					$order->userId,
 					0,
@@ -105,18 +105,31 @@ class DbOperation {
 					'test',
 					$order->productDesc,
 					$order->weight,
-					$order->total,
+					$order->amount,
 					$order->fileNames
 				)
 			);
+//			$stmt->bindParam ("sendId", $order->sendId);
+//			$stmt->bindParam ("recvId", $order->recvId);
+//			$stmt->bindParam ("userId", $order->userId);
+//			$stmt->bindParam ("status", 0, );
+//			$stmt->bindParam ("date", $order->date);
+//			$stmt->bindParam ("code", "test");
+//			$stmt->bindParam ("productDesc", $order->sendId);
+//			$stmt->bindParam ("weight", $order->sendId);
+//			$stmt->bindParam ("total", $order->sendId);
+//			$stmt->bindParam ("fileNames", $order->sendId);
+
 			$orderId = $this->con->lastInsertId ();
 
 			//Query 2: Attempt to update the order details
+			echo count ( $order->productDetails );
+			print_r( $order->productDetails);
 			if ( count ( $order->productDetails ) > 0 ) {
 				$sql = "insert into orderdetails (order_id, p_desc, weight, price_weight, unit, price_unit) values";
 				$orderDetails = "";
 				foreach ( $order->productDetails as $product ) {
-					$orderDetails .= "($orderId, '$product[0]', $product[1], $product[2], $product[3], $product[4]),";
+					$orderDetails .= "($orderId, '$product->desc', $product->weight, $product->unit, $product->price, $product->total),";
 				}
 				$stmt = $this->con->prepare ( $sql . substr ( $orderDetails, 0, -1 ) );
 				$stmt->execute ();

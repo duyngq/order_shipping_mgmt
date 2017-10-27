@@ -58,10 +58,9 @@ function addOrder() {
         data: formToJSON(),
         success: function(data, textStatus, jqXHR){
             alert('Order created successfully');
+            //TODO: update homepage data if success
         },
         error: function(jqXHR, textStatus, errorThrown){
-            console.log(jqXHR);
-            console.log (errorThrown);
             alert('add order error: ');
         }
     });
@@ -176,6 +175,9 @@ function formToJSON() {
         "date": $('#year').val() + "-" + $("#month").val() + "-" + $("#day").val(),
         "productDesc": $('#productDesc').val(),
         "fileNames": $('#uploaded').val(),
+        "weight":$('#weight').html(),
+        "amount":$('#amount').html(),
+        "userId":"1", //TODO: temp value to pass request, need to put real value
         "productDetails" : productDetails
     });
 }
