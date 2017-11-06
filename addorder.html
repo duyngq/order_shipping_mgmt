@@ -50,7 +50,7 @@
 
 <body>
 <div class="container">
-    <form name="addOrderForm" id="addOrderForm" onsubmit="addOrder()" method="post">
+    <form name="addOrderForm" id="addOrderForm" onsubmit="return addOrder()" method="post">
         <!-- data table to show all orders -->
         <!--<div class="table-responsive tab-pane">-->
         <div class="row">
@@ -75,14 +75,6 @@
                             });
                         </script>
                         <datalist id="sendPhoneList">
-                            <!--<?php-->
-                            <!--if (isset($_SESSION['sender'])) {-->
-                            <!--foreach ($_SESSION['sender'] as $sender) {-->
-                            <!--echo "<option data-id=\"".$sender['phone']."\" value=\"".$sender['phone']."\"></option>-->
-                            <!--";-->
-                            <!--}-->
-                            <!--}-->
-                            <!--?>-->
                         </datalist>
                     </div>
                 </div>
@@ -104,14 +96,6 @@
                             });
                         </script>
                         <datalist id="recvPhoneList">
-                            <!--<?php-->
-                            <!--if (isset($_SESSION['recv'])) {-->
-                            <!--foreach ($_SESSION['recv'] as $receiver) {-->
-                            <!--echo "<option data-id=\"".$receiver['phone']."\" value=\"".$receiver['phone']."\"></option>-->
-                            <!--";-->
-                            <!--}-->
-                            <!--}-->
-                            <!--?>-->
                         </datalist>
                     </div>
                 </div>

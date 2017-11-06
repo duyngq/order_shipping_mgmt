@@ -123,8 +123,6 @@ class DbOperation {
 			$orderId = $this->con->lastInsertId ();
 
 			//Query 2: Attempt to update the order details
-			echo count ( $order->productDetails );
-			print_r( $order->productDetails);
 			if ( count ( $order->productDetails ) > 0 ) {
 				$sql = "insert into orderdetails (order_id, p_desc, weight, price_weight, unit, price_unit) values";
 				$orderDetails = "";
@@ -137,12 +135,12 @@ class DbOperation {
 
 			//We've got this far without an exception, so commit the changes.
 			$this->con->commit ();
+			return $orderId;
 		} catch ( Exception $e ) {
 			//Our catch block will handle any exceptions that are thrown.
 			//Rollback the transaction.
 			$this->con->rollBack ();
 			throw $e;
-//			echo $e->getMessage();
 		}
 	}
 

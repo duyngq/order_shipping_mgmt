@@ -126,7 +126,7 @@ function addOrder () {
 //	$sql = "INSERT INTO wine (name, grapes, country, region, year, description) VALUES (:name, :grapes, :country, :region, :year, :description)";
 	try {
 		$db = new DbOperation();
-		$db -> addOrder($order);
+		$orderId = $db -> addOrder($order);
 //		$stmt = $db->prepare ( $sql );
 //		$stmt->bindParam ( "name", $order->name );
 //		$stmt->bindParam ( "grapes", $order->grapes );
@@ -137,10 +137,15 @@ function addOrder () {
 //		$stmt->execute ();
 //		$order->id = $db->lastInsertId ();
 //		$db = null;
-		echo json_encode ( $order );
+//        print_f($order);
+//        $order.push("orderId", $orderId);
+//        print_f($order);
+//		echo json_encode ( $order );
+        echo $orderId;
 	} catch ( Exception $e ) {
-		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
-		echo '{"error":{"text":' . $e->getMessage () . $e.'}}';
+//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+//		echo '{"error":{"text":' . $e->getMessage () . $e.'}}';
+        echo '{"errorText":"Add order fail with text as", "text":}' . $e->getMessage () . $e.'}';
 	}
 }
 
