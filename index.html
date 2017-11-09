@@ -72,7 +72,7 @@
                 ]
             });*/
 
-            $ ('#example').on ('click', 'a.order-edit', function (e) {
+            /*$ ('#orderTbl').on ('click', 'a.order-edit', function (e) {
                 e.preventDefault ();
 
 //                editor.edit($(this).closest('tr'), {
@@ -87,15 +87,15 @@
                         }
                     })
                     .edit ($ (this).closest ('tr'));
-            });
+            });*/
 
-            $ ('#example').DataTable ({
+            $ ('#orderTbl').DataTable ({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
-                    "orderable": false
+                    "orderable": false,
                     // make links in one line
-//                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='order-edit glyphicon glyphicon-pencil'></a> <a href='#' class='order-delete glyphicon glyphicon-trash'></a> </span>"
+                    "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
                     var api = this.api (), data;
@@ -108,23 +108,6 @@
                                 i : 0;
                     };
 
-                    /*var total = function(api, calCol) {
-                        api
-                            .column( calCol )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0 );
-                    }
-
-                    var totalPerPage = function(api, calCol) {
-                        api
-                            .column( calCol, { page: 'current'} )
-                            .data()
-                            .reduce( function (a, b) {
-                                return intVal(a) + intVal(b);
-                            }, 0 );
-                    }*/
                     // Total over all pages
                     totalWeight = api.column (8).data ().reduce (function (a, b) {
                         return intVal (a) + intVal (b);
@@ -246,6 +229,19 @@
                     });
                 dlg.dialog ('open');
             });
+
+            $ ("#orderTbl").on ('click', '#delOrder', (function (event) {
+                event.preventDefault ();
+                deleteOrder ($ ('#orderTbl').DataTable ().row( $(this).parents('tr') ));
+                return false;
+            }));
+
+            $ ("#orderTbl").on ('click', '#editOrder', (function (event) {
+                    alert ("abc");
+                    event.preventDefault ();
+                    return false;
+                })
+            );
         });
     </script>
 
@@ -375,7 +371,7 @@
     <div class="tab-content">
         <!-- data table to show all orders -->
         <div class="table-responsive tab-pane active" id="orderedTab">
-            <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <table id="orderTbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead class="bg-primary">
                 <tr>
                     <th>No.</th>

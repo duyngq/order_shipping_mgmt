@@ -13,19 +13,12 @@ var currentOrder;
 var sCustomers;
 var rCustomers;
 
-// Retrieve wine list when application starts
-// findAll ();
-
-// Start table at boot
-// $(document).ready(function() {
-//     $('#example').DataTable();
-// } );
-
 /**
  * Config action for button/event
  */
 // Nothing to delete in initial application state
-$ ('#btnDelete').hide ();
+// $ ('#btnDelete').hide ();
+
 
 
 /**
@@ -70,6 +63,34 @@ function addOrder () {
     return false;
 }
 
+function deleteOrder (selectedRow) {
+    console.log ('Delete selected order');
+    var c = confirm ("Continue delete?");
+    if (c) {
+        var orderId = JSON.stringify( {"orderId": selectedRow.data()[0]} );
+        //get selected data here, invoke delete and remove also
+        // var dataString = 'orderid=' + orderId;
+        $.ajax ({
+            url: rootURL + "/orders/delete",
+            type: "POST",
+            dataType: "json",
+            data: orderId,
+            success: function (data) {
+                if (data.toLowerCase () == "yes") {
+                    selectedRow.remove ().draw ();
+                } else {
+                    alert ("can't delete the row")
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log ('Delete order error : ' + textStatus);
+                alert ('delete order error: ' + textStatus + jqXHR);
+            }
+        });
+    }
+}
+
+
 /**
  * Get all sender customers
  */
@@ -109,32 +130,23 @@ function getRCustomers () {
 }
 
 /**
- * Adding new data after adding successfully; only return  order ID + used input data
+ * Adding new data after adding successfully for order table; only return  order ID + used input data
  * @param data
  */
 function renderTableDataWithAdd (data) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
-    // var list = data == null ? [] : (data.orders instanceof Array ? data.orders : [data.orders]);
-    // var table = window.opener.$ ('#example').DataTable ();
-    extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
+    var list = data == null ? [] : (data.addedOrder instanceof Array ? data.addedOrder : [data.addedOrder]);
+    var table = window.parent.$ ('#example').DataTable ();
+    var extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
     $.each (list, function (index, order) {
         var weight = order.weight;
-        var amount = order.total;
-        /* this will validate if value is not:
-            null
-            undefined
-            NaN
-            empty string ("")
-            false
-            0
-        */
+        var amount = order.amount;
         if (!weight)
             weight = 0;
         if (!amount)
             amount = 0;
-        // divide data to 2 parts: ordered/delivered (0/1)
-        table.row.add ([data, order.date, order.sendName, order.sendPhone, order.sendAddress, order.recvName, order.recvPhone, order.recvAddress, weight, amount, extraButton]).draw ();
+        table.row.add ([order.orderId, order.date, order.sendName, order.sendPhone, order.sendAddr, order.recvName, order.recvPhone, order.recvAddr, weight, amount, extraButton]).draw ();
     });
 }
 
@@ -149,13 +161,13 @@ function renderTableDataWithAdd (data) {
 function renderTableData (data) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data.orders instanceof Array ? data.orders : [data.orders]);
-    var table = $ ('#example').DataTable ();
+    var table = $ ('#orderTbl').DataTable ();
     // var shippingTable = $('#shippingTbl').DataTable();
     var deliveredTable = $ ('#deliveredTbl').DataTable ();
 
     table.clear ().draw ();
     deliveredTable.clear ().draw ();
-    extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
+    var extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
     $.each (list, function (index, order) {
         var weight = order.weight;
@@ -174,9 +186,9 @@ function renderTableData (data) {
             amount = 0;
         // divide data to 2 parts: ordered/delivered (0/1)
         if (order.status == 0)
-            table.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount, extraButton]).draw ();
+            table.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw ();
         else if (order.status == 1)
-            deliveredTable.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount, extraButton]).draw ();
+            deliveredTable.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw ();
     });
     // $("#example tfoot th#orderedWeight").html(totalWeight);
     // $("#weight").html(totalWeight); same result

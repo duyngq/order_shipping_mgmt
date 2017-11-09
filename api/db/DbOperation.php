@@ -144,6 +144,33 @@ class DbOperation {
 		}
 	}
 
+    /**
+     * Delete selected order
+     */
+    public function deleteOrder($orderId) {
+        $this->con->beginTransaction ();
+        $delOrderDetailsQuery = "DELETE FROM orderdetails WHERE order_id =:id";
+        $delCommentsQuery = "DELETE FROM comments WHERE order_id =:id";
+        $delOrdersQuery = "DELETE FROM orders WHERE id=:id";
+        try {
+            $stmt = $this->con->prepare ( $delOrderDetailsQuery );
+            $stmt->bindParam ( "id", $orderId );
+            $stmt->execute ();
+
+            $stmt = $this->con->prepare ( $delCommentsQuery );
+            $stmt->bindParam ( "id", $orderId );
+            $stmt->execute ();
+
+            $stmt = $this->con->prepare ( $delOrdersQuery );
+            $stmt->bindParam ( "id", $orderId );
+            $stmt->execute ();
+            $this->con->commit ();
+        } catch ( PDOException $e ) {
+            $this->con->rollBack ();
+            throw $e;
+        }
+    }
+
 	/**
 	 * get all data for a specific table name
 	 *
@@ -355,3 +382,4 @@ class DbOperation {
 		return $num_rows > 0;
 	}
 }
+
