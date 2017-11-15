@@ -85,8 +85,8 @@ function getAllSenders () {
         $customers = $db -> getData ( 'sendcustomers' );
         if ( $customers != null ) {
         	// TODO: need to recheck if we need json or collection data here
-//            echo '{"customers":' . json_encode ( $customers ) . '}';
-	        echo json_encode ( $customers );
+            echo '{"customers":' . json_encode ( $customers ) . '}';
+//	        echo json_encode ( $customers );
         } else {
             echo '{"error":{"text":' . "Failed to get senders data" . '}}';
         }

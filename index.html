@@ -7,87 +7,33 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- jQuery library -->
-    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
     <!-- Latest compiled JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-3.3.7.min.js"></script>
 
     <!--<link rel="stylesheet" href="css/dataTables.bootstrap.min.css">-->
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
 
     <!-- use dialog -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link href="https://cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
-    <!--<script src="js/dataTables.bootstrap.min.js"></script>-->
+    <!--<link rel="stylesheet" href="css/dataTables.bootstrap.min.css">-->
+    <!--<script src="js/dataTables.bootstrap-3.3.7.min.js"></script>-->
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="js/sga-main.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
             //all findAll() function to show all orders
             findAll();
-            /*editor = new $.fn.dataTable.Editor ({
-                //https://editor.datatables.net/examples/styling/envelopeInTable.html
-                //https://editor.datatables.net/examples/simple/inTableControls.html
-                //https://editor.datatables.net/examples/styling/bootstrap.html
-                //https://editor.datatables.net/examples/simple/template.html
-                "ajax": '/orders/all',
-                "table": "#example",
-                "fields": [
-                    {
-                        "label": "ID",
-                        "name": "id"
-                    }, {
-                        "label": "Date:",
-                        "name": "date"
-                    }, {
-                        "label": "Sender Cust Name:",
-                        "name": "s_name"
-                    }, {
-                        "label": "Phone",
-                        "name": "s_phone"
-                    }, {
-                        "label": "Address",
-                        "name": "s_addr"
-                    }, {
-                        "label": "Receiver Cust Name",
-                        "name": "r_name"
-                    }, {
-                        "label": "Phone",
-                        "name": "r_phone"
-                    }, {
-                        "label": "Address:",
-                        "name": "r_addr"
-                    }, {
-                        "label": "Weight:",
-                        "name": "weight"
-                    }, {
-                        "label": "Amount",
-                        "name": "amount"
-                    }
-                ]
-            });*/
-
-            /*$ ('#orderTbl').on ('click', 'a.order-edit', function (e) {
-                e.preventDefault ();
-
-//                editor.edit($(this).closest('tr'), {
-//                    title: 'Edit order',
-//                    buttons: 'Update'
-//                });
-                editor
-                    .title ('Edit record')
-                    .buttons ({
-                        "label": "Update", "fn": function () {
-                            editor.submit ()
-                        }
-                    })
-                    .edit ($ (this).closest ('tr'));
-            });*/
+            /*editor = new $.fn.dataTable.Editor  --> unable to use editor since it requires license*/
 
             $('#orderTbl').DataTable({
                 "columnDefs": [{
@@ -191,56 +137,80 @@
                     );
                 }
             });
+
             //TODO: https://editor.datatables.net/examples/advanced/deepObjects.html
-            var senderTable = $('#senderTbl').DataTable({
-                "columnDefs": [{
-                    "targets": -1,
-                    "data": null,
-                    "orderable": false,
-                    // make links in one line
-                    "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
-                }],
-                "order": [[1, 'asc']],
+            $('#senderTbl').DataTable({
                 "processing": true,
-                "serverSide": true,
+                "serverSide": false,
                 'ajax': {
                     "type": "GET",
                     "url": 'http://localhost:8808/api/customer/senders',
-                    "dataSrc": ""
+                    "dataSrc": "customers" // --> indicate which tag/data label need getting
                 },
                 'columns': [
                     {"data": "id"},
                     {"data": "cust_name"},
                     {"data": "phone"},
                     {"data": "address"},
-                ],
-                'dataFilter': function (data) {
-                    var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
-                    var json = jQuery.parseJSON(list);
-                    json.recordsTotal = json.total;
-                    json.recordsFiltered = json.total;
-                    json.data = json.list;
-
-                    return JSON.stringify(json); // return JSON string
-                }
+                    {
+                        "targets": -1,
+                        "data": null,
+                        "orderable": false,
+                        // make links in one line
+                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editorRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+                    }
+                ]
             });
 
-//            senderTable.on('order.dt search.dt', function () {
-//                t.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-//                    cell.innerHTML = i + 1;
-//                });
-//            }).draw();
+            // Edit record
+            $('#recvTbl').on('click', 'a.editorRecv', function (e) {
+                e.preventDefault();
+
+                recvEditor.edit( $(this).closest('tr'), {
+                    title: 'Edit Receiver',
+                    buttons: 'Update'
+                } );
+            } );
+
+            // Delete a record
+            $('#recvTbl').on('click', 'a.deleteRecv', function (e) {
+                e.preventDefault();
+
+                recvEditor.remove( $(this).closest('tr'), {
+                    title: 'Delete Receiver',
+                    message: 'Are you sure you wish to remove this receiver?',
+                    buttons: 'Delete'
+                } );
+            } );
+
+            $('#recvTbl').DataTable({
+                "processing": true,
+                "serverSide": false, //--> let browsers know that there is no more processing
+                'ajax': {
+                    "type": "GET",
+                    "url": 'http://localhost:8808/api/customer/senders',
+                    "dataSrc": "customers" // --> indicate which tag/data label need getting
+                },
+                'columns': [
+                    {"data": "id"},
+                    {"data": "cust_name"},
+                    {"data": "phone"},
+                    {"data": "address"},
+                    {
+                        "targets": -1,
+                        "data": null,
+                        "orderable": false,
+                        // make links in one line
+                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
+                    }
+                ]
+            });
 
             // work with tab
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $($.fn.dataTable.tables(true)).DataTable()
                     .columns.adjust();
             });
-
-//            $("ul.nav-tabs a").click(function (e) {
-//                e.preventDefault();
-//                $(this).tab('show');
-//            });
 
 
         });
