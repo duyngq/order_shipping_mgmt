@@ -20,11 +20,11 @@ $app -> post ( '/orders/add', 'addOrder' );
 $app -> post ( '/orders/delete', 'deleteOrder' );
 $app -> get ( '/orders/upload', 'uploadFiles' );
 $app -> get ( '/customer/senders', 'getAllSenders' );
-$app -> post ( '/customer/senders/delete', 'deleteSender' ); // TODO: with customer
-$app -> post ( '/customer/senders/update', 'updateSender' ); // TODO: with customer
+$app -> post ( '/customer/senders/delete', 'deleteSender' );
+$app -> post ( '/customer/senders/update', 'updateSender' );
 $app -> get ( '/customer/receivers', 'getAllReceivers' );
-$app -> post ( '/customer/receivers/delete', 'deleteReceiver' ); // TODO: impl
-$app -> post ( '/customer/receivers/update', 'updateReceiver' ); // TODO: impl
+$app -> post ( '/customer/receivers/delete', 'deleteReceiver' );
+$app -> post ( '/customer/receivers/update', 'updateReceiver' );
 $app -> post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
     try {
         // get DB connection
