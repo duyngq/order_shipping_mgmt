@@ -20,7 +20,6 @@ var rCustomers;
 // $ ('#btnDelete').hide ();
 
 
-
 /**
  * Define action to connect/get data from server
  */
@@ -53,7 +52,6 @@ function addOrder () {
             console.log ('Order created successfully');
             renderTableDataWithAdd (data);
             alert ('Order created successfully');
-            //TODO: update homepage data if success
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log ('add order error : ' + textStatus);
@@ -67,7 +65,7 @@ function deleteOrder (selectedRow) {
     console.log ('Delete selected order');
     var c = confirm ("Continue delete?");
     if (c) {
-        var orderId = JSON.stringify( {"orderId": selectedRow.data()[0]} );
+        var orderId = JSON.stringify ({"orderId": selectedRow.data ()[0]});
         //get selected data here, invoke delete and remove also
         // var dataString = 'orderid=' + orderId;
         $.ajax ({
@@ -90,6 +88,63 @@ function deleteOrder (selectedRow) {
     }
 }
 
+/**
+ * delete selected customer
+ * @param selectedRow
+ * @param custType
+ */
+function deleteCustomer (selectedRow, custType) {
+    console.log ('Delete selected customer');
+    var c = confirm ("Continue delete?");
+    if (c) {
+        var customerId = JSON.stringify ({"customerId": selectedRow.data ().id});
+        //get selected data here, invoke delete and remove also
+        // var dataString = 'orderid=' + orderId;
+        $.ajax ({
+            url: rootURL + "/customer/" + custType + "/delete",
+            type: "POST",
+            dataType: "json",
+            data: customerId,
+            success: function (data) {
+                if (data.toLowerCase () == "yes") {
+                    selectedRow.remove ().draw ();
+                } else {
+                    alert ("can't delete the selected customer")
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log ('Delete customer error : ' + textStatus);
+                alert ('delete customer error: ' + textStatus + jqXHR);
+            }
+        });
+    }
+}
+
+/**
+ * Update selected customer
+ * TODO:top 1 update customer table data after editing
+ */
+function editCustomer () {
+    console.log ('Update selected customer');
+    $.ajax ({
+        type: 'POST',
+        contentType: 'application/json',
+        url: rootURL + "/" + $ ("#custType").val () + "/add",
+        dataType: "json",
+        data: formCustomerDataToJSON (),
+        success: function (data, textStatus, jqXHR) {
+            console.log ('Order edited successfully');
+            renderTableDataWithAdd (data);
+            alert ('Order edited successfully');
+            //TODO: update homepage data if success
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log ('Update order error : ' + textStatus);
+            alert ('Update order error: ' + textStatus);
+        }
+    });
+    return false;
+}
 
 /**
  * Get all sender customers
@@ -229,6 +284,16 @@ function formToJSON () {
     return json;
 }
 
+// Helper function to serialize all the form fields into a JSON string
+function formCustomerDataToJSON () {
+    var customer = JSON.stringify ({
+        "id": $('#customerDetails').find('#custId').val(),
+        "name": $('#customerDetails').find('#custName').val(),
+        "phone": $('#customerDetails').find('#custPhone').val(),
+        "pddr": $('#customerDetails').find('#custAddress').val()
+    });
+    return customer;
+}
 /**
  * Render JSON data to datalist
  */

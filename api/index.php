@@ -20,7 +20,11 @@ $app -> post ( '/orders/add', 'addOrder' );
 $app -> post ( '/orders/delete', 'deleteOrder' );
 $app -> get ( '/orders/upload', 'uploadFiles' );
 $app -> get ( '/customer/senders', 'getAllSenders' );
+$app -> post ( '/customer/senders/delete', 'deleteSender' ); // TODO: with customer
+$app -> post ( '/customer/senders/update', 'updateSender' ); // TODO: with customer
 $app -> get ( '/customer/receivers', 'getAllReceivers' );
+$app -> post ( '/customer/receivers/delete', 'deleteReceiver' ); // TODO: impl
+$app -> post ( '/customer/receivers/update', 'updateReceiver' ); // TODO: impl
 $app -> post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
     try {
         // get DB connection
@@ -84,14 +88,48 @@ function getAllSenders () {
         $db = new DbOperation();
         $customers = $db -> getData ( 'sendcustomers' );
         if ( $customers != null ) {
-        	// TODO: need to recheck if we need json or collection data here
+            // TODO: need to recheck if we need json or collection data here
             echo '{"customers":' . json_encode ( $customers ) . '}';
-//	        echo json_encode ( $customers );
+            //	        echo json_encode ( $customers );
         } else {
             echo '{"error":{"text":' . "Failed to get senders data" . '}}';
         }
     } catch ( Exception $e ) {
         echo '{"error":{"text":' . $e -> getMessage () . '}}';
+    }
+}
+
+/**
+ * Delete selected sender
+ */
+function deleteSender () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customerId = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> deleteById ( 'sendcustomers', $customerId -> customerId );
+        echo "YES";
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Delete sender fail with text as", "text":}' . $e -> getMessage () . $e . '}';
+    }
+}
+
+/**
+ * Update selected sender
+ */
+function updateSender () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customer = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> updateCustomerById ( 'sendcustomers', $customer );
+        echo json_encode ( $customer );
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Update sender fail with text as", "text":}' . $e -> getMessage () . $e . '}';
     }
 }
 
@@ -110,6 +148,40 @@ function getAllReceivers () {
         }
     } catch ( Exception $e ) {
         echo '{"error":{"text":' . $e -> getMessage () . '}}';
+    }
+}
+
+/**
+ * Delete selected receiver
+ */
+function deleteReceiver () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customerId = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> deleteById ( 'recvcustomers', $customerId -> customerId );
+        echo "YES";
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Delete receiver fail with text as", "text":}' . $e -> getMessage () . $e . '}';
+    }
+}
+
+/**
+ * Update selected sender
+ */
+function updateReceiver () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customer = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> updateCustomerById ( 'recvcustomers', $customer );
+        echo json_encode ( $customer );
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Update receive fail with text as", "text":}' . $e -> getMessage () . $e . '}';
     }
 }
 

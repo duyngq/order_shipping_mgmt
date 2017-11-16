@@ -36,6 +36,7 @@
             findAll();
             /*editor = new $.fn.dataTable.Editor  --> unable to use editor since it requires license*/
 
+            // Order tables
             $('#orderTbl').DataTable({
                 "columnDefs": [{
                     "targets": -1,
@@ -139,6 +140,7 @@
                 }
             });
 
+            // Customer tables
             //TODO: https://editor.datatables.net/examples/advanced/deepObjects.html
             $('#senderTbl').DataTable({
                 "processing": true,
@@ -167,6 +169,7 @@
             $('#senderTbl tbody').on('click', '#editSender', function (e) {
                 e.preventDefault();
                 var selectedRow = $('#senderTbl').DataTable().row($(this).parents('tr')).data();
+                $('#customerDetails').find('#custType').val('senders');
                 $('#customerDetails').find('#tmpId').val(selectedRow.id);
                 $('#customerDetails').find('#custName').val(selectedRow.cust_name);
                 $('#customerDetails').find('#custPhone').val(selectedRow.phone);
@@ -178,11 +181,7 @@
             $('#senderTbl').on('click', '#deleteSender', function (e) {
                 e.preventDefault();
 
-                recvEditor.remove($(this).closest('tr'), {
-                    title: 'Delete Receiver',
-                    message: 'Are you sure you wish to remove this receiver?',
-                    buttons: 'Delete'
-                });
+                deleteCustomer($('#senderTbl').DataTable().row($(this).parents('tr')), 'senders');
             });
 
             $('#recvTbl').DataTable({
@@ -212,11 +211,19 @@
             $('#recvTbl tbody').on('click', '#editRecv', function (e) {
                 e.preventDefault();
                 var selectedRow = $('#recvTbl').DataTable().row($(this).parents('tr')).data();
+                $('#customerDetails').find('#custType').val('receivers');
                 $('#customerDetails').find('#tmpId').val(selectedRow.id);
                 $('#customerDetails').find('#custName').val(selectedRow.cust_name);
                 $('#customerDetails').find('#custPhone').val(selectedRow.phone);
                 $('#customerDetails').find('#custAddress').val(selectedRow.address);
                 $("#customerModal").modal('show');
+            });
+
+            // Delete a selected receiver
+            $('#recvTbl').on('click', '#deleteRecv', function (e) {
+                e.preventDefault();
+
+                deleteCustomer($('#recvTbl').DataTable().row($(this).parents('tr')), 'receivers');
             });
 
             // work with tab
@@ -225,9 +232,10 @@
                     .columns.adjust();
             });
 
-            $('#updateCustomerBtn').on('click', function(evt) {
-                evt.stopPropagation();
+            $('#updateCustomerBtn').on('click', function(e) {
+                e.stopPropagation();
                 alert('starting update code');
+                editCustomer();
                 $("#customerModal").modal('hide');
             });
         });
@@ -535,6 +543,7 @@
             <div id="customerDetails" class="table-responsive modal-body">
                 <table id="customerDetailsTbl" class="table table-bordered" cellspacing="0" width="100%">
                     <input name="tmpId" id="tmpId" hidden="true"/>
+                    <input name="custType" id="custType" hidden="true"/>
                     <tr>
                         <td>Name</td>
                         <td><input name="custName" type="text" id="custName" size="50" required/></td>
