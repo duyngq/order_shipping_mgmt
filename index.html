@@ -16,6 +16,8 @@
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 
     <!-- use dialog -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -23,19 +25,18 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link href="https://cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <!--<link rel="stylesheet" href="css/dataTables.bootstrap.min.css">-->
     <!--<script src="js/dataTables.bootstrap-3.3.7.min.js"></script>-->
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="js/sga-main.js"></script>
     <script type="text/javascript" charset="utf-8">
-        $ (document).ready (function () {
+        $(document).ready(function () {
             //all findAll() function to show all orders
-            findAll ();
+            findAll();
             /*editor = new $.fn.dataTable.Editor  --> unable to use editor since it requires license*/
 
-            $ ('#orderTbl').DataTable ({
+            $('#orderTbl').DataTable({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
@@ -44,50 +45,50 @@
                     "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api (), data;
+                    var api = this.api(), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace (/[\$,]/g, '') * 1 :
+                            i.replace(/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // Total over all pages
-                    totalWeight = api.column (8).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeight = api.column(8).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (8).footer ()).html (
+                    $(api.column(8).footer()).html(
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column (9).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmount = api.column(9).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (9).footer ()).html (
+                    $(api.column(9).footer()).html(
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
-            $ ('#shippingTbl').DataTable ();
-            $ ('#deliveredTbl').DataTable ({
+            $('#shippingTbl').DataTable();
+            $('#deliveredTbl').DataTable({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
@@ -96,50 +97,50 @@
                     "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='delivered-edit glyphicon glyphicon-pencil'></a> <a href='#' class='delivered-delete glyphicon glyphicon-trash'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api (), data;
+                    var api = this.api(), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace (/[\$,]/g, '') * 1 :
+                            i.replace(/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // Total over all pages
-                    totalWeight = api.column (8).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeight = api.column(8).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (8).footer ()).html (
+                    $(api.column(8).footer()).html(
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column (9).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmount = api.column(9).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
                     }, 0);
 
                     // Update footer
-                    $ (api.column (9).footer ()).html (
+                    $(api.column(9).footer()).html(
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
             //TODO: https://editor.datatables.net/examples/advanced/deepObjects.html
-            $ ('#senderTbl').DataTable ({
+            $('#senderTbl').DataTable({
                 "processing": true,
                 "serverSide": false,
                 'ajax': {
@@ -157,95 +158,110 @@
                         "data": null,
                         "orderable": false,
                         // make links in one line
-                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editorRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
                     }
                 ]
             });
 
             // Edit record
-            $ ('#recvTbl').on ('click', 'a.editorRecv', function (e) {
-                e.preventDefault ();
+            $('#senderTbl tbody').on('click', '#editSender', function (e) {
+                e.preventDefault();
+                var selectedRow = $('#senderTbl').DataTable().row($(this).parents('tr')).data();
+                $('#customerDetails').find('#tmpId').val(selectedRow.id);
+                $('#customerDetails').find('#custName').val(selectedRow.cust_name);
+                $('#customerDetails').find('#custPhone').val(selectedRow.phone);
+                $('#customerDetails').find('#custAddress').val(selectedRow.address);
+                $("#customerModal").modal('show');
+            });
 
-                $("#customerModal").on("show.bs.modal", function(e) {
-                    var getIdFromRow = $(event.target).closest('tr').data('id'); //get the id from tr
-                    //make your ajax call populate items or what even you need
-                    $(this).find('#customerDetails').html($('<b> Order Id selected: ' + getIdFromRow  + '</b>'))
+            // Delete a record
+            $('#senderTbl').on('click', '#deleteSender', function (e) {
+                e.preventDefault();
 
+                recvEditor.remove($(this).closest('tr'), {
+                    title: 'Delete Receiver',
+                    message: 'Are you sure you wish to remove this receiver?',
+                    buttons: 'Delete'
                 });
             });
 
-                // Delete a record
-                $ ('#recvTbl').on ('click', 'a.deleteRecv', function (e) {
-                    e.preventDefault ();
+            $('#recvTbl').DataTable({
+                "processing": true,
+                "serverSide": false, //--> let browsers know that there is no more processing
+                'ajax': {
+                    "type": "GET",
+                    "url": 'http://localhost:8808/api/customer/receivers',
+                    "dataSrc": "customers" // --> indicate which tag/data label need getting
+                },
+                'columns': [
+                    {"data": "id"},
+                    {"data": "cust_name"},
+                    {"data": "phone"},
+                    {"data": "address"},
+                    {
+                        "targets": -1,
+                        "data": null,
+                        "orderable": false,
+                        // make links in one line
+                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+                    }
+                ]
+            });
 
-                    recvEditor.remove ($ (this).closest ('tr'), {
-                        title: 'Delete Receiver',
-                        message: 'Are you sure you wish to remove this receiver?',
-                        buttons: 'Delete'
+            // Edit record
+            $('#recvTbl tbody').on('click', '#editRecv', function (e) {
+                e.preventDefault();
+                var selectedRow = $('#recvTbl').DataTable().row($(this).parents('tr')).data();
+                $('#customerDetails').find('#tmpId').val(selectedRow.id);
+                $('#customerDetails').find('#custName').val(selectedRow.cust_name);
+                $('#customerDetails').find('#custPhone').val(selectedRow.phone);
+                $('#customerDetails').find('#custAddress').val(selectedRow.address);
+                $("#customerModal").modal('show');
+            });
+
+            // work with tab
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+            });
+
+            $('#updateCustomerBtn').on('click', function(evt) {
+                evt.stopPropagation();
+                alert('starting update code');
+                $("#customerModal").modal('hide');
+            });
+        });
+
+        $(function () {
+            $("#addOrder").click(function (e) {
+                e.preventDefault();
+                var dlg = $('<div></div>')
+                    .html('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>').dialog({
+                        title: "Add Order",
+                        autoOpen: false,
+                        modal: true,
+                        position: ["left", "top"],
+                        width: "100%",
+                        height: $(window).height(),
+                        zIndex: 1000
                     });
-                });
-
-                $ ('#recvTbl').DataTable ({
-                    "processing": true,
-                    "serverSide": false, //--> let browsers know that there is no more processing
-                    'ajax': {
-                        "type": "GET",
-                        "url": 'http://localhost:8808/api/customer/senders',
-                        "dataSrc": "customers" // --> indicate which tag/data label need getting
-                    },
-                    'columns': [
-                        {"data": "id"},
-                        {"data": "cust_name"},
-                        {"data": "phone"},
-                        {"data": "address"},
-                        {
-                            "targets": -1,
-                            "data": null,
-                            "orderable": false,
-                            // make links in one line
-                            "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
-                        }
-                    ]
-                });
-
-                // work with tab
-                $ ('a[data-toggle="tab"]').on ('shown.bs.tab', function (e) {
-                    $ ($.fn.dataTable.tables (true)).DataTable ()
-                        .columns.adjust ();
-                });
-
-
+                dlg.dialog('open');
             });
 
-            $ (function () {
-                $ ("#addOrder").click (function (e) {
-                    e.preventDefault ();
-                    var dlg = $ ('<div></div>')
-                        .html ('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>').dialog ({
-                            title: "Add Order",
-                            autoOpen: false,
-                            modal: true,
-                            position: ["left", "top"],
-                            width: "100%",
-                            height: $ (window).height (),
-                            zIndex: 1000
-                        });
-                    dlg.dialog ('open');
-                });
+            $("#orderTbl").on('click', '#delOrder', (function (event) {
+                event.preventDefault();
+                deleteOrder($('#orderTbl').DataTable().row($(this).parents('tr')));
+                return false;
+            }));
 
-                $ ("#orderTbl").on ('click', '#delOrder', (function (event) {
-                    event.preventDefault ();
-                    deleteOrder ($ ('#orderTbl').DataTable ().row ($ (this).parents ('tr')));
+            $("#orderTbl").on('click', '#editOrder', (function (event) {
+                    alert("abc");
+                    //TODO: add delete order handler
+                    event.preventDefault();
                     return false;
-                }));
-
-                $ ("#orderTbl").on ('click', '#editOrder', (function (event) {
-                        alert ("abc");
-                        event.preventDefault ();
-                        return false;
-                    })
-                );
-            });
+                })
+            );
+        });
     </script>
 
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
@@ -507,18 +523,36 @@
 </div> <!-- end container -->
 <!-- define editable modal -->
 <!-- Modal -->
-<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel">
+<div class="modal fade in" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
                 <h4 class="modal-title" id="customerModalLabel">Edit Customer</h4>
             </div>
 
-            <div id="customerDetails"class="modal-body"></div>
+            <div id="customerDetails" class="table-responsive modal-body">
+                <table id="customerDetailsTbl" class="table table-bordered" cellspacing="0" width="100%">
+                    <input name="tmpId" id="tmpId" hidden="true"/>
+                    <tr>
+                        <td>Name</td>
+                        <td><input name="custName" type="text" id="custName" size="50" required/></td>
+                    </tr>
+                    <tr>
+                        <td>Phone</td>
+                        <td><input name="custPhone" type="text" id="custPhone" size="50" required/></td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td><input name="custAddress" type="text" id="custAddress" size="50" required/></td>
+                    </tr>
+                </table>
+            </div>
 
             <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button id="closeBtn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button id="updateCustomerBtn" data-dismiss="modal" aria-hidden="true">Update</button>
             </div>
 
 
@@ -527,7 +561,7 @@
 </div>
 </body>
 </html>
-
+<!-- TODO: fix responsive table https://stackoverflow.com/questions/21934121/jquery-datatable-overflows-in-bootstrap-modal-->
 
 <!--
 <div class="header">
