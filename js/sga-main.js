@@ -7,8 +7,8 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://localhost:8808/api"
-// var rootURL = "http://" + HOST + "/api";
+// var rootURL = "http://localhost:8808/api"
+var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 var sCustomers;
 var rCustomers;
@@ -121,22 +121,60 @@ function deleteCustomer (selectedRow, custType) {
 }
 
 /**
- * Update selected customer
- * TODO:top 1 update customer table data after editing
+ * Update selected customer; Have put the table reference to update data later since we can't
+ * access table if out of its scope. But need to check anyway TODO
  */
-function editCustomer () {
+function editCustomer (table) {
     console.log ('Update selected customer');
+    var custType = $ ("#custType").val ();
     $.ajax ({
         type: 'POST',
         contentType: 'application/json',
-        url: rootURL + "/" + $ ("#custType").val () + "/add",
+        url: rootURL + "/customer/" + custType + "/update",
         dataType: "json",
         data: formCustomerDataToJSON (),
         success: function (data, textStatus, jqXHR) {
-            console.log ('Order edited successfully');
-            renderTableDataWithAdd (data);
-            alert ('Order edited successfully');
-            //TODO: update homepage data if success
+            console.log ('Customer edited successfully');
+            var updatedCustomerData = $.map (data, function (value, index) {
+                return [value];
+            });
+            applyData (table, updatedCustomerData, false, $ ("#rowId").val ());
+            alert ('Customer edited successfully');
+            //Only close modal if edited successfully
+            $ ("#customerModal").modal ('hide');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log ('Update order error : ' + textStatus);
+            alert ('Update order error: ' + textStatus);
+        }
+    });
+    return false;
+}
+
+/**
+ * Add customer
+ *
+ * @param table
+ * @returns {boolean}
+ */
+function addCustomer (table) {
+    console.log ('Add new customer');
+    var custType = $ ("#custType").val ();
+    $.ajax ({
+        type: 'POST',
+        contentType: 'application/json',
+        url: rootURL + "/customer/" + custType + "/add",
+        dataType: "json",
+        data: formCustomerDataToJSON (),
+        success: function (data, textStatus, jqXHR) {
+            console.log ('Customer added successfully');
+            var updatedCustomerData = $.map (data, function (value, index) {
+                return [value];
+            });
+            applyData (table, updatedCustomerData, false, $ ("#rowId").val ());
+            alert ('Customer added successfully');
+            //Only close modal if edited successfully
+            $ ("#customerModal").modal ('hide');
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log ('Update order error : ' + textStatus);
@@ -287,13 +325,14 @@ function formToJSON () {
 // Helper function to serialize all the form fields into a JSON string
 function formCustomerDataToJSON () {
     var customer = JSON.stringify ({
-        "id": $('#customerDetails').find('#custId').val(),
-        "name": $('#customerDetails').find('#custName').val(),
-        "phone": $('#customerDetails').find('#custPhone').val(),
-        "pddr": $('#customerDetails').find('#custAddress').val()
+        "id": $ ('#customerDetails').find ('#tmpId').val (),
+        "name": $ ('#customerDetails').find ('#custName').val (),
+        "phone": $ ('#customerDetails').find ('#custPhone').val (),
+        "address": $ ('#customerDetails').find ('#custAddress').val ()
     });
     return customer;
 }
+
 /**
  * Render JSON data to datalist
  */
@@ -312,4 +351,34 @@ function getCustomersAsJson (data) {
         returnMap[customer.phone] = customer;
     });
     return JSON.stringify (returnMap);
+}
+
+// method to handle datatable with selected row
+function applyData (table, data, append, rowId) {
+
+    //Quickly appends new data rows.  Does not update rows
+    if (append == true) {
+        table.rows.add (data);
+        //Locate and update rows by rowId or add if new
+    } else {
+        // var index;
+        // for (var x = 0; x < data.length; x++) {
+        //Find row index by rowId if row exists - use id (customer, order ...)
+        // index = table.row (rowId);
+
+        //Update row data if existing, and invalidate for redraw
+        if (table.row (rowId).length > 0) {
+            var totalColumn = table.columns ().count ();
+            for (var i = 0; i < totalColumn-1; i ++) {
+                table.cell(rowId, i).data(data[i]);
+            }
+            // table.row (rowId).data ([data[0],data[1],data[2],data[3]]).invalidate ();
+        } else {
+            //Add row data if new
+            table.row.add (data);
+        }
+        // }
+    }
+    //Redraw table maintaining paging
+    table.draw (false);
 }

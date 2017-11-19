@@ -198,13 +198,35 @@ class DbOperation {
      */
     public function updateCustomerById ( $table, $customer ) {
         $this -> con -> beginTransaction ();
-        $updateCustomer = "UPDATE wine SET name=:name, phone=:phone, address=:address WHERE id=:id";
+        $updateCustomer = "UPDATE " . $table . " SET cust_name=:name, phone=:phone, address=:address WHERE id=:id";
         try {
-            $stmt = $this -> con -> prepare ($updateCustomer);
-            $stmt -> bindParam ( "id", $customer -> id);
+            $stmt = $this -> con -> prepare ( $updateCustomer );
+            $stmt -> bindParam ( "id", $customer -> id );
             $stmt -> bindParam ( "name", $customer -> name );
             $stmt -> bindParam ( "phone", $customer -> phone );
-            $stmt -> bindParam ( "address", $customer-> address );
+            $stmt -> bindParam ( "address", $customer -> address );
+            $stmt -> execute ();
+            $this -> con -> commit ();
+        } catch ( PDOException $e ) {
+            $this -> con -> rollBack ();
+            echo '{"error":{"text":' . $e -> getMessage () . '}}';
+        }
+    }
+
+    /**
+     * Add customer with input value
+     *
+     * @param $table
+     * @param $customer
+     */
+    public function addCustomer ( $table, $customer ) {
+        $this -> con -> beginTransaction ();
+        $addCustomer = "INSERT INTO " . $table . " VALUES(cust_name=:name, phone=:phone, address=:address)";
+        try {
+            $stmt = $this -> con -> prepare ( $addCustomer );
+            $stmt -> bindParam ( "name", $customer -> name );
+            $stmt -> bindParam ( "phone", $customer -> phone );
+            $stmt -> bindParam ( "address", $customer -> address );
             $stmt -> execute ();
             $this -> con -> commit ();
         } catch ( PDOException $e ) {

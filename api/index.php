@@ -22,9 +22,11 @@ $app -> get ( '/orders/upload', 'uploadFiles' );
 $app -> get ( '/customer/senders', 'getAllSenders' );
 $app -> post ( '/customer/senders/delete', 'deleteSender' );
 $app -> post ( '/customer/senders/update', 'updateSender' );
+$app -> post ( '/customer/senders/add', 'addSender' );
 $app -> get ( '/customer/receivers', 'getAllReceivers' );
 $app -> post ( '/customer/receivers/delete', 'deleteReceiver' );
 $app -> post ( '/customer/receivers/update', 'updateReceiver' );
+$app -> post ( '/customer/receivers/add', 'addReceiver' );
 $app -> post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
     try {
         // get DB connection
@@ -134,6 +136,23 @@ function updateSender () {
 }
 
 /**
+ * Add sender
+ */
+function addSender () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customer = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> addCustomer ( 'sendcustomers', $customer );
+        echo json_encode ( $customer );
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Update sender fail with text as", "text":}' . $e -> getMessage () . $e . '}';
+    }
+}
+
+/**
  * Get all senders
  */
 function getAllReceivers () {
@@ -182,6 +201,23 @@ function updateReceiver () {
     } catch ( Exception $e ) {
         //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
         echo '{"errorText":"Update receive fail with text as", "text":}' . $e -> getMessage () . $e . '}';
+    }
+}
+
+/**
+ * Add receiver
+ */
+function addReceiver () {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim ::getInstance () -> request ();
+    $customer = json_decode ( $request -> getBody () );
+    try {
+        $db = new DbOperation();
+        $db -> addCustomer ( 'recvcustomers', $customer );
+        echo json_encode ( $customer );
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Update sender fail with text as", "text":}' . $e -> getMessage () . $e . '}';
     }
 }
 
