@@ -179,7 +179,7 @@ class DbOperation {
     public function deleteById ( $table, $id ) {
         $this -> con -> beginTransaction ();
         try {
-            $stmt = $this -> con -> prepare ( "DELETE FROM " . $table . " WHERE order_id =:id" );
+            $stmt = $this -> con -> prepare ( "DELETE FROM " . $table . " WHERE id =:id" );
             $stmt -> bindParam ( "id", $id );
             $stmt -> execute ();
 
@@ -221,14 +221,16 @@ class DbOperation {
      */
     public function addCustomer ( $table, $customer ) {
         $this -> con -> beginTransaction ();
-        $addCustomer = "INSERT INTO " . $table . " VALUES(cust_name=:name, phone=:phone, address=:address)";
+        $addCustomer = "INSERT INTO " . $table . " (cust_name, phone, address) VALUES(:name, :phone, :address)";
         try {
             $stmt = $this -> con -> prepare ( $addCustomer );
-            $stmt -> bindParam ( "name", $customer -> name );
-            $stmt -> bindParam ( "phone", $customer -> phone );
-            $stmt -> bindParam ( "address", $customer -> address );
+            $stmt -> bindParam ( ":name", $customer -> name );
+            $stmt -> bindParam ( ":phone", $customer -> phone );
+            $stmt -> bindParam ( ":address", $customer -> address );
             $stmt -> execute ();
+	        $custId = $this -> con -> lastInsertId ();
             $this -> con -> commit ();
+            return $custId;
         } catch ( PDOException $e ) {
             $this -> con -> rollBack ();
             echo '{"error":{"text":' . $e -> getMessage () . '}}';

@@ -7,8 +7,8 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-// var rootURL = "http://localhost:8808/api"
-var rootURL = "http://" + HOST + "/api";
+var rootURL = "http://localhost:8808/api"
+// var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 var sCustomers;
 var rCustomers;
@@ -171,14 +171,24 @@ function addCustomer (table) {
             var updatedCustomerData = $.map (data, function (value, index) {
                 return [value];
             });
-            applyData (table, updatedCustomerData, false, $ ("#rowId").val ());
+            var icon;
+            switch (custType) {
+                case "receivers":
+                    icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>";
+                    break;
+                case "senders":
+                    icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span></a>";
+                    break;
+            }
+            updatedCustomerData.push (icon);
+            applyData (table, updatedCustomerData, true, $ ("#rowId").val ());
             alert ('Customer added successfully');
             //Only close modal if edited successfully
             $ ("#customerModal").modal ('hide');
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log ('Update order error : ' + textStatus);
-            alert ('Update order error: ' + textStatus);
+            console.log ('Add customer error : ' + textStatus + errorThrown);
+            alert ('Add customer error: ' + textStatus);
         }
     });
     return false;
