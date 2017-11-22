@@ -224,7 +224,7 @@ class DbOperation {
         $addCustomer = "INSERT INTO " . $table . " (cust_name, phone, address) VALUES(:name, :phone, :address)";
         try {
             $stmt = $this -> con -> prepare ( $addCustomer );
-            $stmt -> bindParam ( ":name", $customer -> name );
+            $stmt -> bindParam ( ":name", $customer -> cust_name );
             $stmt -> bindParam ( ":phone", $customer -> phone );
             $stmt -> bindParam ( ":address", $customer -> address );
             $stmt -> execute ();

@@ -33,7 +33,9 @@
     <script type="text/javascript" charset="utf-8">
         $ (document).ready (function () {
             //all findAll() function to show all orders
-            findAll ();
+            findAllOrders ();
+            findAllCustomers('senders');
+            findAllCustomers('receivers');
             /*editor = new $.fn.dataTable.Editor  --> unable to use editor since it requires license*/
 
             // Order tables
@@ -143,18 +145,14 @@
             // Customer tables
             //TODO: https://editor.datatables.net/examples/advanced/deepObjects.html
             $ ('#senderTbl').DataTable ({
-                "processing": true,
-                "serverSide": false,
-                'ajax': {
-                    "type": "GET",
-                    "url": rootURL + '/customer/senders',
-                    "dataSrc": "customers" // --> indicate which tag/data label need getting
-                },
-                'columns': [
-                    {"data": "id"},
-                    {"data": "cust_name"},
-                    {"data": "phone"},
-                    {"data": "address"},
+//                "processing": true,
+//                "serverSide": false,
+//                'ajax': {
+//                    "type": "GET",
+//                    "url": rootURL + '/customer/senders',
+//                    "dataSrc": "customers" // --> indicate which tag/data label need getting
+//                },
+                'columnDefs': [
                     {
                         "targets": -1,
                         "data": null,
@@ -162,7 +160,20 @@
                         // make links in one line
                         "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
                     }
-                ]
+                ],
+//                'columns': [
+//                    {"data": "id"},
+//                    {"data": "cust_name"},
+//                    {"data": "phone"},
+//                    {"data": "address"},
+//                    {
+//                        "targets": -1,
+//                        "data": null,
+//                        "orderable": false,
+//                        // make links in one line
+//                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
+//                    }
+//                ]
             });
 
             // Add Sender
@@ -187,23 +198,35 @@
             // Delete a record
             $ ('#senderTbl').on ('click', '#deleteSender', function (e) {
                 e.preventDefault ();
-
                 deleteCustomer ($ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')), 'senders');
+                return false;
             });
 
+            //TIP: there is a trick to manipulate data with predefined table (can use editor which is not free --> easier); so just define table manually and manipulate it then update
+            // corresponding data for each action. --> this is applied to all data/table we have now.
+            // TODO: need to rework if needed to find a way to manipulate predefined table with ajax at booting
             $ ('#recvTbl').DataTable ({
-                "processing": true,
-                "serverSide": false, //--> let browsers know that there is no more processing
-                'ajax': {
-                    "type": "GET",
-                    "url": rootURL + '/customer/receivers',
-                    "dataSrc": "customers" // --> indicate which tag/data label need getting
-                },
-                'columns': [
-                    {"data": "id"},
-                    {"data": "cust_name"},
-                    {"data": "phone"},
-                    {"data": "address"},
+//                "processing": true,
+//                "serverSide": false, //--> let browsers know that there is no more processing
+//                'ajax': {
+//                    "type": "GET",
+//                    "url": rootURL + '/customer/receivers',
+//                    "dataSrc": "customers" // --> indicate which tag/data label need getting
+//                },
+//                'columns': [
+//                    {"data": "id"},
+//                    {"data": "cust_name"},
+//                    {"data": "phone"},
+//                    {"data": "address"},
+//                    {
+//                        "targets": -1,
+//                        "data": null,
+//                        "orderable": false,
+//                        // make links in one line
+//                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+//                    }
+//                ],
+                'columnDefs': [
                     {
                         "targets": -1,
                         "data": null,
@@ -211,7 +234,7 @@
                         // make links in one line
                         "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
                     }
-                ]
+                ],
             });
 
             // Add receiver
@@ -237,6 +260,7 @@
             $ ('#recvTbl').on ('click', '#deleteRecv', function (e) {
                 e.preventDefault ();
                 deleteCustomer ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')), 'receivers');
+                return false;
             });
 
             // work with tab
@@ -258,8 +282,6 @@
                         break;
                 }
                 editCustomer (table);
-                //--> unable to get selected row data from here;
-                // TODO: update this one.; can choose update dircetly
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
 

@@ -12,6 +12,10 @@ var rootURL = "http://localhost:8808/api"
 var currentOrder;
 var sCustomers;
 var rCustomers;
+var customerTypes = {
+    SENDER: 'sender',
+    RECEIVER: 'receiver',
+};
 
 /**
  * Config action for button/event
@@ -23,69 +27,88 @@ var rCustomers;
 /**
  * Define action to connect/get data from server
  */
-function findAll () {
-    console.log ('find all orders');
-    $.ajax ({
+function findAllOrders() {
+    console.log('find all orders');
+    $.ajax({
         type: 'GET',
         url: rootURL + "/orders/all",
         dataType: "json", // data type of response
         success: renderTableData,
         error: function (data) {
-            console.log ("failed", data);
+            console.log("failed", data);
         }
     });
 }
 
-function addOrder () {
-    console.log ('Add a new order');
-    if (!validation ()) {
-        alert ('Add order fail at validation');
+function addOrder() {
+    console.log('Add a new order');
+    if (!validation()) {
+        alert('Add order fail at validation');
         return;
     }
-    $.ajax ({
+    $.ajax({
         type: 'POST',
         contentType: 'application/json',
         url: rootURL + "/orders/add",
         dataType: "json",
-        data: formToJSON (),
+        data: formToJSON(),
         success: function (data, textStatus, jqXHR) {
-            console.log ('Order created successfully');
-            renderTableDataWithAdd (data);
-            alert ('Order created successfully');
+            console.log('Order created successfully');
+            renderTableDataWithAdd(data);
+            alert('Order created successfully');
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log ('add order error : ' + textStatus);
-            alert ('add order error: ');
+            console.log('add order error : ' + textStatus);
+            alert('add order error: ');
         }
     });
     return false;
 }
 
-function deleteOrder (selectedRow) {
-    console.log ('Delete selected order');
-    var c = confirm ("Continue delete?");
+function deleteOrder(selectedRow) {
+    console.log('Delete selected order');
+    var c = confirm("Continue delete?");
     if (c) {
-        var orderId = JSON.stringify ({"orderId": selectedRow.data ()[0]});
+        var orderId = JSON.stringify({"orderId": selectedRow.data()[0]});
         //get selected data here, invoke delete and remove also
         // var dataString = 'orderid=' + orderId;
-        $.ajax ({
+        $.ajax({
             url: rootURL + "/orders/delete",
             type: "POST",
             dataType: "json",
             data: orderId,
             success: function (data) {
-                if (data.toLowerCase () == "yes") {
-                    selectedRow.remove ().draw ();
+                if (data.deleteStatus.toLowerCase() == "yes") {
+                    selectedRow.remove().draw();
                 } else {
-                    alert ("can't delete the row")
+                    alert("can't delete the row")
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log ('Delete order error : ' + textStatus);
-                alert ('delete order error: ' + textStatus + jqXHR);
+                console.log('Delete order error : ' + textStatus);
+                alert('delete order error: ' + textStatus + jqXHR);
             }
         });
     }
+}
+
+//==================================================
+/**
+ * Find all customers and render
+ */
+function findAllCustomers(custType) {
+    console.log('find all senders');
+    $.ajax({
+        type: 'GET',
+        url: rootURL + '/customer/' + custType,
+        dataType: "json", // data type of response
+        success: function (data, textStatus, jqXHR) {
+            renderCustomerTableData(null, data, custType);
+        },
+        error: function (data) {
+            console.log("failed", data);
+        }
+    });
 }
 
 /**
@@ -93,28 +116,26 @@ function deleteOrder (selectedRow) {
  * @param selectedRow
  * @param custType
  */
-function deleteCustomer (selectedRow, custType) {
-    console.log ('Delete selected customer');
-    var c = confirm ("Continue delete?");
+function deleteCustomer(selectedRow, custType) {
+    console.log('Delete selected customer');
+    var c = confirm("Continue delete?");
     if (c) {
-        var customerId = JSON.stringify ({"customerId": selectedRow.data ().id});
-        //get selected data here, invoke delete and remove also
-        // var dataString = 'orderid=' + orderId;
-        $.ajax ({
+        var customerId = JSON.stringify({"customerId": selectedRow.data()[0]});
+        $.ajax({
             url: rootURL + "/customer/" + custType + "/delete",
             type: "POST",
             dataType: "json",
             data: customerId,
             success: function (data) {
-                if (data.toLowerCase () == "yes") {
-                    selectedRow.remove ().draw ();
+                if (data.deleteStatus.toLowerCase() == "yes") {
+                    selectedRow.remove().draw();
                 } else {
-                    alert ("can't delete the selected customer")
+                    alert("can't delete the selected customer")
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log ('Delete customer error : ' + textStatus);
-                alert ('delete customer error: ' + textStatus + jqXHR);
+                console.log('Delete customer error : ' + textStatus);
+                alert('delete customer error: ' + textStatus + jqXHR.toString());
             }
         });
     }
@@ -124,28 +145,28 @@ function deleteCustomer (selectedRow, custType) {
  * Update selected customer; Have put the table reference to update data later since we can't
  * access table if out of its scope. But need to check anyway TODO
  */
-function editCustomer (table) {
-    console.log ('Update selected customer');
-    var custType = $ ("#custType").val ();
-    $.ajax ({
+function editCustomer(table) {
+    console.log('Update selected customer');
+    var custType = $("#custType").val();
+    $.ajax({
         type: 'POST',
         contentType: 'application/json',
         url: rootURL + "/customer/" + custType + "/update",
         dataType: "json",
-        data: formCustomerDataToJSON (),
+        data: formCustomerDataToJSON(),
         success: function (data, textStatus, jqXHR) {
-            console.log ('Customer edited successfully');
-            var updatedCustomerData = $.map (data, function (value, index) {
+            console.log('Customer edited successfully');
+            var updatedCustomerData = $.map(data, function (value, index) {
                 return [value];
             });
-            applyData (table, updatedCustomerData, false, $ ("#rowId").val ());
-            alert ('Customer edited successfully');
+            applyData(table, updatedCustomerData, false, $("#rowId").val());
+            alert('Customer edited successfully');
             //Only close modal if edited successfully
-            $ ("#customerModal").modal ('hide');
+            $("#customerModal").modal('hide');
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log ('Update order error : ' + textStatus);
-            alert ('Update order error: ' + textStatus);
+            console.log('Update order error : ' + textStatus);
+            alert('Update order error: ' + textStatus);
         }
     });
     return false;
@@ -157,38 +178,42 @@ function editCustomer (table) {
  * @param table
  * @returns {boolean}
  */
-function addCustomer (table) {
-    console.log ('Add new customer');
-    var custType = $ ("#custType").val ();
-    $.ajax ({
+function addCustomer(table) {
+    console.log('Add new customer');
+    var custType = $("#custType").val();
+    $.ajax({
         type: 'POST',
         contentType: 'application/json',
         url: rootURL + "/customer/" + custType + "/add",
         dataType: "json",
-        data: formCustomerDataToJSON (),
+        data: formCustomerDataToJSON(),
         success: function (data, textStatus, jqXHR) {
-            console.log ('Customer added successfully');
-            var updatedCustomerData = $.map (data, function (value, index) {
-                return [value];
-            });
-            var icon;
-            switch (custType) {
-                case "receivers":
-                    icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>";
-                    break;
-                case "senders":
-                    icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span></a>";
-                    break;
-            }
-            updatedCustomerData.push (icon);
-            applyData (table, updatedCustomerData, true, $ ("#rowId").val ());
-            alert ('Customer added successfully');
+            console.log('Customer added successfully');
+            // var updatedCustomerData = $.map (data, function (value, index) {
+            //     if (index == 0) {
+            //         return [parseInt(value)];
+            //     }
+            //     return [value];
+            // });
+            // var icon;
+            // switch (custType) {
+            //     case "receivers":
+            //         icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>";
+            //         break;
+            //     case "senders":
+            //         icon = "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span></a>";
+            //         break;
+            // }
+            // updatedCustomerData.push (icon);
+            // applyData(table, data, true, "");
+            renderCustomerTableData(table, data, custType);
+            alert('Customer added successfully');
             //Only close modal if edited successfully
-            $ ("#customerModal").modal ('hide');
+            $("#customerModal").modal('hide');
         },
         error: function (jqXHR, textStatus, errorThrown) {
-            console.log ('Add customer error : ' + textStatus + errorThrown);
-            alert ('Add customer error: ' + textStatus);
+            console.log('Add customer error : ' + textStatus + errorThrown);
+            alert('Add customer error: ' + textStatus);
         }
     });
     return false;
@@ -197,18 +222,18 @@ function addCustomer (table) {
 /**
  * Get all sender customers
  */
-function getSCustomers () {
-    console.log ('Get all sender customers');
-    $.ajax ({
+function getSCustomers() {
+    console.log('Get all sender customers');
+    $.ajax({
         type: 'GET',
         url: rootURL + "/customer/senders",
         dataType: "json", // data type of response
         success: function (data) {
             sCustomers = data;
-            rederDataList (sCustomers, 'sendPhoneList');
+            rederDataList(sCustomers, 'sendPhoneList');
         },
         error: function (data) {
-            console.log ("failed to load or render senders", data);
+            console.log("failed to load or render senders", data);
         }
     });
 }
@@ -216,18 +241,18 @@ function getSCustomers () {
 /**
  * Get all receiver customers
  */
-function getRCustomers () {
-    console.log ('Get all receiver customers');
-    $.ajax ({
+function getRCustomers() {
+    console.log('Get all receiver customers');
+    $.ajax({
         type: 'GET',
         url: rootURL + "/customer/receivers",
         dataType: "json", // data type of response
         success: function (data) {
             rCustomers = data;
-            rederDataList (rCustomers, 'recvPhoneList');
+            rederDataList(rCustomers, 'recvPhoneList');
         },
         error: function (data) {
-            console.log ("failed to load or render receivers", data);
+            console.log("failed to load or render receivers", data);
         }
     });
 }
@@ -236,20 +261,20 @@ function getRCustomers () {
  * Adding new data after adding successfully for order table; only return  order ID + used input data
  * @param data
  */
-function renderTableDataWithAdd (data) {
+function renderTableDataWithAdd(data) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data.addedOrder instanceof Array ? data.addedOrder : [data.addedOrder]);
-    var table = window.parent.$ ('#example').DataTable ();
+    var table = window.parent.$('#example').DataTable();
     var extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
-    $.each (list, function (index, order) {
+    $.each(list, function (index, order) {
         var weight = order.weight;
         var amount = order.amount;
         if (!weight)
             weight = 0;
         if (!amount)
             amount = 0;
-        table.row.add ([order.orderId, order.date, order.sendName, order.sendPhone, order.sendAddr, order.recvName, order.recvPhone, order.recvAddr, weight, amount, extraButton]).draw ();
+        table.row.add([order.orderId, order.date, order.sendName, order.sendPhone, order.sendAddr, order.recvName, order.recvPhone, order.recvAddr, weight, amount, extraButton]).draw();
     });
 }
 
@@ -261,18 +286,18 @@ function renderTableDataWithAdd (data) {
  * 3. delivered data
  * @param data
  */
-function renderTableData (data) {
+function renderTableData(data) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data.orders instanceof Array ? data.orders : [data.orders]);
-    var table = $ ('#orderTbl').DataTable ();
+    var table = $('#orderTbl').DataTable();
     // var shippingTable = $('#shippingTbl').DataTable();
-    var deliveredTable = $ ('#deliveredTbl').DataTable ();
+    var deliveredTable = $('#deliveredTbl').DataTable();
 
-    table.clear ().draw ();
-    deliveredTable.clear ().draw ();
+    table.clear().draw();
+    deliveredTable.clear().draw();
     var extraButton = "<span style='display:inline-flex !important;'><a href='' class='order-edit glyphicon glyphicon-pencil'></a> <a href='' class='order-delete glyphicon glyphicon-trash'></a> </span>";
     // var weight = order.weight;
-    $.each (list, function (index, order) {
+    $.each(list, function (index, order) {
         var weight = order.weight;
         var amount = order.total;
         /* this will validate if value is not:
@@ -289,9 +314,9 @@ function renderTableData (data) {
             amount = 0;
         // divide data to 2 parts: ordered/delivered (0/1)
         if (order.status == 0)
-            table.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw ();
+            table.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw();
         else if (order.status == 1)
-            deliveredTable.row.add ([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw ();
+            deliveredTable.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw();
     });
     // $("#example tfoot th#orderedWeight").html(totalWeight);
     // $("#weight").html(totalWeight); same result
@@ -299,33 +324,33 @@ function renderTableData (data) {
 }
 
 // Helper function to serialize all the form fields into a JSON string
-function formToJSON () {
-    var productDetails = new Array ();
+function formToJSON() {
+    var productDetails = new Array();
     for (var i = 1; i <= 10; i++) {
-        var productDetail = new Object ();
-        if (!$ ('#productDesc' + i).val ())
+        var productDetail = new Object();
+        if (!$('#productDesc' + i).val())
             continue;
-        productDetail.desc = $ ('#productDesc' + i).val ();
-        productDetail.weight = $ ('#weight' + i).val ();
-        productDetail.unit = $ ('#unit' + i).val ();
-        productDetail.price = $ ('#price' + i).val ();
-        productDetail.total = $ ('#total' + i).val ();
+        productDetail.desc = $('#productDesc' + i).val();
+        productDetail.weight = $('#weight' + i).val();
+        productDetail.unit = $('#unit' + i).val();
+        productDetail.price = $('#price' + i).val();
+        productDetail.total = $('#total' + i).val();
         productDetails[i - 1] = productDetail;
     }
-    var json = JSON.stringify ({
-        "sendId": $ ("#sendPhoneList option[value='" + $ ('#sendPhone').val () + "']").attr ('data-id'),
-        "sendName": $ ('#sendName').val (),
-        "sendPhone": $ ('#sendPhone').val (),
-        "sendAddr": $ ('#sendAddr').val (),
-        "recvId": $ ("#recvPhoneList option[value='" + $ ('#recvPhone').val () + "']").attr ('data-id'),
-        "recvName": $ ('#recvName').val (),
-        "recvPhone": $ ('#recvPhone').val (),
-        "recvAddr": $ ('#recvAddr').val (),
-        "date": $ ('#year').val () + "-" + $ ("#month").val () + "-" + $ ("#day").val (),
-        "productDesc": $ ('#productDesc').val (),
-        "fileNames": $ ('#uploaded').val (),
-        "weight": $ ('#weight').html (),
-        "amount": $ ('#amount').html (),
+    var json = JSON.stringify({
+        "sendId": $("#sendPhoneList option[value='" + $('#sendPhone').val() + "']").attr('data-id'),
+        "sendName": $('#sendName').val(),
+        "sendPhone": $('#sendPhone').val(),
+        "sendAddr": $('#sendAddr').val(),
+        "recvId": $("#recvPhoneList option[value='" + $('#recvPhone').val() + "']").attr('data-id'),
+        "recvName": $('#recvName').val(),
+        "recvPhone": $('#recvPhone').val(),
+        "recvAddr": $('#recvAddr').val(),
+        "date": $('#year').val() + "-" + $("#month").val() + "-" + $("#day").val(),
+        "productDesc": $('#productDesc').val(),
+        "fileNames": $('#uploaded').val(),
+        "weight": $('#weight').html(),
+        "amount": $('#amount').html(),
         "userId": "1", //TODO: temp value to pass request, need to put real value
         "productDetails": productDetails
     });
@@ -333,12 +358,12 @@ function formToJSON () {
 }
 
 // Helper function to serialize all the form fields into a JSON string
-function formCustomerDataToJSON () {
-    var customer = JSON.stringify ({
-        "id": $ ('#customerDetails').find ('#tmpId').val (),
-        "name": $ ('#customerDetails').find ('#custName').val (),
-        "phone": $ ('#customerDetails').find ('#custPhone').val (),
-        "address": $ ('#customerDetails').find ('#custAddress').val ()
+function formCustomerDataToJSON() {
+    var customer = JSON.stringify({
+        "id": $('#customerDetails').find('#tmpId').val(),
+        "cust_name": $('#customerDetails').find('#custName').val(),
+        "phone": $('#customerDetails').find('#custPhone').val(),
+        "address": $('#customerDetails').find('#custAddress').val()
     });
     return customer;
 }
@@ -346,29 +371,61 @@ function formCustomerDataToJSON () {
 /**
  * Render JSON data to datalist
  */
-function rederDataList (data, datalist) {
+function rederDataList(data, datalist) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
-    $.each (list, function (index, customer) {
-        $ ('#' + datalist + '').append ("<option data-id='" + customer.id + "'value='" + customer.phone + "'>"); // Not working.
+    $.each(list, function (index, customer) {
+        $('#' + datalist + '').append("<option data-id='" + customer.id + "'value='" + customer.phone + "'>"); // Not working.
     });
 }
 
-function getCustomersAsJson (data) {
+/**
+ * Render data for specific customer table
+ *
+ * @param data
+ * @param custType
+ */
+function renderCustomerTableData(table, data, custType) {
+    var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
+    var custTable;
+    if (!table) {
+        switch (custType) {
+            case "receivers":
+                custTable = $('#recvTbl').DataTable();
+                break;
+            case "senders":
+                custTable = $('#senderTbl').DataTable();
+                break;
+
+        }
+    } else {
+        custTable = table;
+    }
+    $.each(list, function (index, customer) {
+        custTable.row.add([customer.id, customer.cust_name, customer.phone, customer.address]).draw();
+
+    });
+}
+
+function getCustomersAsJson(data) {
     var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
     var returnMap = {};
-    $.each (list, function (index, customer) {
+    $.each(list, function (index, customer) {
         returnMap[customer.phone] = customer;
     });
-    return JSON.stringify (returnMap);
+    return JSON.stringify(returnMap);
 }
 
 // method to handle datatable with selected row
-function applyData (table, data, append, rowId) {
+function applyData(table, data, append, rowId) {
 
     //Quickly appends new data rows.  Does not update rows
     if (append == true) {
-        table.rows.add (data);
+        var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
+        $.each(list, function (index, customer) {
+            table.rows.add(customer).draw();
+        });
+        // table.rows.add (data);
         //Locate and update rows by rowId or add if new
     } else {
         // var index;
@@ -377,18 +434,18 @@ function applyData (table, data, append, rowId) {
         // index = table.row (rowId);
 
         //Update row data if existing, and invalidate for redraw
-        if (table.row (rowId).length > 0) {
-            var totalColumn = table.columns ().count ();
-            for (var i = 0; i < totalColumn-1; i ++) {
+        if (table.row(rowId).length > 0) {
+            var totalColumn = table.columns().count();
+            for (var i = 0; i < totalColumn - 1; i++) {
                 table.cell(rowId, i).data(data[i]);
             }
             // table.row (rowId).data ([data[0],data[1],data[2],data[3]]).invalidate ();
         } else {
             //Add row data if new
-            table.row.add (data);
+            table.row.add(data);
         }
         // }
+        //Redraw table maintaining paging
+        table.draw(false);
     }
-    //Redraw table maintaining paging
-    table.draw (false);
 }

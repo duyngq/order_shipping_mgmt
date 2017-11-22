@@ -111,7 +111,7 @@ function deleteSender () {
 	try {
 		$db = new DbOperation();
 		$db->deleteById ( 'sendcustomers', $customer->customerId );
-		echo "YES";
+		echo '{"deleteStatus":"YES"}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"errorText":"Delete sender fail with text as", "text":}' . $e->getMessage () . $e . '}';
@@ -146,7 +146,7 @@ function addSender () {
 		$db = new DbOperation();
 		$custId = $db->addCustomer ( 'sendcustomers', $customer );
 		$customer->id = $custId;
-		echo json_encode ( $customer );
+		echo '{"customers":' . json_encode ( $customer ) . '}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"errorText":"Add sender fail with text as", "text":}' . $e->getMessage () . $e . '}';
@@ -181,7 +181,7 @@ function deleteReceiver () {
 	try {
 		$db = new DbOperation();
 		$db->deleteById ( 'recvcustomers', $customerId->customerId );
-		echo "YES";
+		echo '{"deleteStatus":"YES"}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"errorText":"Delete receiver fail with text as", "text":}' . $e->getMessage () . $e . '}';
@@ -216,7 +216,7 @@ function addReceiver () {
 		$db = new DbOperation();
 		$custId = $db->addCustomer ( 'recvcustomers', $customer );
 		$customer->id = $custId;
-		echo json_encode ( $customer );
+		echo '{"customers":' . json_encode ( $customer ) . '}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"errorText":"Add receiver fail with text as", "text":}' . $e->getMessage () . $e . '}';
@@ -275,7 +275,7 @@ function deleteOrder () {
 	try {
 		$db = new DbOperation();
 		$db->deleteOrder ( $orderId->orderId );
-		echo "YES";
+		echo '{"deleteStatus":"YES"}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
 		echo '{"errorText":"Delete order fail with text as", "text":}' . $e->getMessage () . $e . '}';
