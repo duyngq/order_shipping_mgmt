@@ -27,6 +27,11 @@ $app->get ( '/customer/receivers', 'getAllReceivers' );
 $app->post ( '/customer/receivers/delete', 'deleteReceiver' );
 $app->post ( '/customer/receivers/update', 'updateReceiver' );
 $app->post ( '/customer/receivers/add', 'addReceiver' );
+
+$app->post ( '/shipping/delete', 'deleteShipping' );
+$app->post ( '/shipping/update', 'updateShipping' );
+$app->post ( '/shipping/add', 'addShipping' );
+
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
 		// get DB connection
@@ -282,6 +287,65 @@ function deleteOrder () {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Shipping section
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Add a shipping
+ */
+function addShipping() {
+	//	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+	$request = Slim::getInstance ()->request ();
+	$shipping = json_decode ( $request->getBody () );
+	try {
+		$db = new DbOperation();
+		$shippingId = $db->addShipping ( $shipping );
+		$shipping->shippingId = $shippingId;
+		echo '{"addedShipping":' . json_encode ( $shipping ) . '}';
+	} catch ( Exception $e ) {
+		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+		echo '{"errorText":"Add shipping fail with text as", "text":}' . $e->getMessage () . $e . '}';
+	}
+}
+
+/**
+ * Delete selected shipping
+ */
+function deleteShipping () {
+	//	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+	$request = Slim::getInstance ()->request ();
+	$shippingId = json_decode ( $request->getBody () );
+	try {
+		$db = new DbOperation();
+		$db->deleteOrder ( $shippingId->shippingId );
+		echo '{"deleteStatus":"YES"}';
+	} catch ( Exception $e ) {
+		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+		echo '{"errorText":"Delete shipping fail with text as", "text":}' . $e->getMessage () . $e . '}';
+	}
+}
+
+/**
+ * Update selected shipping
+ */
+function updateShipping () {
+	//	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+	$request = Slim::getInstance ()->request ();
+	$shipping = json_decode ( $request->getBody () );
+	try {
+		$db = new DbOperation();
+		$db->updateShipping ($shipping );
+		echo json_encode ( $shipping );
+	} catch ( Exception $e ) {
+		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+		echo '{"errorText":"Update shipping fail with text as", "text":}' . $e->getMessage () . $e . '}';
+	}
+}
+////////////////////////////////////////////////////////////////////////////////
+/// ///////////////////////
+/// ///////////////
+///
 function getWines () {
 	$sql = "select * FROM wine ORDER BY name";
 	try {
