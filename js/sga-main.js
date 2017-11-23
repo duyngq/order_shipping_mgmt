@@ -292,6 +292,7 @@ function renderTableData(data) {
     var table = $('#orderTbl').DataTable();
     // var shippingTable = $('#shippingTbl').DataTable();
     var deliveredTable = $('#deliveredTbl').DataTable();
+    var orderDetailsTable = $('#orderDetailsTbl').DataTable();
 
     table.clear().draw();
     deliveredTable.clear().draw();
@@ -317,10 +318,9 @@ function renderTableData(data) {
             table.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw();
         else if (order.status == 1)
             deliveredTable.row.add([order.id, order.date, order.s_name, order.s_phone, order.s_address, order.r_name, order.r_phone, order.r_address, weight, amount]).draw();
+        //reserve first column for checkbox with order id as well
+        orderDetailsTable.row.add([order.id, order.id, order.date, order.s_name, order.r_name, weight, amount]).draw();
     });
-    // $("#example tfoot th#orderedWeight").html(totalWeight);
-    // $("#weight").html(totalWeight); same result
-    // $("#example tfoot th#orderedAmount").html(totalAmount);
 }
 
 // Helper function to serialize all the form fields into a JSON string
