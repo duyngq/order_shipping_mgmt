@@ -101,10 +101,11 @@
             /**
              * Shipping details data table for input
              */
-                //TODO: check box with datatable --> done:
+                //Problem: check box with datatable --> done:
+                // Solution
                 // refer: https://jsfiddle.net/gyrocode/abhbs4x8/
                 // Explanation: https://www.gyrocode.com/articles/jquery-datatables-checkboxes/
-            var rows_selected = []; // need this one
+            var selectedRows = []; // need this one
             var orderDetailsTable = $('#orderDetailsTbl').DataTable({
                 "columnDefs": [{
                     "orderable": false,
@@ -121,7 +122,7 @@
                     var rowId = data[0];
 
                     // If row ID is in the list of selected row IDs
-                    if ($.inArray(rowId, rows_selected) !== -1) {
+                    if ($.inArray(rowId, selectedRows) !== -1) {
                         $(row).find('input[type="checkbox"]').prop('checked', true);
                         $(row).addClass('selected');
                     }
@@ -182,15 +183,15 @@
                 var rowId = data[0];
 
                 // Determine whether row ID is in the list of selected row IDs
-                var index = $.inArray(rowId, rows_selected);
+                var index = $.inArray(rowId, selectedRows);
 
                 // If checkbox is checked and row ID is not in list of selected row IDs
                 if(this.checked && index === -1){
-                    rows_selected.push(rowId);
+                    selectedRows.push(rowId);
 
                     // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
                 } else if (!this.checked && index !== -1){
-                    rows_selected.splice(index, 1);
+                    selectedRows.splice(index, 1);
                 }
 
                 if(this.checked){
@@ -198,7 +199,7 @@
                 } else {
                     $row.removeClass('selected');
                 }
-                console.log("selected order details :" + rows_selected);
+                console.log("selected order details :" + selectedRows);
 
                 // Update state of "Select all" control
 //                updateDataTableSelectAllCtrl(table);
@@ -300,7 +301,6 @@
             // Add receiver
             $("#addShipping").click(function (e) {
                 e.preventDefault();
-//                setCustomerTableData (0, 'receivers', "", "", "", "");
                 $('#updateShippingBtn').addClass("hidden");
                 $('#addShippingBtn').removeClass("hidden");
                 $("#shippingModal").modal('show');
@@ -319,13 +319,20 @@
             // Delete a selected receiver
             $('#shippingTbl').on('click', '#deleteShipping', function (e) {
                 e.preventDefault();
-//                deleteCustomer ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')), 'receivers');
+                deleteShipping($ ('#shippingTbl').DataTable ().row ($ (this).parents ('tr')))
                 return false;
             });
 
             // Update data for shipping with edit
             $('#updateShippingBtn').on('click', function (e) {
                 e.stopPropagation();
+                //TODO: too complicated --> load all data + selected orders and mark exisitng to choose
+                var selectedRow = $('#shippingTbl').DataTable().row($(this).parents('tr')).data();
+                $('#shippingDetails').find('#rowId').val($('#shippingTbl').DataTable().row($(this).parents('tr')).index());
+                $('#shippingDetails').find('#tmpId').val(selectedRow[0]);
+                $('#shippingDetails').find('#custName').val(custName);
+                $('#shippingDetails').find('#custPhone').val(phone);
+                $('#shippingDetails').find('#custAddress').val(address);
 //                editCustomer (table);
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
@@ -333,7 +340,7 @@
             // Add data for shipping with edit
             $('#addShippingBtn').on('click', function (e) {
                 e.stopPropagation();
-//                addCustomer (table);
+                addShipping (selectedRows);
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
             $('#deliveredTbl').DataTable({
@@ -915,14 +922,14 @@
             <div id="shippingDetails" class="table-responsive modal-body">
                 <table id="shippingDetailsTbl" class="table" cellspacing="0" width="100%">
                     <!--<input name="rowId" id="rowId" hidden="true"/>-->
-                    <!--<input name="tmpId" id="tmpId" hidden="true"/>-->
+                    <input name="tmpSId" id="tmpSId" hidden="true"/>
                     <!--<input name="custType" id="custType" hidden="true"/>-->
                     <tr>
                         <td><label>Date</label></td>
                         <td>
-                            <input type="text" size="10" value="23/11/2017" required/>
+                            <input type="text" size="10" id="shippingDate" value="23/11/2017" required/>
                         </td>
-                        <td><label>Flight No</label></td>
+                        <td><label>Flight No</label></td> <!--mawb -->
                         <td>
                             <input name="flightNo" type="text" id="flightNo" size="20" required/>
                         </td>

@@ -258,6 +258,89 @@ function getRCustomers() {
 }
 
 /**
+ * Add shipping
+ */
+function addShipping(selectedRows) {
+    console.log('Add new shipping');
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: rootURL + "/shipping/add",
+        dataType: "json",
+        data: formShippingDataToJSON(selectedRows),
+        success: function (data, textStatus, jqXHR) {
+            console.log('Shipping added successfully');
+            renderShippingTableData(data);
+            alert('Shipping added successfully');
+            //Only close modal if edited successfully
+            $("#shippingModal").modal('hide');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log('Add shipping error : ' + textStatus + errorThrown);
+            alert('Add shipping error: ' + textStatus);
+        }
+    });
+    return false;
+}
+
+/**
+ * Delete shipping
+ */
+function deleteShipping(selectedRow) {
+    console.log('Delete selected shipping');
+    var c = confirm("Continue delete?");
+    if (c) {
+        var shippingId = JSON.stringify({"shippingId": selectedRow.data()[0]});
+        $.ajax({
+            url: rootURL + "/shipping/delete",
+            type: "POST",
+            dataType: "json",
+            data: shippingId,
+            success: function (data) {
+                if (data.deleteStatus.toLowerCase() == "yes") {
+                    selectedRow.remove().draw();
+                } else {
+                    alert("can't delete the selected shipping")
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Delete shipping error : ' + textStatus);
+                alert('delete shipping error: ' + textStatus + jqXHR.toString());
+            }
+        });
+    }
+}
+
+/**
+ * Update selected shipping
+ */
+function editCustomer(selectedRow) {
+    console.log('Update selected shipping');
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: rootURL + "/shipping/update",
+        dataType: "json",
+        data: formShippingDataToJSON(selectedRow),
+        success: function (data, textStatus, jqXHR) {
+            console.log('Shipping edited successfully');
+            var updatedCustomerData = $.map(data, function (value, index) {
+                return [value];
+            });
+            updateShippingTableData(data);
+            alert('Shipping edited successfully');
+            //Only close modal if edited successfully
+            $("#shippingModal").modal('hide');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log('Update shipping error : ' + textStatus);
+            alert('Update shipping error: ' + textStatus);
+        }
+    });
+    return false;
+}
+
+/**
  * Adding new data after adding successfully for order table; only return  order ID + used input data
  * @param data
  */
@@ -448,4 +531,78 @@ function applyData(table, data, append, rowId) {
         //Redraw table maintaining paging
         table.draw(false);
     }
+}
+
+//TODO: testing all shipping function
+/**
+ * Form shipping data to json for server
+ */
+function formShippingDataToJSON(selectedRows) {
+    var orderDetails = new Array();
+    $('#orderDetailsTbl').rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+        var data = this.data();
+
+        // Get row ID
+        var rowId = data[0];
+
+        // If checkbox is checked and row ID is not in list of selected row IDs
+        if(this.checked && index === -1){
+            var order = new Object();
+            order.id = rowId;
+            order.date = data[2];
+            order.sender = data[3];
+            order.receiver = data[4];
+            order.weight = data[5];
+            order.amount = data[6];
+            orderDetails[i - 1] = order;
+            // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+        }
+    } );
+    var shipping = JSON.stringify({
+        "id": $('#shippingDetails').find('#tmpSId').val(),
+        "date": $('#shippingDetails').find('#shippingDate').val(),
+        "mawb": $('#shippingDetails').find('#flightNo').val(),
+        "hawb": $('#shippingDetails').find('#shippingHawb').val(),
+        "pieces": $('#shippingDetails').find('#shippingUnit').val(),
+        "weight": $('#shippingDetails').find('#shippingWeight').val(),
+        "amount": $('#shippingDetails').find('#shippingTotalAmount').val(),
+        "orderDetails": selectedRows
+    });
+    return shipping;
+}
+
+
+/**
+ * Render data for shipping table
+ *
+ * @param data
+ */
+function renderShippingTableData(data) {
+    var list = data == null ? [] : (data.addedShipping instanceof Array ? data.addedShipping : [data.addedShipping]);
+    var shippingTable = $("#shippingTbl").DataTable();
+    $.each(list, function (index, shipping) {
+        shippingTable.row.add([shipping.id, shipping.date, shipping.mawb, shipping.hawb, shipping.pieces, shipping.weight, shipping.amount]).draw();
+    });
+}
+
+/**
+ * Update shipping table after editting
+ *
+ * @param data
+ */
+function updateShippingTableData(data) {
+    var shippingTable = $('#shippingTbl').DataTable();
+    if (shippingTable.row(rowId).length > 0) {
+        var totalColumn = table.columns().count();
+        for (var i = 0; i < totalColumn - 1; i++) {
+            table.cell(rowId, i).data(data[i]);
+        }
+        // table.row (rowId).data ([data[0],data[1],data[2],data[3]]).invalidate ();
+    } else {
+        //Add row data if new
+        shippingTable.row.add(data);
+    }
+    // }
+    //Redraw table maintaining paging
+    shippingTable.draw(false);
 }
