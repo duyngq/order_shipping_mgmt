@@ -85,6 +85,66 @@ class DbOperation {
 		return $orders;
 	}
 
+    /**
+     * get selected order details base on order id
+     *
+     * @param $orderId
+     * @return array
+     */
+    public function getSelectedOrder($orderId) {
+        $orderQuery ="select o.*, r.cust_name as r_name, r.phone as r_phone, r.address as r_address, s.cust_name as s_name, s.phone as s_phone, s.address as s_address from orders o join recvcustomers r join sendcustomers s on o.send_cust_id = s.id and o.recv_cust_id = r.id where o.id=".$orderId;
+        $ordersQuery = $this->con->query ( $orderQuery );
+        $orders = $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
+        foreach ($orders as $order) {
+            $orderDetailsQuery = $this->con->query ( "select * from orderdetails where order_id=".$order->id );
+            $order->orderDetails = $orderDetailsQuery->fetchAll ( PDO::FETCH_OBJ );
+        }
+        return $orders;
+    }
+
+    /**
+     * Update order
+     *
+     * @param $order
+     */
+    public function updateOrder($order) {
+        $this->con->beginTransaction ();
+        try {
+            $deleteOrderDetails = $this->con->prepare ( "DELETE FROM orderdetails WHERE order_id =:id" );
+            $deleteOrderDetails->bindParam ( "id", $order->id );
+            $deleteOrderDetails->execute ();
+
+            // update shipping
+            $updateOrder = $this->con->prepare ( "UPDATE orders SET user_id=:userId, date=:date, status=:status, code=:code, product_desc=:desc, weight=:weight, total=:total, file_name=:fileName WHERE id=:id" );
+            $updateOrder->bindParam ( ":id", $order->id );
+            $updateOrder->bindParam ( ":date", $order->date );
+            $updateOrder->bindParam ( ":userId", $order->userId );
+            $updateOrder->bindParam ( ":status", $order->status);
+            $updateOrder->bindParam ( ":code", $order->code );
+            $updateOrder->bindParam ( ":desc", $order->productDesc );
+            $updateOrder->bindParam ( ":weight", $order->weight );
+            $updateOrder->bindParam ( ":total", $order->amount );
+            $updateOrder->bindParam ( ":fileName", $order->fileNames );
+            $updateOrder->execute ();
+
+            // insert order details
+            if ( count ( $order->productDetails ) > 0 ) {
+                $sql = "insert into orderdetails (order_id, p_desc, weight, unit, price, total) values";
+                $orderDetails = "";
+                foreach ( $order->productDetails as $product ) {
+                    $orderDetails .= "($order->id, '$product->desc', $product->weight, $product->unit, $product->price, $product->total),";
+                }
+                $stmt = $this->con->prepare ( $sql . substr ( $orderDetails, 0, -1 ) );
+                $stmt->execute ();
+            }
+
+            $this->con->commit ();
+        } catch ( PDOException $e ) {
+            $this->con->rollBack ();
+            echo '{"error":{"text":' . $e->getMessage () . '}}';
+        }
+    }
+
 	/**
 	 * Add order and update order details except customer datas since they will be update separately
 	 * @param $order
@@ -112,7 +172,7 @@ class DbOperation {
 
 			//Query 2: Attempt to update the order details
 			if ( count ( $order->productDetails ) > 0 ) {
-				$sql = "insert into orderdetails (order_id, p_desc, weight, price_weight, unit, price_unit) values";
+				$sql = "insert into orderdetails (order_id, p_desc, weight, unit, price, total) values";
 				$orderDetails = "";
 				foreach ( $order->productDetails as $product ) {
 					$orderDetails .= "($orderId, '$product->desc', $product->weight, $product->unit, $product->price, $product->total),";
@@ -242,18 +302,37 @@ class DbOperation {
 	/// Shipping section
 	/////////////////////////
 	///
-	/**
+    /**
+     * get all shippings with shipping details
+     */
+	function getAllShippings() {
+        $ordersQuery = $this->con->query ( "select sh.* from shippings sh" );
+        $orders = $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
+        foreach ($orders as $order) {
+            $shippingDetailsQuery = $this->con->query ( "select order_id from shippingdetails where shipping_id=".$order->id );
+            $shippingDetails = $shippingDetailsQuery->fetchAll ( PDO::FETCH_OBJ );
+            $orderIds = array();
+            $i = 0;
+            foreach ($shippingDetails as $shippingDetail) {
+                $orderIds[$i] =  $shippingDetail->order_id;
+                $i++;
+            }
+            $order->orderDetails =  $orderIds;
+        }
+        return $orders;
+    }
+
+    /**
 	 * Add new shipping
-	 * TODO: #1: add table/schema + testing data for shipping
-	 *
+     *
 	 * @param $shipping
 	 */
 	function addShipping ( $shipping ) {
 		$this->con->beginTransaction ();
-		$addShipping = "INSERT INTO shipping (date, mawb, hawb, pieces, weight, amount) VALUES(:date, :mawb, :hawb, :pieces, :weight, :amount)";
+		$addShipping = "INSERT INTO shippings (date, mawb, hawb, pieces, weight, amount) VALUES(:date, :mawb, :hawb, :pieces, :weight, :amount)";
 		try {
 			$stmt = $this->con->prepare ( $addShipping );
-			$stmt->bindParam ( ":data", $shipping->date );
+			$stmt->bindParam ( ":date", $shipping->date );
 			$stmt->bindParam ( ":mawb", $shipping->mawb );
 			$stmt->bindParam ( ":hawb", $shipping->hawb );
 			$stmt->bindParam ( ":pieces", $shipping->pieces );
@@ -264,7 +343,7 @@ class DbOperation {
 
 			//Query 2: Attempt to update the order details
 			if ( count ( $shipping->orderDetails ) > 0 ) {
-				addShippingDetails ( $shipping, $shippingId );
+				$this -> addShippingDetails ( $shipping, $shippingId );
 //				$sql = "insert into shippingdetails (shipping_id, order_id) values";
 //				$orderDetails = "";
 //				foreach ( $shipping -> orderDetails as $orderId ) {
@@ -283,11 +362,11 @@ class DbOperation {
 
 	function addShippingDetails ( $shipping, $shippingId ) {
 		$sql = "insert into shippingdetails (shipping_id, order_id) values";
-		$orderDetails = "";
+		$shippingDetails = "";
 		foreach ( $shipping->orderDetails as $orderId ) {
-			$orderDetails .= "($shippingId, $orderId),";
+			$shippingDetails .= "($shippingId, $orderId),";
 		}
-		$stmt = $this->con->prepare ( $sql . substr ( $orderDetails, 0, -1 ) );
+		$stmt = $this->con->prepare ( $sql . substr ( $shippingDetails, 0, -1 ) );
 		$stmt->execute ();
 	}
 
@@ -308,9 +387,9 @@ class DbOperation {
 			$deleteShippingDetails->execute ();
 
 			// update shipping
-			$updateShipping = $this->con->prepare ( "UPDATE shipping SET date=:date, mawb=:mawb, hawb=:hawb, pieces:=pieces, weight:=weight, amount:=amount WHERE id=:id" );
+			$updateShipping = $this->con->prepare ( "UPDATE shippings SET date=:date, mawb=:mawb, hawb=:hawb, pieces=:pieces, weight=:weight, amount=:amount WHERE id=:id" );
 			$updateShipping->bindParam ( ":id", $shipping->id );
-			$updateShipping->bindParam ( ":data", $shipping->date );
+			$updateShipping->bindParam ( ":date", $shipping->date );
 			$updateShipping->bindParam ( ":mawb", $shipping->mawb );
 			$updateShipping->bindParam ( ":hawb", $shipping->hawb );
 			$updateShipping->bindParam ( ":pieces", $shipping->pieces );
@@ -319,7 +398,7 @@ class DbOperation {
 			$updateShipping->execute ();
 
 			// insert shipping details
-			addShippingDetails ( $shipping, $shipping->id );
+			$this->addShippingDetails ( $shipping, $shipping->id );
 
 			$this->con->commit ();
 		} catch ( PDOException $e ) {
@@ -336,12 +415,16 @@ class DbOperation {
 	function deleteShipping ( $shippingId ) {
 		$this->con->beginTransaction ();
 		try {
-			$this->deleteById ( "shipping", $shippingId );
-			// TODO: extract to generic function
-			$stmt = $this->con->prepare ( "DELETE FROM shippingdetails WHERE shipping_id=:id" );
-			$stmt->bindParam ( "shipping_id", $id );
-			$stmt->execute ();
+            // TODO: extract to generic function
+            // delete shipping details first
+            $stmt = $this->con->prepare ( "DELETE FROM shippingdetails WHERE shipping_id=:id" );
+            $stmt->bindParam ( "id", $shippingId );
+            $stmt->execute ();
 
+		    $stmt = $this->con->prepare ( "DELETE FROM shippings WHERE id =:id" ); // Do that since PHP doesn't allow nested transaction
+            $stmt->bindParam ( "id", $shippingId );
+            $stmt->execute ();
+//			$this->deleteById ( "shippings", $shippingId );
 			$this->con->commit ();
 		} catch ( PDOException $e ) {
 			$this->con->rollBack ();

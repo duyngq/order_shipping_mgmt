@@ -38,62 +38,75 @@
     <!--<script src="js/dataTables.bootstrap-3.3.7.min.js"></script>-->
     <!--<script src="js/jquery.dataTables.min.js"></script>-->
     <script src="js/sga-main.js"></script>
+    <script type="text/javascript" src="js/validate.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/upload.js"></script>
     <script type="text/javascript" charset="utf-8">
-        $(document).ready(function () {
+        $ (document).ready (function () {
             /*editor = new $.fn.dataTable.Editor  --> unable to use editor since it requires license*/
 
             //all findAll() function to show all orders
-            findAllOrders();
-            findAllCustomers('senders');
-            findAllCustomers('receivers');
+            findAllOrders ();
+            findAllCustomers ('senders');
+            findAllCustomers ('receivers');
+            findAllShippings ();
 
+            getSCustomers ();
+            getRCustomers ();
+
+            addOrderDetails ();
+
+            $ ('body').on ('hidden.bs.modal', '#shippingModal', function () {
+//                $(this).removeData('bs.modal');
+                $ ('.modal-body').find ("input,textarea,select").val ('').end ();
+            });
             // Order tables
-            $('#orderTbl').DataTable({
+            $ ('#orderTbl').DataTable ({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
                     "orderable": false,
                     // make links in one line
-                    "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> </span>"
+                    "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api(), data;
+                    var api = this.api (), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
+                            i.replace (/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // Total over all pages
-                    totalWeight = api.column(8).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalWeight = api.column (8).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Update footer
-                    $(api.column(8).footer()).html(
+                    $ (api.column (8).footer ()).html (
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column(9).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmount = api.column (9).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Update footer
-                    $(api.column(9).footer()).html(
+                    $ (api.column (9).footer ()).html (
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
@@ -106,11 +119,11 @@
                 // refer: https://jsfiddle.net/gyrocode/abhbs4x8/
                 // Explanation: https://www.gyrocode.com/articles/jquery-datatables-checkboxes/
             var selectedRows = []; // need this one
-            var orderDetailsTable = $('#orderDetailsTbl').DataTable({
+            var orderDetailsTable = $ ('#orderDetailsTbl').DataTable ({
                 "columnDefs": [{
                     "orderable": false,
                     "searchable": false,
-                    "width":'1%',
+                    "width": '1%',
                     "className": 'select-checkbox',
                     "targets": 0,
                     "render": function (data, type, full, meta) {
@@ -122,119 +135,90 @@
                     var rowId = data[0];
 
                     // If row ID is in the list of selected row IDs
-                    if ($.inArray(rowId, selectedRows) !== -1) {
-                        $(row).find('input[type="checkbox"]').prop('checked', true);
-                        $(row).addClass('selected');
+                    if ($.inArray (rowId, selectedRows) !== -1) {
+                        $ (row).find ('input[type="checkbox"]').prop ('checked', true);
+                        $ (row).addClass ('selected');
                     }
-                },
-                "footerCallback": function (row, data, start, end, display) {
-                    //handle footer with selected row
-                    // TODO: update with real selection
-                    var api = this.api(), data;
-
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) {
-                        return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
-                            typeof i === 'number' ?
-                                i : 0;
-                    };
-
-                    // Total over all pages
-                    totalWeight = api.column(5).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Total over this page
-                    totalWeightPerPage = api.column(5, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Update footer
-                    $(api.column(5).footer()).html(
-                        +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
-                    );
-
-                    // Total amount
-                    totalAmount = api.column(6).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Total over this page
-                    totalAmountPerPage = api.column(6, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Update footer
-                    $(api.column(6).footer()).html(
-                        '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
-                    );
                 }
             });
 
             // Handle click on checkbox
-            $('#orderDetailsTbl tbody').on('click', 'input[type="checkbox"]', function(e){
-                var $row = $(this).closest('tr');
+            $ ('#orderDetailsTbl tbody').on ('click', 'input[type="checkbox"]', function (e) {
+                var $row = $ (this).closest ('tr');
 
                 // Get row data
-                var data = orderDetailsTable.row($row).data();
+                var data = orderDetailsTable.row ($row).data ();
 
                 // Get row ID
                 var rowId = data[0];
 
                 // Determine whether row ID is in the list of selected row IDs
-                var index = $.inArray(rowId, selectedRows);
+                var index = $.inArray (rowId, selectedRows);
 
                 // If checkbox is checked and row ID is not in list of selected row IDs
-                if(this.checked && index === -1){
-                    selectedRows.push(rowId);
+                if (this.checked && index === -1) {
+                    selectedRows.push (rowId);
+                    var weight = parseFloat ($ ('#shippingWeight').val ());
+                    var addedWeight = parseFloat (data[5]); // weight of selected order details
+                    $ ('#shippingWeight').val (parseFloat (weight + addedWeight));
 
+                    var amount = parseFloat ($ ('#shippingTotalAmount').html ());
+                    var addedAmount = parseFloat (data[6]); // weight of selected order details
+                    $ ('#shippingTotalAmount').html (parseFloat (amount + addedAmount));
                     // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
-                } else if (!this.checked && index !== -1){
-                    selectedRows.splice(index, 1);
+                } else if (!this.checked && index !== -1) {
+                    selectedRows.splice (index, 1);
+
+                    var weight = parseFloat ($ ('#shippingWeight').val ());
+                    var addedWeight = parseFloat (data[5]); // weight of selected order details
+                    $ ('#shippingWeight').val (parseFloat (weight - addedWeight));
+
+                    var amount = parseFloat ($ ('#shippingTotalAmount').html ());
+                    var addedAmount = parseFloat (data[6]); // weight of selected order details
+                    $ ('#shippingTotalAmount').html (parseFloat (amount - addedAmount));
                 }
 
-                if(this.checked){
-                    $row.addClass('selected');
+                if (this.checked) {
+                    $row.addClass ('selected');
                 } else {
-                    $row.removeClass('selected');
+                    $row.removeClass ('selected');
                 }
-                console.log("selected order details :" + selectedRows);
+                console.log ("selected order details :" + selectedRows);
 
                 // Update state of "Select all" control
 //                updateDataTableSelectAllCtrl(table);
 
                 // Prevent click event from propagating to parent
-                e.stopPropagation();
+                e.stopPropagation ();
             });
 
             /**
              * This function for case if we have a checkbox for whole table
              */
-            function updateDataTableSelectAllCtrl(table){
-                var $table             = table.table().node();
-                var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
-                var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
-                var chkbox_select_all  = $('thead input[name="select_all"]', $table).get(0);
+            function updateDataTableSelectAllCtrl (table) {
+                var $table = table.table ().node ();
+                var $chkbox_all = $ ('tbody input[type="checkbox"]', $table);
+                var $chkbox_checked = $ ('tbody input[type="checkbox"]:checked', $table);
+                var chkbox_select_all = $ ('thead input[name="select_all"]', $table).get (0);
 
                 // If none of the checkboxes are checked
-                if($chkbox_checked.length === 0){
+                if ($chkbox_checked.length === 0) {
                     chkbox_select_all.checked = false;
-                    if('indeterminate' in chkbox_select_all){
+                    if ('indeterminate' in chkbox_select_all) {
                         chkbox_select_all.indeterminate = false;
                     }
 
                     // If all of the checkboxes are checked
-                } else if ($chkbox_checked.length === $chkbox_all.length){
+                } else if ($chkbox_checked.length === $chkbox_all.length) {
                     chkbox_select_all.checked = true;
-                    if('indeterminate' in chkbox_select_all){
+                    if ('indeterminate' in chkbox_select_all) {
                         chkbox_select_all.indeterminate = false;
                     }
 
                     // If some of the checkboxes are checked
                 } else {
                     chkbox_select_all.checked = true;
-                    if('indeterminate' in chkbox_select_all){
+                    if ('indeterminate' in chkbox_select_all) {
                         chkbox_select_all.indeterminate = true;
                     }
                 }
@@ -243,7 +227,7 @@
             /**
              * Shipping table to show shipping data
              */
-            $('#shippingTbl').DataTable({
+            $ ('#shippingTbl').DataTable ({
                 'columnDefs': [
                     {
                         "targets": -1,
@@ -251,159 +235,136 @@
                         "orderable": false,
                         // make links in one line
                         "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editShipping' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteShipping' class='glyphicon glyphicon-trash'></a> </span>"
+                    },
+                    {
+                        "targets": [7],
+                        "visible": false
                     }
                 ],
                 "footerCallback": function (row, data, start, end, display) {
                     //handle footer with selected row
-                    // TODO: update with real selection
-                    var api = this.api(), data;
+                    var api = this.api (), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
+                            i.replace (/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
-                    // Total over all pages
-                    totalWeight = api.column(4).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Total over this page
-                    totalWeightPerPage = api.column(4, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Update footer
-                    $(api.column(4).footer()).html(
-                        +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
-                    );
-
                     // Total amount
-                    totalAmount = api.column(5).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmount = api.column (6).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column(5, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmountPerPage = api.column (6, {page: 'current'}).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Update footer
-                    $(api.column(5).footer()).html(
+                    $ (api.column (6).footer ()).html (
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
             // Add receiver
-            $("#addShipping").click(function (e) {
-                e.preventDefault();
-                $('#updateShippingBtn').addClass("hidden");
-                $('#addShippingBtn').removeClass("hidden");
-                $("#shippingModal").modal('show');
+            $ ("#addShipping").click (function (e) {
+                e.preventDefault ();
+                $ ('#updateShippingBtn').addClass ("hidden");
+                $ ('#addShippingBtn').removeClass ("hidden");
+                $ ("#shippingModal").modal ('show');
             });
 
             // Edit shipping
-            $('#shippingTbl tbody').on('click', '#editShipping', function (e) {
-                e.preventDefault();
-                var selectedRow = $('#shippingTbl').DataTable().row($(this).parents('tr')).data();
+            $ ('#shippingTbl tbody').on ('click', '#editShipping', function (e) {
+                e.preventDefault ();
+                var selectedRow = $ ('#shippingTbl').DataTable ().row ($ (this).parents ('tr'));
+                selectedRows = selectedRow.data ()[7];
+                fillOrderDetails (selectedRow);
 //                setCustomerTableData ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')).index (), 'receivers', selectedRow.id, selectedRow.cust_name, selectedRow.phone, selectedRow.address);
-                $('#updateShippingBtn').removeClass("hidden");
-                $('#addShippingBtn').addClass("hidden");
-                $("#shippingModal").modal('show');
+                $ ('#updateShippingBtn').removeClass ("hidden");
+                $ ('#addShippingBtn').addClass ("hidden");
+                $ ("#shippingModal").modal ('show');
             });
 
             // Delete a selected receiver
-            $('#shippingTbl').on('click', '#deleteShipping', function (e) {
-                e.preventDefault();
-                deleteShipping($ ('#shippingTbl').DataTable ().row ($ (this).parents ('tr')))
+            $ ('#shippingTbl').on ('click', '#deleteShipping', function (e) {
+                e.preventDefault ();
+                deleteShipping ($ ('#shippingTbl').DataTable ().row ($ (this).parents ('tr')))
                 return false;
             });
 
             // Update data for shipping with edit
-            $('#updateShippingBtn').on('click', function (e) {
-                e.stopPropagation();
-                //TODO: too complicated --> load all data + selected orders and mark exisitng to choose
-                var selectedRow = $('#shippingTbl').DataTable().row($(this).parents('tr')).data();
-                $('#shippingDetails').find('#rowId').val($('#shippingTbl').DataTable().row($(this).parents('tr')).index());
-                $('#shippingDetails').find('#tmpId').val(selectedRow[0]);
-                $('#shippingDetails').find('#custName').val(custName);
-                $('#shippingDetails').find('#custPhone').val(phone);
-                $('#shippingDetails').find('#custAddress').val(address);
-//                editCustomer (table);
+            $ ('#updateShippingBtn').on ('click', function (e) {
+                e.stopPropagation ();
+                editShipping (selectedRows);
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
 
             // Add data for shipping with edit
-            $('#addShippingBtn').on('click', function (e) {
-                e.stopPropagation();
+            $ ('#addShippingBtn').on ('click', function (e) {
+                e.stopPropagation ();
                 addShipping (selectedRows);
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
-            $('#deliveredTbl').DataTable({
+
+            $ ('#deliveredTbl').DataTable ({
                 "columnDefs": [{
                     "targets": -1,
                     "data": null,
                     "orderable": false,
                     // make links in one line
-                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='delivered-edit glyphicon glyphicon-pencil'></a> <a href='#' class='delivered-delete glyphicon glyphicon-trash'></a> </span>"
+                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='editDelivered glyphicon glyphicon-pencil'></a> <a href='#' class='delDelivered glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a>  </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
-                    var api = this.api(), data;
+                    var api = this.api (), data;
 
                     // Remove the formatting to get integer data for summation
                     var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
+                            i.replace (/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // Total over all pages
-                    totalWeight = api.column(8).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalWeight = api.column (8).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Total over this page
-                    totalWeightPerPage = api.column(8, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Update footer
-                    $(api.column(8).footer()).html(
+                    $ (api.column (8).footer ()).html (
                         +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
                     );
 
                     // Total amount
-                    totalAmount = api.column(9).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmount = api.column (9).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Total over this page
-                    totalAmountPerPage = api.column(9, {page: 'current'}).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
+                        return intVal (a) + intVal (b);
                     }, 0);
 
                     // Update footer
-                    $(api.column(9).footer()).html(
+                    $ (api.column (9).footer ()).html (
                         '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
                     );
                 }
             });
 
             // Customer tables
-            //TODO: https://editor.datatables.net/examples/advanced/deepObjects.html
-            $('#senderTbl').DataTable({
-//                "processing": true,
-//                "serverSide": false,
-//                'ajax': {
-//                    "type": "GET",
-//                    "url": rootURL + '/customer/senders',
-//                    "dataSrc": "customers" // --> indicate which tag/data label need getting
-//                },
+            //Refer: https://editor.datatables.net/examples/advanced/deepObjects.html
+            $ ('#senderTbl').DataTable ({
                 'columnDefs': [
                     {
                         "targets": -1,
@@ -413,71 +374,37 @@
                         "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
                     }
                 ],
-//                'columns': [
-//                    {"data": "id"},
-//                    {"data": "cust_name"},
-//                    {"data": "phone"},
-//                    {"data": "address"},
-//                    {
-//                        "targets": -1,
-//                        "data": null,
-//                        "orderable": false,
-//                        // make links in one line
-//                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
-//                    }
-//                ]
             });
 
             // Add Sender
-            $("#addSender").click(function (e) {
-                e.preventDefault();
-                $('#updateCustomerBtn').addClass("hidden");
-                setCustomerTableData(0, 'senders', "", "", "", "");
-                $('#addCustomerBtn').removeClass("hidden");
-                $("#customerModal").modal('show');
+            $ ("#addSender").click (function (e) {
+                e.preventDefault ();
+                $ ('#updateCustomerBtn').addClass ("hidden");
+                setCustomerTableData (0, 'senders', "", "", "", "");
+                $ ('#addCustomerBtn').removeClass ("hidden");
+                $ ("#customerModal").modal ('show');
             });
 
             // Edit record
-            $('#senderTbl tbody').on('click', '#editSender', function (e) {
-                e.preventDefault();
-                var selectedRow = $('#senderTbl').DataTable().row($(this).parents('tr')).data();
-                setCustomerTableData($('#senderTbl').DataTable().row($(this).parents('tr')).index(), 'senders', selectedRow.id, selectedRow.cust_name, selectedRow.phone, selectedRow.address);
-                $('#updateCustomerBtn').removeClass("hidden");
-                $('#addCustomerBtn').addClass("hidden");
-                $("#customerModal").modal('show');
+            $ ('#senderTbl tbody').on ('click', '#editSender', function (e) {
+                e.preventDefault ();
+                var selectedRow = $ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')).data ();
+                setCustomerTableData ($ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')).index (), 'senders', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
+                $ ('#updateCustomerBtn').removeClass ("hidden");
+                $ ('#addCustomerBtn').addClass ("hidden");
+                $ ("#customerModal").modal ('show');
             });
 
             // Delete a record
-            $('#senderTbl').on('click', '#deleteSender', function (e) {
-                e.preventDefault();
-                deleteCustomer($('#senderTbl').DataTable().row($(this).parents('tr')), 'senders');
+            $ ('#senderTbl').on ('click', '#deleteSender', function (e) {
+                e.preventDefault ();
+                deleteCustomer ($ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')), 'senders');
                 return false;
             });
 
             //TIP: there is a trick to manipulate data with predefined table (can use editor which is not free --> easier); so just define table manually and manipulate it then update
             // corresponding data for each action. --> this is applied to all data/table we have now.
-            // TODO: need to rework if needed to find a way to manipulate predefined table with ajax at booting
-            $('#recvTbl').DataTable({
-//                "processing": true,
-//                "serverSide": false, //--> let browsers know that there is no more processing
-//                'ajax': {
-//                    "type": "GET",
-//                    "url": rootURL + '/customer/receivers',
-//                    "dataSrc": "customers" // --> indicate which tag/data label need getting
-//                },
-//                'columns': [
-//                    {"data": "id"},
-//                    {"data": "cust_name"},
-//                    {"data": "phone"},
-//                    {"data": "address"},
-//                    {
-//                        "targets": -1,
-//                        "data": null,
-//                        "orderable": false,
-//                        // make links in one line
-//                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
-//                    }
-//                ],
+            $ ('#recvTbl').DataTable ({
                 'columnDefs': [
                     {
                         "targets": -1,
@@ -490,78 +417,78 @@
             });
 
             // Add receiver
-            $("#addRecv").click(function (e) {
-                e.preventDefault();
-                setCustomerTableData(0, 'receivers', "", "", "", "");
-                $('#updateCustomerBtn').addClass("hidden");
-                $('#addCustomerBtn').removeClass("hidden");
-                $("#customerModal").modal('show');
+            $ ("#addRecv").click (function (e) {
+                e.preventDefault ();
+                setCustomerTableData (0, 'receivers', "", "", "", "");
+                $ ('#updateCustomerBtn').addClass ("hidden");
+                $ ('#addCustomerBtn').removeClass ("hidden");
+                $ ("#customerModal").modal ('show');
             });
 
             // Edit record
-            $('#recvTbl tbody').on('click', '#editRecv', function (e) {
-                e.preventDefault();
-                var selectedRow = $('#recvTbl').DataTable().row($(this).parents('tr')).data();
-                setCustomerTableData($('#recvTbl').DataTable().row($(this).parents('tr')).index(), 'receivers', selectedRow.id, selectedRow.cust_name, selectedRow.phone, selectedRow.address);
-                $('#updateCustomerBtn').removeClass("hidden");
-                $('#addCustomerBtn').addClass("hidden");
-                $("#customerModal").modal('show');
+            $ ('#recvTbl tbody').on ('click', '#editRecv', function (e) {
+                e.preventDefault ();
+                var selectedRow = $ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')).data ();
+                setCustomerTableData ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')).index (), 'receivers', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
+                $ ('#updateCustomerBtn').removeClass ("hidden");
+                $ ('#addCustomerBtn').addClass ("hidden");
+                $ ("#customerModal").modal ('show');
             });
 
             // Delete a selected receiver
-            $('#recvTbl').on('click', '#deleteRecv', function (e) {
-                e.preventDefault();
-                deleteCustomer($('#recvTbl').DataTable().row($(this).parents('tr')), 'receivers');
+            $ ('#recvTbl').on ('click', '#deleteRecv', function (e) {
+                e.preventDefault ();
+                deleteCustomer ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')), 'receivers');
                 return false;
             });
 
             // work with tab
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                $($.fn.dataTable.tables(true)).DataTable()
-                    .columns.adjust();
+            $ ('a[data-toggle="tab"]').on ('shown.bs.tab', function (e) {
+                $ ($.fn.dataTable.tables (true)).DataTable ()
+                    .columns.adjust ();
             });
 
             // Update data for customer with edit
-            $('#updateCustomerBtn').on('click', function (e) {
-                e.stopPropagation();
+            $ ('#updateCustomerBtn').on ('click', function (e) {
+                e.stopPropagation ();
                 var table;
-                switch ($('#custType').val()) {
+                switch ($ ('#custType').val ()) {
                     case "receivers":
-                        table = $('#recvTbl').DataTable();
+                        table = $ ('#recvTbl').DataTable ();
                         break;
                     case "senders":
-                        table = $('#senderTbl').DataTable();
+                        table = $ ('#senderTbl').DataTable ();
                         break;
                 }
-                editCustomer(table);
+                editCustomer (table);
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
 
             // Add data for customer with edit
-            $('#addCustomerBtn').on('click', function (e) {
-                e.stopPropagation();
+            $ ('#addCustomerBtn').on ('click', function (e) {
+                e.stopPropagation ();
                 var table;
-                switch ($('#custType').val()) {
+                switch ($ ('#custType').val ()) {
                     case "receivers":
-                        table = $('#recvTbl').DataTable();
+                        table = $ ('#recvTbl').DataTable ();
                         break;
                     case "senders":
-                        table = $('#senderTbl').DataTable();
+                        table = $ ('#senderTbl').DataTable ();
                         break;
                 }
-                addCustomer(table);
+                addCustomer (table);
                 //--> unable to get selected row data from here;
                 //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
             });
 
             // set data for customer table in Modal
-            function setCustomerTableData(index, custType, id, custName, phone, address) {
-                $('#customerDetails').find('#rowId').val(index);
-                $('#customerDetails').find('#custType').val(custType);
-                $('#customerDetails').find('#tmpId').val(id);
-                $('#customerDetails').find('#custName').val(custName);
-                $('#customerDetails').find('#custPhone').val(phone);
-                $('#customerDetails').find('#custAddress').val(address);
+            function setCustomerTableData (index, custType, id, custName, phone, address) {
+                $ ('#customerDetails').find ('#rowId').val (index);
+                $ ('#customerDetails').find ('#custType').val (custType);
+                $ ('#customerDetails').find ('#tmpId').val (id);
+                $ ('#customerDetails').find ('#custName').val (custName);
+                $ ('#customerDetails').find ('#custPhone').val (phone);
+                $ ('#customerDetails').find ('#custAddress').val (address);
             }
 
             /*var date_input=$('input[name="date"]'); //our date input has the name "date"
@@ -571,47 +498,95 @@
                 autoclose: true,
             };
             date_input.datepicker(options);*/
-        });
 
-        $(function () {
-            $("#addOrder").click(function (e) {
-                e.preventDefault();
-                var dlg = $('<div></div>')
-                    .html('<iframe style="border: 0px;" src="addorder.html" width="100%" height="100%"></iframe>').dialog({
-                        title: "Add Order",
-                        autoOpen: false,
-                        modal: true,
-                        position: ["left", "top"],
-                        width: "100%",
-                        height: $(window).height(),
-                        zIndex: 1000
-                    });
-                dlg.dialog('open');
+            ///////////////////////////////////////
+            ///// Add order section
+            ///////////////////////////////////////
+            function addOrderDetails () {
+                for (var i = 1; i <= 10; i++) {
+                    $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="productDesc' + i + '" class="productDesc' + i + '" size="30" style="border:0"/></td> ' +
+                        '<td><input name="weight' + i + '" type="text" id="weight' + i + '" class="weight' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
+                        '<td><input name="unit' + i + '" type="text" id="unit' + i + '" class="unit' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>' +
+                        '<td><input name="price' + i + '" type="text" id="price' + i + '" class="price' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\',\'total' + i + '\');calTotal(\'feeTable\');"/></td>' +
+                        '<td><input name="total' + i + '" type="text" id="total' + i + '" class="total' + i + '" value="0" size="10" style="border:0" readonly="readonly"/></td>' +
+                        '</tr>');
+                }
+            }
+
+            // Add order
+            $ ("#addOrder").click (function (e) {
+                e.preventDefault ();
+                $ ('#updateOrderBtn').addClass ("hidden");
+                $ ('#addOrderBtn').removeClass ("hidden");
+                $ ('#status').addClass ('hidden');
+                $ ("#orderModal").modal ('show');
             });
 
-            $("#orderTbl").on('click', '#delOrder', (function (event) {
-                event.preventDefault();
-                deleteOrder($('#orderTbl').DataTable().row($(this).parents('tr')));
-                return false;
-            }));
+            // Edit Order
+            $ ('#orderTbl tbody').on ('click', '#editOrder', function (e) {
+                e.preventDefault ();
+                $ ('#orderForm').find ('#oType').val ("ordered");
+                var selectedRow = $ ('#orderTbl').DataTable ().row ($ (this).parents ('tr'));
+                fillOrder (selectedRow);
+                $ ('#updateOrderBtn').removeClass ("hidden");
+                $ ('#addOrderBtn').addClass ("hidden");
+                $ ('#status').removeClass ('hidden');
+                $ ("#orderModal").modal ('show');
+            });
 
-            $("#orderTbl").on('click', '#editOrder', (function (event) {
-                    alert("abc");
-                    //TODO: add delete order handler
-                    event.preventDefault();
-                    return false;
-                })
-            );
+            // Delete a selected receiver
+            $ ('#orderTbl').on ('click', '#delOrder', function (e) {
+                e.preventDefault ();
+                deleteOrder ($ ('#orderTbl').DataTable ().row ($ (this).parents ('tr')));
+                return false;
+            });
+
+            // Update data for Order with edit
+            $ ('#updateOrderBtn').on ('click', function (e) {
+                e.stopPropagation ();
+                var table;
+                switch ($ ('#oType').val ()) {
+                    case "ordered":
+                        table = $ ('#orderTbl').DataTable ();
+                        break;
+                    case "delivered":
+                        table = $ ('#deliveredTbl').DataTable ();
+                        break;
+                }
+                editOrder (table);
+                //http://plnkr.co/edit/B9fJQwgdLXEqBhrIJI76?p=preview
+            });
+
+            // Add data for Order
+            $ ('#addOrderBtn').on ('click', function (e) {
+                e.stopPropagation ();
+                addOrder ();
+            });
+
+            /**
+             * Edit and edlete delivered order
+             *
+             */
+            // Edit shipping
+            $ ('#deliveredTbl tbody').on ('click', '#editDelivered', function (e) {
+                e.preventDefault ();
+                var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
+                fillOrder (selectedRow);
+                $ ('#updateOrderBtn').removeClass ("hidden");
+                $ ('#addOrderBtn').addClass ("hidden");
+                $ ('#status').removeClass ('hidden');
+                $ ("#orderModal").modal ('show');
+            });
+
+            // Delete a selected receiver
+            $ ('#deliveredTbl').on ('click', '#delOrder', function (e) {
+                e.preventDefault ();
+                $ ('#orderForm').find ('#oType').val ("delivered");
+                deleteOrder ($ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr')));
+                return false;
+            });
         });
     </script>
-
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
-    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
-    <!-- full bootstrap 3.3.7 with glyphicons
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    -->
 </head>
 
 <body>
@@ -669,7 +644,7 @@
                     <li><a href=""><span>Logout</span></a></li>
                 </ul>
                 <!--<ul class="nav navbar-nav navbar-right sga-nav-color">-->
-                <!--&lt;!&ndash; TODO: good menu but maybe noneed&ndash;&gt;-->
+                <!--&lt;!&ndash; &ndash;&gt;-->
                 <!--<li class="dropdown">-->
                 <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"-->
                 <!--aria-expanded="false">Order </a>-->
@@ -778,16 +753,19 @@
                             <tr>
                                 <th>No.</th>
                                 <th>Date</th>
-                                <th>Sender</th>
-                                <th>Receiver</th>
+                                <th>Mawb</th>
+                                <th>Hawb</th>
+                                <th>Pieces</th>
                                 <th>Weight</th>
                                 <th>Amount</th>
+                                <th>OrderIds</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tfoot>
                             <tr>
-                                <th colspan="4">Total</th>
-                                <th id="shipWeight">0</th>
+                                <th colspan="6">Total</th>
+                                <!--<th id="shipWeight">0</th>-->
                                 <th id="shipAmount">0</th>
                             </tr>
                             </tfoot>
@@ -923,13 +901,14 @@
                 <table id="shippingDetailsTbl" class="table" cellspacing="0" width="100%">
                     <!--<input name="rowId" id="rowId" hidden="true"/>-->
                     <input name="tmpSId" id="tmpSId" hidden="true"/>
+                    <input name="sRowId" id="sRowId" hidden="true"/>
                     <!--<input name="custType" id="custType" hidden="true"/>-->
                     <tr>
                         <td><label>Date</label></td>
                         <td>
                             <input type="text" size="10" id="shippingDate" value="23/11/2017" required/>
                         </td>
-                        <td><label>Flight No</label></td> <!--mawb -->
+                        <td><label>Mawb</label></td> <!--mawb -->
                         <td>
                             <input name="flightNo" type="text" id="flightNo" size="20" required/>
                         </td>
@@ -944,7 +923,8 @@
                         <td><label>Weight</label>
                             <!-- Note: in kgs with 1kg=2.2046lbs-->
                         </td>
-                        <td><input name="shippingWeight" type="text" id="shippingWeight" size="20" required/></td>
+                        <td><input value="0" name="shippingWeight" type="text" id="shippingWeight" size="20" required/>
+                        </td>
                     </tr>
                 </table>
                 <p>Select or Add Receipt</p>
@@ -961,8 +941,8 @@
                     </tr>
                     <tfoot>
                     <tr>
-                        <th colspan="5">Total</th>
-                        <th id="shippingTotalWeight">0</th>
+                        <th colspan="6">Total</th>
+                        <!--<th id="shippingTotalWeight">0</th>-->
                         <th id="shippingTotalAmount">0</th>
                     </tr>
                     </tfoot>
@@ -980,6 +960,289 @@
         </div>
     </div>
 </div>
+
+<!-- order modal -->
+<div class="modal fade in" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel">
+    <div class="modal-dialog test" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="orderModalLabel">Add/Update Order</h4>
+            </div>
+
+            <div id="orderForm" class="modal-body">
+                <input name="oId" id="oId" hidden="true"/>
+                <input name="oRow" id="oRow" hidden="true"/>
+                <input name="oType" id="oType" hidden="true"/>
+                <div class="row">
+                    <div class="col-xs-5"><strong>- Sender</strong></div>
+                    <div class="col-xs-7"><strong>- Receiver</strong></div>
+                </div>
+                <div class="row">
+                    <!-- sender phone number-->
+                    <div class="col-xs-5">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Phone</div>
+                            <div class="col-xs-5">
+                                <input name="sendPhone" type="text" id="sendPhone" size="45"
+                                       list="sendPhoneList" required/>
+                                <!-- drop down list that can be search/add new text -->
+                                <script type="text/javascript">
+                                    $ ("input[name=sendPhone]").focusout (function () {
+                                        var senders = JSON.parse (getCustomersAsJson (sCustomers));
+                                        var sendPhone = $ (this).val ();
+                                        $ ('input[name="sendName"]').val (senders[sendPhone]['cust_name']);
+                                        $ ('input[name="sendAddr"]').val (senders[sendPhone]['address']);
+                                    });
+                                </script>
+                                <datalist id="sendPhoneList">
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Receiver phone number -->
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Phone</div>
+                            <div class="col-xs-7">
+                                <input name="recvPhone" type="text" id="recvPhone" size="50"
+                                       list="recvPhoneList" required/>
+                                <!-- drop down list that can be search/add new text -->
+                                <script type="text/javascript">
+                                    $ ("input[name=recvPhone]").focusout (function () {
+                                        var recvs = JSON.parse (getCustomersAsJson (rCustomers));
+                                        var recvPhone = $ (this).val ();
+                                        $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
+                                        $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
+                                    });
+                                </script>
+                                <datalist id="recvPhoneList">
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- sender name-->
+                    <div class="col-xs-5">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Name</div>
+                            <div class="col-xs-5"><input name="sendName" id="sendName" size="45"/></div>
+                        </div>
+                    </div>
+                    <!-- Receiver Name-->
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Name</div>
+                            <div class="col-xs-5"><input name="recvName" id="recvName" size="50"/></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- sender name-->
+                    <div class="col-xs-5">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Address</div>
+                            <div class="col-xs-5"><input name="sendAddr" type="text" id="sendAddr" size="45" required/>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Receiver Name-->
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <div class="col-xs-2 sub-element">Address</div>
+                            <div class="col-xs-5"><input name="recvAddr" type="text" id="recvAddr" size="50" required/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- sender name-->
+                    <div class="col-xs-1"><strong>- Date</strong></div>
+                    <div class="col-xs-5">
+                        <select name="day" id="day">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                        </select>
+                        <select name="month" id="month">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <select name="year" id="year">
+                            <option value="2016">2016</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                        <!-- input name="orderDate" type="text"
+                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
+                        <input name="orderDate" type="text"
+                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
+                        <script type="text/javascript">
+                            //                                        validateDate();
+                            //                                         validate_date();
+                            selectDate ();
+                        </script>
+                    </div>
+                </div>
+                <div class="row" id="status">
+                    <div class="col-xs-1"><strong>- Status</strong></div>
+                    <div class="col-xs-5">
+                        <label><input type="radio" name="status" value="0"/>Ordered</label>
+                        <label><input type="radio" name="status" value="1"/>Delivered</label>
+                    </div>
+                </div>
+                <!-- last element: description and details -->
+                <div class="row">
+                    <!-- Descriptor -->
+                    <div class="col-xs-6">
+                        <div class="row">
+                            <div class="col-xs-3"></div>
+                            <div class="col-xs-5"><strong>Description</strong></div>
+                        </div>
+                    </div>
+                    <!-- Details-->
+                    <div class="col-xs-6">
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Descriptor -->
+                    <div class="col-xs-5">
+                        <p id="productDescPara"><textarea name="productDesc" id="productDesc" cols="55" rows="22"
+                                                          style="border: 1px solid black"
+                                                          placeholder="Click and write product description"></textarea>
+                        </p>
+                        <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
+                            <input name="file[]" type="file" multiple="multiple" id="uploadFile"/>
+                            <div id="uploadedFiles"></div>
+                            <input name="uploaded" id="uploaded" type="hidden"/>
+                        </form>
+                        <script>
+                            //TODO: Use slim to upload files; make sure if user not submit, the file should be removed as well
+                            // Add events
+                            $ (':file').on ('change', prepareUpload);
+                            //                                    $("#upload").on( 'click', uploadFiles);
+                            $ ("#uploadedFiles").on ('click', 'a', removeUploadedFile); // To do ajax call for dynamic component. Refer http://api.jquery.com/on/ delegated events part
+                        </script>
+                    </div>
+                    <!-- Details-->
+                    <div class="col-xs-7">
+                        <table class="table table-bordered" id="feeTable">
+                            <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Weigh (Lbs)</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th><strong>Total</strong></th>
+                                <th id="weight" class="weight">0</th>
+                                <th id="unit" class="unit">0</th>
+                                <th></th>
+                                <th id="amount" class="amount">0</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div id="dialogForm" title="Product description">
+        <textarea name="productDescDlg" id="productDescDlg"
+                  style="border: 1px solid black; width: 100%; height: 95%"
+                  placeholder="Click and write product description"></textarea>
+                </div>
+
+
+                <script>
+                    //                    $ (function () {
+                    //                        //$('.rTable').clone().appendTo('#feeTable');
+                    //                        //$('#feeTable').find('input').attr('readonly', 'readonly');
+                    //                        var productDescDlg = $ ("#dialogForm").dialog ({
+                    //                            autoOpen: false,
+                    //                            height: 800,
+                    //                            width: 800,
+                    //                            modal: true,
+                    //                            buttons: {
+                    //                                Close: function () {
+                    //                                    productDescDlg.dialog ("close");
+                    //                                    $ ("#productDesc").val ($ ("#productDescDlg").val ());
+                    //                                }
+                    //                            },
+                    //                            close: function () {
+                    //                                $ ("#productDesc").val ($ ("#productDescDlg").val ());
+                    //                            }
+                    //                        });
+                    //
+                    //                        $ ("#productDesc").on ("click", function () {
+                    //                            productDescDlg.dialog ("open");
+                    //                            $ ("#productDescDlg").val ($ ("#productDesc").val ());
+                    //                        });
+                    //                    });
+                </script>
+            </div>
+            <div class="modal-footer">
+                <button id="closeOrderModal" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button id="updateOrderBtn" data-dismiss="modal" aria-hidden="true">Update</button>
+                <button id="addOrderBtn" data-dismiss="modal" aria-hidden="true">Add</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 <!-- TODO: fix responsive table https://stackoverflow.com/questions/21934121/jquery-datatable-overflows-in-bootstrap-modal-->

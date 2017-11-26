@@ -15,14 +15,18 @@ $app->post ( '/wines', 'addWine' );
 $app->put ( '/wines/:id', 'updateWine' );
 $app->delete ( '/wines/:id', 'deleteWine' );
 
-$app->get ( '/orders/all', 'getAllOrders' );
+$app->get ( '/orders/:orderId', 'getSelectedOrder' );
+$app->get ( '/orders', 'getAllOrders' );
 $app->post ( '/orders/add', 'addOrder' );
 $app->post ( '/orders/delete', 'deleteOrder' );
+$app->post ( '/orders/update', 'updateOrder' );
 $app->get ( '/orders/upload', 'uploadFiles' );
+
 $app->get ( '/customer/senders', 'getAllSenders' );
 $app->post ( '/customer/senders/delete', 'deleteSender' );
 $app->post ( '/customer/senders/update', 'updateSender' );
 $app->post ( '/customer/senders/add', 'addSender' );
+
 $app->get ( '/customer/receivers', 'getAllReceivers' );
 $app->post ( '/customer/receivers/delete', 'deleteReceiver' );
 $app->post ( '/customer/receivers/update', 'updateReceiver' );
@@ -31,6 +35,7 @@ $app->post ( '/customer/receivers/add', 'addReceiver' );
 $app->post ( '/shipping/delete', 'deleteShipping' );
 $app->post ( '/shipping/update', 'updateShipping' );
 $app->post ( '/shipping/add', 'addShipping' );
+$app->get ( '/shipping/all', 'getAllShippings' );
 
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
@@ -87,6 +92,42 @@ function getAllOrders () {
 }
 
 /**
+ * get selected order details to update
+ */
+function getSelectedOrder($orderId) {
+    try {
+        // get DB connection
+        $db = new DbOperation();
+        $orders = $db->getSelectedOrder ($orderId);
+        if ( $orders != null ) {
+            echo '{"gotOrder":' . json_encode ( $orders ) . '}';
+        } else {
+            echo '{"error":{"text":' . "Failed to get orders data" . '}}';
+        }
+    } catch ( Exception $e ) {
+        echo '{"error":{"text":' . $e->getMessage () . '}}';
+    }
+}
+
+/**
+ * Update order
+ *
+ */
+function updateOrder() {
+    //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
+    $request = Slim::getInstance ()->request ();
+    $order = json_decode ( $request->getBody () );
+    try {
+        $db = new DbOperation();
+        $db->updateOrder ( $order );
+        echo json_encode ( $order );
+    } catch ( Exception $e ) {
+        //		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
+        echo '{"errorText":"Update order fail with text as", "text":}' . $e->getMessage () . $e . '}';
+    }
+}
+
+/**
  * Get all senders
  */
 function getAllSenders () {
@@ -95,9 +136,7 @@ function getAllSenders () {
 		$db = new DbOperation();
 		$customers = $db->getData ( 'sendcustomers' );
 		if ( $customers != null ) {
-			// TODO: need to recheck if we need json or collection data here
 			echo '{"customers":' . json_encode ( $customers ) . '}';
-			//	        echo json_encode ( $customers );
 		} else {
 			echo '{"error":{"text":' . "Failed to get senders data" . '}}';
 		}
@@ -291,6 +330,23 @@ function deleteOrder () {
 /// Shipping section
 ////////////////////////////////////////////////////////////////////////////////
 
+/***
+ * Get all shippings
+ */
+function getAllShippings() {
+    try {
+        // get DB connection
+        $db = new DbOperation();
+        $shippings = $db->getAllShippings ( );
+        if ( $shippings != null ) {
+            echo '{"shippings":' . json_encode ( $shippings ) . '}';
+        } else {
+            echo '{"error":{"text":' . "Failed to get senders data" . '}}';
+        }
+    } catch ( Exception $e ) {
+        echo '{"error":{"text":' . $e->getMessage () . '}}';
+    }
+}
 /**
  * Add a shipping
  */
@@ -301,7 +357,7 @@ function addShipping() {
 	try {
 		$db = new DbOperation();
 		$shippingId = $db->addShipping ( $shipping );
-		$shipping->shippingId = $shippingId;
+		$shipping->id = $shippingId;
 		echo '{"addedShipping":' . json_encode ( $shipping ) . '}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
@@ -318,7 +374,7 @@ function deleteShipping () {
 	$shippingId = json_decode ( $request->getBody () );
 	try {
 		$db = new DbOperation();
-		$db->deleteOrder ( $shippingId->shippingId );
+		$db->deleteShipping ( $shippingId->shippingId );
 		echo '{"deleteStatus":"YES"}';
 	} catch ( Exception $e ) {
 		//		error_log ( $e->getMessage (), 3, '/var/tmp/php.log' );
