@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SaigonAir Cargo</title>
     <link rel="stylesheet" href="css/main.css"/>
     <!-- Latest compiled and minified CSS -->
@@ -593,7 +593,8 @@
 
 <div class="container">
 
-    <nav class="navbar bg-primary">
+    <!-- follow: https://getbootstrap.com/docs/3.3/components/#navbar for responsive menu-->
+    <nav class="navbar navbar-default bg-primary">
         <!--navbar-fixed-top"> add this class to fixed top toolbar -> span all horizontal-->
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -614,8 +615,8 @@
             or
             https://bootsnipp.com/snippets/65zm
             -->
-            <div class="collapse navbar-collapse sga-nav-color navbar-right">
-                <ul class="nav navbar-nav">
+            <div class="collapse navbar-collapse sga-nav-color" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <!--<ul class="dropdown-menu">-->
                         <!--<li><a href="" id="addOrder">Order</a></li>-->
@@ -628,7 +629,7 @@
                         <!--&lt;!&ndash;</ul>&ndash;&gt;-->
                         <!--&lt;!&ndash;</li>&ndash;&gt;-->
                         <!--</ul>-->
-                        <a href="" class="btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                            aria-expanded="false">Add<span class="caret"></span></a>
                         <!--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add-->
                         <!--<span class="caret"></span></button>-->
