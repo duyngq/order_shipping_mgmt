@@ -964,7 +964,7 @@
 
 <!-- order modal -->
 <div class="modal fade in" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel">
-    <div class="modal-dialog test" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -972,270 +972,233 @@
                 <h4 class="modal-title" id="orderModalLabel">Add/Update Order</h4>
             </div>
 
-            <div id="orderForm" class="modal-body">
-                <input name="oId" id="oId" hidden="true"/>
-                <input name="oRow" id="oRow" hidden="true"/>
-                <input name="oType" id="oType" hidden="true"/>
-                <div class="row">
-                    <div class="col-xs-5"><strong>- Sender</strong></div>
-                    <div class="col-xs-7"><strong>- Receiver</strong></div>
-                </div>
-                <div class="row">
-                    <!-- sender phone number-->
-                    <div class="col-xs-5">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Phone</div>
-                            <div class="col-xs-5">
-                                <input name="sendPhone" type="text" id="sendPhone" size="45"
-                                       list="sendPhoneList" required/>
-                                <!-- drop down list that can be search/add new text -->
-                                <script type="text/javascript">
-                                    $ ("input[name=sendPhone]").focusout (function () {
-                                        var senders = JSON.parse (getCustomersAsJson (sCustomers));
-                                        var sendPhone = $ (this).val ();
-                                        $ ('input[name="sendName"]').val (senders[sendPhone]['cust_name']);
-                                        $ ('input[name="sendAddr"]').val (senders[sendPhone]['address']);
-                                    });
-                                </script>
-                                <datalist id="sendPhoneList">
-                                </datalist>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Receiver phone number -->
-                    <div class="col-xs-7">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Phone</div>
-                            <div class="col-xs-7">
-                                <input name="recvPhone" type="text" id="recvPhone" size="50"
-                                       list="recvPhoneList" required/>
-                                <!-- drop down list that can be search/add new text -->
-                                <script type="text/javascript">
-                                    $ ("input[name=recvPhone]").focusout (function () {
-                                        var recvs = JSON.parse (getCustomersAsJson (rCustomers));
-                                        var recvPhone = $ (this).val ();
-                                        $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
-                                        $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
-                                    });
-                                </script>
-                                <datalist id="recvPhoneList">
-                                </datalist>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- sender name-->
-                    <div class="col-xs-5">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Name</div>
-                            <div class="col-xs-5"><input name="sendName" id="sendName" size="45"/></div>
-                        </div>
-                    </div>
-                    <!-- Receiver Name-->
-                    <div class="col-xs-7">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Name</div>
-                            <div class="col-xs-5"><input name="recvName" id="recvName" size="50"/></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- sender name-->
-                    <div class="col-xs-5">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Address</div>
-                            <div class="col-xs-5"><input name="sendAddr" type="text" id="sendAddr" size="45" required/>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Receiver Name-->
-                    <div class="col-xs-7">
-                        <div class="row">
-                            <div class="col-xs-2 sub-element">Address</div>
-                            <div class="col-xs-5"><input name="recvAddr" type="text" id="recvAddr" size="50" required/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- sender name-->
-                    <div class="col-xs-1"><strong>- Date</strong></div>
-                    <div class="col-xs-5">
-                        <select name="day" id="day">
-                            <option value="01">01</option>
-                            <option value="02">02</option>
-                            <option value="03">03</option>
-                            <option value="04">04</option>
-                            <option value="05">05</option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                            <option value="25">25</option>
-                            <option value="26">26</option>
-                            <option value="27">27</option>
-                            <option value="28">28</option>
-                            <option value="29">29</option>
-                            <option value="30">30</option>
-                            <option value="31">31</option>
-                        </select>
-                        <select name="month" id="month">
-                            <option value="01">01</option>
-                            <option value="02">02</option>
-                            <option value="03">03</option>
-                            <option value="04">04</option>
-                            <option value="05">05</option>
-                            <option value="06">06</option>
-                            <option value="07">07</option>
-                            <option value="08">08</option>
-                            <option value="09">09</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                        <select name="year" id="year">
-                            <option value="2016">2016</option>
-                            <option value="2017">2017</option>
-                            <option value="2018">2018</option>
-                            <option value="2019">2019</option>
-                            <option value="2020">2020</option>
-                            <option value="2021">2021</option>
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                        </select>
-                        <!-- input name="orderDate" type="text"
-                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
-                        <input name="orderDate" type="text"
-                        size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
-                        <script type="text/javascript">
-                            //                                        validateDate();
-                            //                                         validate_date();
-                            selectDate ();
-                        </script>
-                    </div>
-                </div>
-                <div class="row" id="status">
-                    <div class="col-xs-1"><strong>- Status</strong></div>
-                    <div class="col-xs-5">
-                        <label><input type="radio" name="status" value="0"/>Ordered</label>
-                        <label><input type="radio" name="status" value="1"/>Delivered</label>
-                    </div>
-                </div>
-                <!-- last element: description and details -->
-                <div class="row">
-                    <!-- Descriptor -->
-                    <div class="col-xs-6">
-                        <div class="row">
-                            <div class="col-xs-3"></div>
-                            <div class="col-xs-5"><strong>Description</strong></div>
-                        </div>
-                    </div>
-                    <!-- Details-->
-                    <div class="col-xs-6">
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- Descriptor -->
-                    <div class="col-xs-5">
-                        <p id="productDescPara"><textarea name="productDesc" id="productDesc" cols="55" rows="22"
-                                                          style="border: 1px solid black"
-                                                          placeholder="Click and write product description"></textarea>
-                        </p>
-                        <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
-                            <input name="file[]" type="file" multiple="multiple" id="uploadFile"/>
-                            <div id="uploadedFiles"></div>
-                            <input name="uploaded" id="uploaded" type="hidden"/>
-                        </form>
-                        <script>
-                            //TODO: Use slim to upload files; make sure if user not submit, the file should be removed as well
-                            // Add events
-                            $ (':file').on ('change', prepareUpload);
-                            //                                    $("#upload").on( 'click', uploadFiles);
-                            $ ("#uploadedFiles").on ('click', 'a', removeUploadedFile); // To do ajax call for dynamic component. Refer http://api.jquery.com/on/ delegated events part
-                        </script>
-                    </div>
-                    <!-- Details-->
-                    <div class="col-xs-7">
-                        <table class="table table-bordered" id="feeTable">
-                            <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Weigh (Lbs)</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Amount</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th><strong>Total</strong></th>
-                                <th id="weight" class="weight">0</th>
-                                <th id="unit" class="unit">0</th>
-                                <th></th>
-                                <th id="amount" class="amount">0</th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-                <div id="dialogForm" title="Product description">
+            <div id="orderForm" class="table-responsive modal-body">
+                <table id="addingOrderTbl" class="table fixed-table-body" cellspacing="0" style="width: 100%">
+                    <input name="oId" id="oId" hidden="true"/>
+                    <input name="oRow" id="oRow" hidden="true"/>
+                    <input name="oType" id="oType" hidden="true"/>
+                    <tr>
+                        <td colspan="2"><strong>- Sender</strong></td>
+                        <td colspan="2"><strong>- Receiver</strong></td>
+                    </tr>
+                    <tr>
+                        <!-- sender phone number-->
+                        <td><label>Phone</label></td>
+                        <td><input name="sendPhone" type="text" id="sendPhone" size="45"
+                                   list="sendPhoneList" required/>
+                            <!-- drop down list that can be search/add new text -->
+                            <script type="text/javascript">
+                                $ ("input[name=sendPhone]").focusout (function () {
+                                    var senders = JSON.parse (getCustomersAsJson (sCustomers));
+                                    var sendPhone = $ (this).val ();
+                                    $ ('input[name="sendName"]').val (senders[sendPhone]['cust_name']);
+                                    $ ('input[name="sendAddr"]').val (senders[sendPhone]['address']);
+                                });
+                            </script>
+                            <datalist id="sendPhoneList">
+                            </datalist>
+                        </td>
+                        <!-- Receiver phone number -->
+                        <td><label>Phone</label></td>
+                        <td><input name="recvPhone" type="text" id="recvPhone" size="45"
+                                   list="recvPhoneList" required/>
+                            <!-- drop down list that can be search/add new text -->
+                            <script type="text/javascript">
+                                $ ("input[name=recvPhone]").focusout (function () {
+                                    var recvs = JSON.parse (getCustomersAsJson (rCustomers));
+                                    var recvPhone = $ (this).val ();
+                                    $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
+                                    $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
+                                });
+                            </script>
+                            <datalist id="recvPhoneList">
+                            </datalist>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class=" sub-element"><label>Name</label></td>
+                        <td><input name="sendName" id="sendName" size="45"/></td>
+                        <td><label>Name</label></td>
+                        <td><input name="recvName" id="recvName" size="45"/></td>
+                    </tr>
+                    <tr>
+                        <td><label>Address</label></td>
+                        <td><input name="sendAddr" type="text" id="sendAddr" size="45" required/></td>
+                        <td><label>Address</label></td>
+                        <td><input name="recvAddr" type="text" id="recvAddr" size="45" required/></td>
+                    </tr>
+                    <tr>
+                        <!-- sender name-->
+                        <td><strong>- Date</strong></td>
+                        <td>
+                            <select name="day" id="day">
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                            </select>
+                            <select name="month" id="month">
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            <select name="year" id="year">
+                                <option value="2016">2016</option>
+                                <option value="2017">2017</option>
+                                <option value="2018">2018</option>
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                            <!-- input name="orderDate" type="text"
+                            size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" />
+                            <input name="orderDate" type="text"
+                            size="20" value="<?php echo date_create_from_format("d/m/Y", date("Y/m/d")); ?>" readonly="true" /-->
+                            <script type="text/javascript">
+                                //                                        validateDate();
+                                //                                         validate_date();
+                                selectDate ();
+                            </script>
+                        </td>
+                    </tr>
+                    <tr id="status">
+                        <td><strong>- Status</strong></td>
+                        <td>
+                            <label><input type="radio" name="status" value="0"/>Ordered</label>
+                            <label><input type="radio" name="status" value="1"/>Delivered</label>
+                        </td>
+                    </tr>
+                    <!-- last element: description and details -->
+                    <tr>
+                        <!-- Descriptor -->
+                        <td><strong>Description</strong></td>
+                        <!-- Details-->
+                    </tr>
+                    <tr>
+                        <!-- Descriptor -->
+                        <td colspan="2">
+                            <p id="productDescPara"><textarea name="productDesc" id="productDesc" cols="55" rows="22"
+                                                              style="border: 1px solid black"
+                                                              placeholder="Click and write product description"></textarea>
+                            </p>
+                            <form name="fileUpload" id="fileUpload" method="post" enctype="multipart/form-data">
+                                <input name="file[]" type="file" multiple="multiple" id="uploadFile"/>
+                                <div id="uploadedFiles"></div>
+                                <input name="uploaded" id="uploaded" type="hidden"/>
+                            </form>
+                            <script>
+                                //TODO: Use slim to upload files; make sure if user not submit, the file should be removed as well
+                                // Add events
+                                $ (':file').on ('change', prepareUpload);
+                                //                                    $("#upload").on( 'click', uploadFiles);
+                                $ ("#uploadedFiles").on ('click', 'a', removeUploadedFile); // To do ajax call for dynamic component. Refer http://api.jquery.com/on/ delegated events part
+                            </script>
+                        </td>
+                        <!-- Details-->
+                        <td colspan="2">
+                            <table class="table table-bordered table-responsive fixed-table-body" id="feeTable">
+                                <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Weigh (Lbs)</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th><strong>Total</strong></th>
+                                    <th id="weight" class="weight">0</th>
+                                    <th id="unit" class="unit">0</th>
+                                    <th></th>
+                                    <th id="amount" class="amount">0</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                    <div id="dialogForm" title="Product description">
         <textarea name="productDescDlg" id="productDescDlg"
                   style="border: 1px solid black; width: 100%; height: 95%"
                   placeholder="Click and write product description"></textarea>
-                </div>
+                    </div>
 
 
-                <script>
-                    //                    $ (function () {
-                    //                        //$('.rTable').clone().appendTo('#feeTable');
-                    //                        //$('#feeTable').find('input').attr('readonly', 'readonly');
-                    //                        var productDescDlg = $ ("#dialogForm").dialog ({
-                    //                            autoOpen: false,
-                    //                            height: 800,
-                    //                            width: 800,
-                    //                            modal: true,
-                    //                            buttons: {
-                    //                                Close: function () {
-                    //                                    productDescDlg.dialog ("close");
-                    //                                    $ ("#productDesc").val ($ ("#productDescDlg").val ());
-                    //                                }
-                    //                            },
-                    //                            close: function () {
-                    //                                $ ("#productDesc").val ($ ("#productDescDlg").val ());
-                    //                            }
-                    //                        });
-                    //
-                    //                        $ ("#productDesc").on ("click", function () {
-                    //                            productDescDlg.dialog ("open");
-                    //                            $ ("#productDescDlg").val ($ ("#productDesc").val ());
-                    //                        });
-                    //                    });
-                </script>
+                    <script>
+                        $ (function () {
+                            //$('.rTable').clone().appendTo('#feeTable');
+                            //$('#feeTable').find('input').attr('readonly', 'readonly');
+                            var productDescDlg = $ ("#dialogForm").dialog ({
+                                autoOpen: false,
+                                height: 800,
+                                width: 800,
+                                modal: true,
+                                buttons: {
+                                    Close: function () {
+                                        productDescDlg.dialog ("close");
+                                        $ ("#productDesc").val ($ ("#productDescDlg").val ());
+                                    }
+                                },
+                                close: function () {
+                                    $ ("#productDesc").val ($ ("#productDescDlg").val ());
+                                }
+                            });
+
+                            $ ("#productDesc").on ("click", function () {
+                                productDescDlg.dialog ("open");
+                                $ ("#productDescDlg").val ($ ("#productDesc").val ());
+                            });
+                        });
+                    </script>
+                </table>
             </div>
             <div class="modal-footer">
                 <button id="closeOrderModal" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -1244,6 +1207,28 @@
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade in" id="printOrderModal" tabindex="-1" role="dialog" aria-labelledby="printOrderModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <!--<h4 class="modal-title" id="printOrderModalLabel">Add/Update Customer</h4>-->
+            </div>
+
+            <div id="printOrderDetails" class="table-responsive modal-body">
+                <table id="printOrderDetailsTbl" class="table table-bordered" cellspacing="0" width="100%">
+
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button id="closePrintBtn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 <!-- TODO: fix responsive table https://stackoverflow.com/questions/21934121/jquery-datatable-overflows-in-bootstrap-modal-->
