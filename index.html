@@ -21,8 +21,7 @@
 
     <!-- use dialog -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <!--<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">-->
     <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <link href="https://cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css">
 
@@ -504,11 +503,11 @@
             ///////////////////////////////////////
             function addOrderDetails () {
                 for (var i = 1; i <= 10; i++) {
-                    $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="productDesc' + i + '" class="productDesc' + i + '" size="30" style="border:0"/></td> ' +
+                    $ ("#feeTable").append ('<tr><td><input name="productDesc' + i + '" type="text" id="productDesc' + i + '" class="productDesc' + i + '" size="15" style="border:0"/></td> ' +
                         '<td><input name="weight' + i + '" type="text" id="weight' + i + '" class="weight' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalWeight(\'feeTable\');"/></td>' +
                         '<td><input name="unit' + i + '" type="text" id="unit' + i + '" class="unit' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\', \'total' + i + '\');calTotal(\'feeTable\');calTotalUnit(\'feeTable\');"/></td>' +
                         '<td><input name="price' + i + '" type="text" id="price' + i + '" class="price' + i + '" value="0" size="5" style="border:0" onchange="calFeeAmount(\'feeTable\', \'weight' + i + '\', \'price' + i + '\', \'unit' + i + '\',\'total' + i + '\');calTotal(\'feeTable\');"/></td>' +
-                        '<td><input name="total' + i + '" type="text" id="total' + i + '" class="total' + i + '" value="0" size="10" style="border:0" readonly="readonly"/></td>' +
+                        '<td><input name="total' + i + '" type="text" id="total' + i + '" class="total' + i + '" value="0" size="5" style="border:0" readonly="readonly"/></td>' +
                         '</tr>');
                 }
             }
@@ -1141,7 +1140,7 @@
                         </td>
                         <!-- Details-->
                         <td colspan="2">
-                            <table class="table table-bordered table-responsive fixed-table-body" id="feeTable">
+                            <table class="table table-bordered table-responsive" id="feeTable">
                                 <thead>
                                 <tr>
                                     <th>Description</th>
