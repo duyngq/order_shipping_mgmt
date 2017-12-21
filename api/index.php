@@ -354,7 +354,7 @@ function getAllShippings() {
         if ( $shippings != null ) {
             echo '{"shippings":' . json_encode ( $shippings ) . '}';
         } else {
-            echo '{"error":{"text":' . "Failed to get senders data" . '}}';
+            echo '{"error":{"text":' . "Unable to get all shippings data" . '}}';
         }
     } catch ( Exception $e ) {
         echo '{"error":{"text":' . $e->getMessage () . '}}';
