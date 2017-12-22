@@ -15,6 +15,8 @@ require_once 'db/DbOperation.php';
 }
 */
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, DELETE, PUT, PATCH, OPTIONS');
+header("Access-Control-Allow-Headers: X-Requested-With, Origin, Content-Type, X-Auth-Token , Authorization");
 //header('Content-Type: application/json');
 //header('Access-Control-Allow-Origin: *');
 

@@ -7,7 +7,7 @@
 var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://localhost:8808/api"
+var rootURL = "http://192.168.81.23:8808/api"
 // var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 var sCustomers;
