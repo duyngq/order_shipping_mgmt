@@ -442,9 +442,8 @@
             });
 
             // work with tab
-            $ ('a[data-toggle="tab"]').on ('shown.bs.tab', function (e) {
-                $ ($.fn.dataTable.tables (true)).DataTable ()
-                    .columns.adjust ();
+            $ ('a[data-toggle=\"tab\"]').on ('shown.bs.tab', function (e) {
+                $ ($.fn.dataTable.tables (true)).DataTable ().columns.adjust();
             });
 
             // Update data for customer with edit
@@ -719,7 +718,7 @@
                     <li><a href="#deliveredTab" data-toggle="tab">Delivered</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="table-responsive tab-pane active" id="orderedTab">
+                    <div class="tab-pane active" id="orderedTab"> <!--table-responsive -->
                         <table id="orderTbl" class="table table-striped table-bordered" cellspacing="0" >
                             <thead class="bg-primary">
                             <tr>
@@ -747,8 +746,8 @@
                         </table>
                     </div>
                     <!-- data table to show all shipping orders -->
-                    <div class="table-responsive tab-pane" id="shippingTab">
-                        <table id="shippingTbl" class="table table-striped table-bordered" cellspacing="0" >
+                    <div class="tab-pane" id="shippingTab"> <!--table-responsive -->
+                        <table id="shippingTbl" class="table table-striped table-bordered" cellspacing="0" width="100%" >
                             <thead class="bg-primary">
                             <tr>
                                 <th>No.</th>
@@ -772,9 +771,8 @@
                         </table>
                     </div>
                     <!-- data table to show all delivered orders -->
-                    <div class="table-responsive tab-pane" id="deliveredTab">
-                        <table id="deliveredTbl" class="table table-striped table-bordered" cellspacing="0"
-                               >
+                    <div class="tab-pane" id="deliveredTab"><!--table-responsive -->
+                        <table id="deliveredTbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead class="bg-primary">
                             <tr>
                                 <th>No.</th>
@@ -811,7 +809,7 @@
                     <li><a href="#recvTab" data-toggle="tab">Receivers</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="table-responsive tab-pane active" id="senderTab">
+                    <div class="tab-pane active" id="senderTab"> <!--table-responsive -->
                         <table id="senderTbl" class="table table-striped table-bordered" cellspacing="0" >
                             <thead class="bg-primary">
                             <tr>
@@ -825,7 +823,7 @@
                         </table>
                     </div>
                     <!-- data table to show all receivers -->
-                    <div class="table-responsive tab-pane" id="recvTab">
+                    <div class="tab-pane" id="recvTab"><!--table-responsive -->
                         <table id="recvTbl" class="table table-striped table-bordered" cellspacing="0" >
                             <thead class="bg-primary">
                             <tr>
@@ -856,7 +854,7 @@
                 <h4 class="modal-title" id="customerModalLabel">Add/Update Customer</h4>
             </div>
 
-            <div id="customerDetails" class="table-responsive modal-body">
+            <div id="customerDetails" class="modal-body"> <!--table-responsive -->
                 <table id="customerDetailsTbl" class="table table-bordered" cellspacing="0" width="100%">
                     <input name="rowId" id="rowId" hidden="true"/>
                     <input name="tmpId" id="tmpId" hidden="true"/>
@@ -897,7 +895,7 @@
                 <h4 class="modal-title" id="shippingModalLabel">Add/Update Shipping</h4>
             </div>
 
-            <div id="shippingDetails" class="table-responsive modal-body">
+            <div id="shippingDetails" class="modal-body"><!--table-responsive -->
                 <table id="shippingDetailsTbl" class="table" cellspacing="0" width="100%">
                     <!--<input name="rowId" id="rowId" hidden="true"/>-->
                     <input name="tmpSId" id="tmpSId" hidden="true"/>
