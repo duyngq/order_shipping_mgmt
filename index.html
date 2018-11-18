@@ -390,6 +390,13 @@
             // Edit record
             $ ('#senderTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
+                
+                var selected = $(this).hasClass("highlight");
+                $("#senderTbl tr").removeClass("highlight");
+                if(!selected) {
+                   $(this).addClass("highlight");
+                }
+
                 var selectedRow = $ ('#senderTbl').DataTable ().row (this).data ();
                 setCustomerTableData ($ ('#senderTbl').DataTable ().row (this).index (), 'senders', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
                 $ ('#updateCustomerBtn').removeClass ("hidden");
@@ -431,6 +438,12 @@
             // Edit record
             $ ('#recvTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
+                var selected = $(this).hasClass("highlight");
+                $("#recvTbl tr").removeClass("highlight");
+                if(!selected) {
+                   $(this).addClass("highlight");
+                }
+
                 var selectedRow = $ ('#recvTbl').DataTable ().row (this).data ();
                 setCustomerTableData ($ ('#recvTbl').DataTable ().row (this).index (), 'receivers', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
                 $ ('#updateCustomerBtn').removeClass ("hidden");
@@ -527,6 +540,12 @@
             // Edit Order
             $ ('#orderTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
+                var selected = $(this).hasClass("highlight");
+                $("#orderTbl tr").removeClass("highlight");
+                if(!selected) {
+                   $(this).addClass("highlight");
+                }
+
                 $ ('#orderForm').find ('#oType').val ("ordered");
                 var selectedRow = $ ('#orderTbl').DataTable ().row (this);
                 fillOrder (selectedRow);
@@ -572,6 +591,12 @@
             // Edit shipping
             $ ('#deliveredTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
+
+                var selected = $(this).hasClass("highlight");
+                $("#deliveredTbl tr").removeClass("highlight");
+                if(!selected) {
+                   $(this).addClass("highlight");
+                }
                 //used with edit button
                 //var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
                 //used with select row and edit

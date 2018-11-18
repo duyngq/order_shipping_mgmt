@@ -3,6 +3,9 @@ body .test   { /* Width */
     width: 70% !important;
     /*display: inline-block;*/
 }
+.highlight { 
+    background-color: lightsalmon !important; 
+}
 /**
 menu
  */
