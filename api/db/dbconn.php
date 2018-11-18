@@ -16,7 +16,7 @@ class DB {
                 "db_port" => "3306",
                 "db_user" => "root",
                 "db_pass" => "",
-                "db_name" => "order_shipping",
+                "db_name" => "id4078479_order_shipping",
                 "db_charset" => "UTF-8");
             try {
                 self::$instance = new PDO("mysql:host=".$db_info['db_host'].';port='.$db_info['db_port'].';dbname='.$db_info['db_name'], $db_info['db_user'], $db_info['db_pass']);

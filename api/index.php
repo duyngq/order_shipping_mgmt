@@ -1,6 +1,7 @@
 <?php
 error_reporting ( E_ALL );
 ini_set ( 'display_errors', 1 );
+session_start();
 require 'Slim/Slim.php';
 require_once 'db/DbOperation.php';
 
@@ -21,6 +22,15 @@ header("Access-Control-Allow-Headers: X-Requested-With, Origin, Content-Type, X-
 //header('Access-Control-Allow-Origin: *');
 
 $app = new Slim();
+
+/* $app->add(new Slim_Middleware_SessionCookie(array(
+    'expires' => '30 minutes',
+    'path' => '/',
+    'domain' => null,
+    'secure' => false,
+    'httponly' => false,
+    'name' => 'slim_session',
+))); */
 
 $app->config ( 'debug', true );
 $app->get ( '/wines', 'getWines' );

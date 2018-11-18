@@ -66,7 +66,8 @@
                     "data": null,
                     "orderable": false,
                     // make links in one line
-                    "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a> </span>"
+                    //"defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editOrder' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a> </span>"
+                    "defaultContent": "<span style='display:inline-flex !important;'> <a href='Javascript:void(0);' id='delOrder' class='glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a> </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
                     var api = this.api (), data;
@@ -233,7 +234,7 @@
                         "data": null,
                         "orderable": false,
                         // make links in one line
-                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editShipping' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteShipping' class='glyphicon glyphicon-trash'></a> </span>"
+                        //"defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editShipping' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteShipping' class='glyphicon glyphicon-trash'></a> </span>"
                     },
                     {
                         "targets": [7],
@@ -316,7 +317,8 @@
                     "data": null,
                     "orderable": false,
                     // make links in one line
-                    "defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='editDelivered glyphicon glyphicon-pencil'></a> <a href='#' class='delDelivered glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a>  </span>"
+                    //"defaultContent": "<span style='display:inline-flex !important;'><a href='#' class='editDelivered glyphicon glyphicon-pencil'></a> <a href='#' class='delDelivered glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printOrder' class='glyphicon glyphicon-print'></a>  </span>"
+                    "defaultContent": "<span style='display:inline-flex !important;'> <a href='#' class='delDelivered glyphicon glyphicon-trash'></a> <a href='Javascript:void(0);' id='printDelivered' class='glyphicon glyphicon-print'></a>  </span>"
                 }],
                 "footerCallback": function (row, data, start, end, display) {
                     var api = this.api (), data;
@@ -370,7 +372,8 @@
                         "data": null,
                         "orderable": false,
                         // make links in one line
-                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
+                        //"defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editSender' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
+                        "defaultContent": "<span style='display:inline-flex !important;'> <a href='Javascript:void(0);' id='deleteSender' class='glyphicon glyphicon-trash'></a> </span>"
                     }
                 ],
             });
@@ -385,10 +388,10 @@
             });
 
             // Edit record
-            $ ('#senderTbl tbody').on ('click', '#editSender', function (e) {
+            $ ('#senderTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
-                var selectedRow = $ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')).data ();
-                setCustomerTableData ($ ('#senderTbl').DataTable ().row ($ (this).parents ('tr')).index (), 'senders', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
+                var selectedRow = $ ('#senderTbl').DataTable ().row (this).data ();
+                setCustomerTableData ($ ('#senderTbl').DataTable ().row (this).index (), 'senders', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
                 $ ('#updateCustomerBtn').removeClass ("hidden");
                 $ ('#addCustomerBtn').addClass ("hidden");
                 $ ("#customerModal").modal ('show');
@@ -410,7 +413,8 @@
                         "data": null,
                         "orderable": false,
                         // make links in one line
-                        "defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+                        //"defaultContent": "<span style='display:inline-flex !important;'><a href='Javascript:void(0);' id='editRecv' class='glyphicon glyphicon-pencil'></a> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
+                        "defaultContent": "<span style='display:inline-flex !important;'> <a href='Javascript:void(0);' id='deleteRecv' class='glyphicon glyphicon-trash'></a> </span>"
                     }
                 ],
             });
@@ -425,10 +429,10 @@
             });
 
             // Edit record
-            $ ('#recvTbl tbody').on ('click', '#editRecv', function (e) {
+            $ ('#recvTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
-                var selectedRow = $ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')).data ();
-                setCustomerTableData ($ ('#recvTbl').DataTable ().row ($ (this).parents ('tr')).index (), 'receivers', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
+                var selectedRow = $ ('#recvTbl').DataTable ().row (this).data ();
+                setCustomerTableData ($ ('#recvTbl').DataTable ().row (this).index (), 'receivers', selectedRow[0], selectedRow[1], selectedRow[2], selectedRow[3]);
                 $ ('#updateCustomerBtn').removeClass ("hidden");
                 $ ('#addCustomerBtn').addClass ("hidden");
                 $ ("#customerModal").modal ('show');
@@ -521,10 +525,10 @@
             });
 
             // Edit Order
-            $ ('#orderTbl tbody').on ('click', '#editOrder', function (e) {
+            $ ('#orderTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
                 $ ('#orderForm').find ('#oType').val ("ordered");
-                var selectedRow = $ ('#orderTbl').DataTable ().row ($ (this).parents ('tr'));
+                var selectedRow = $ ('#orderTbl').DataTable ().row (this);
                 fillOrder (selectedRow);
                 $ ('#updateOrderBtn').removeClass ("hidden");
                 $ ('#addOrderBtn').addClass ("hidden");
@@ -566,9 +570,12 @@
              *
              */
             // Edit shipping
-            $ ('#deliveredTbl tbody').on ('click', '#editDelivered', function (e) {
+            $ ('#deliveredTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
-                var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
+                //used with edit button
+                //var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
+                //used with select row and edit
+                var selectedRow = $ ('#deliveredTbl').DataTable ().row (this);
                 fillOrder (selectedRow);
                 $ ('#updateOrderBtn').removeClass ("hidden");
                 $ ('#addOrderBtn').addClass ("hidden");
@@ -714,7 +721,7 @@
             <div class="tabbable">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#orderedTab" data-toggle="tab">Ordered</a></li>
-                    <li><a href="#shippingTab" data-toggle="tab">Shipping</a></li>
+                    <!--li><a href="#shippingTab" data-toggle="tab">Shipping</a></li-->
                     <li><a href="#deliveredTab" data-toggle="tab">Delivered</a></li>
                 </ul>
                 <div class="tab-content">
@@ -746,7 +753,7 @@
                         </table>
                     </div>
                     <!-- data table to show all shipping orders -->
-                    <div class="tab-pane" id="shippingTab"> <!--table-responsive -->
+                    <div class="tab-pane" id="shippingTab" style="visibility: hidden"> <!--table-responsive -->
                         <table id="shippingTbl" class="table table-striped table-bordered" cellspacing="0" width="100%" >
                             <thead class="bg-primary">
                             <tr>

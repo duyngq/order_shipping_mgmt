@@ -22,3 +22,6 @@ Steps to enable rewrite URL:
 	sudo a2enmod rewrite && sudo /etc/init.d/apache2 restart
 
 - Slim demo example (http://coenraets.org/blog/2011/12/restful-services-with-jquery-php-and-the-slim-framework/)
+
+- Existing code is good for php 5.6.8
+- If using php 7.2, please add session_start() at the begining of the index file

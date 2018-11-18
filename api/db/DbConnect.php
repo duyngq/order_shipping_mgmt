@@ -31,7 +31,7 @@ class DbConnect {
 				"db_port" => "3306",
 				"db_user" => "root",
 				"db_pass" => "",
-				"db_name" => "order_shipping",
+				"db_name" => "id4078479_order_shipping",
 				"db_charset" => "UTF-8" );
 			try {
 //				include_once dirname ( __FILE__ ) . '/DbConstants.php';
