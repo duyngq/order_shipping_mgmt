@@ -4,11 +4,11 @@
 
 //For wamp, there is an issue, so the host should be as:
 // refer this link: https://stackoverflow.com/questions/29945153/php-slim-api-404-not-found
-var HOST = "localhost/order"
+var HOST = "localhost/saigonair"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-var rootURL = "http://192.168.81.23:8808/api"
-// var rootURL = "http://" + HOST + "/api";
+// var rootURL = "http://192.168.81.23:8808/api"
+var rootURL = "http://" + HOST + "/api";
 var currentOrder;
 var sCustomers;
 var rCustomers;
@@ -606,6 +606,111 @@ function formCustomerDataToJSON () {
     return customer;
 }
 
+/**
+ * Fill order to print
+ * @param selectedRow
+ */
+function fillPrintOrder (selectedRow) {
+    console.log ('Fill selected order to print');
+    $.ajax ({
+        type: 'GET',
+        url: rootURL + "/orders/" + selectedRow.data ()[0],
+        dataType: "json", // data type of response
+        success: function (data) {
+            //$ ('#orderForm').find ('#oId').val (selectedRow.data ()[0]);
+            //$ ('#orderForm').find ('#oRow').val (selectedRow.index ());
+            renderPrintOrder (data);
+            //$ ('#orderModal').modal ('show');
+        },
+        error: function (data, textStatus, jqXHR) {
+            console.log ("failed", data);
+        }
+    });
+}
+
+/**
+ * render data to print order
+ * 
+ * @param data 
+ */
+function renderPrintOrder(data) {
+    var list = data == null ? [] : (data.gotOrder instanceof Array ? data.gotOrder : [data.gotOrder]);
+    $.each (list, function (index, order) {
+        var header = "", address1 = "", phone1 = "", address2 = "", phone2 = "";
+        if ( order.user_id == 7 ) { // || $_SESSION['username'] == 'trietle')) { // apply full role with user khoa - id = 5
+            header = "SF Express";
+        } else if ( order.user_id == 5) { //} || $_SESSION['username'] == 'khoa')) { // apply full role with user khoa - id = 5
+            header = "Saigon Cargo";
+        } else{
+            header = "SAO PHI CARGO";
+        }
+
+        // TODO: temporary using order user; should use logged in user
+        if ( order.user_id == 7 ) { // || $_SESSION['username'] == 'trietle')) { // apply full role with user khoa - id = 5
+            address1 = "2955 Senter Rd, Ste 60, San Jose, CA 95111";
+            phone1 = "<strong>Mr. Triet: </strong>408-898 9898";
+        } else {
+            if ( order.user_id == 6 ) { // || $_SESSION['username'] == 'vinhle')) { // apply full role with user khoa - id = 5
+                address1 = "";    
+                phone1 = "<strong>Mr. Vinh: </strong>408-797-7777";
+            } else {
+           	// echo "1229 Jacklin Rd, Milpitas, CA 95036";
+                // echo "1759 S Main St #116, Milpitas CA 95035";
+                address1 = "567 Tully Rd, San Jose, CA 95111";
+                phone1 = "<strong>Mr. Phap: </strong>408-781-8812";
+            }
+
+            // if ( order.user_id == 5) { // || $_SESSION['username'] == 'khoa')) {
+                address2 = "328 Vo Van Kiet Street, District 1, HCM";
+                phone2 = "<strong>Mr.Khoa: </strong>0938-622-922";
+            // }
+        }
+
+
+        $ ( '#printOrderModal' ).find("#header").html (header);
+        $ ( '#printOrderModal' ).find("#add1").html (address1);
+        $ ( '#printOrderModal' ).find("#phone1").html (phone1);
+        $ ( '#printOrderModal' ).find("#add2").html (address2);
+        $ ( '#printOrderModal' ).find("#phone2").html (phone2);
+        
+        $ ( '#printOrderModal' ).find("#orderId").html ("</br> RECEIPT </br> SP: " + order.id);
+/*
+        $ ('#orderForm').find ('#sendPhone').val (order.s_phone);
+        $ ('#orderForm').find ('#sendName').val (order.s_name);
+        $ ('#orderForm').find ('#sendAddr').val (order.s_address);
+
+        $ ('#orderForm').find ('#recvPhone').val (order.r_phone);
+        $ ('#orderForm').find ('#recvName').val (order.r_name);
+        $ ('#orderForm').find ('#recvAddr').val (order.r_address);
+
+        var orderDate = order.date.split ("-");
+        $ ('#orderForm').find ('#day').val (orderDate[2]);
+        $ ('#orderForm').find ('#month').val (orderDate[1]);
+        $ ('#orderForm').find ('#year').val (orderDate[0]);
+
+        $ ('#orderForm').find ('#productDesc').val (order.product_desc);
+        if (order.status == 0) {
+            $ ('input:radio[name=status]')[0].checked = true;
+        }
+
+        if (order.status == 1) {
+            $ ('input:radio[name=status]')[1].checked= true;
+        }
+
+        var productDetails = order.orderDetails;
+        var i = 1;
+        productDetails.forEach (function (product) {
+            $ ('#orderForm').find ('#productDesc' + i).val (product.p_desc);
+            $ ('#orderForm').find ('#weight' + i).val (product.weight);
+            $ ('#orderForm').find ('#unit' + i).val (product.unit);
+            $ ('#orderForm').find ('#price' + i).val (product.price);
+            $ ('#orderForm').find ('#total' + i).val (product.total);
+        });
+        $ ('#orderForm').find ('#weight').val (order.weight);
+        $ ('#orderForm').find ('#amount').val (order.total);
+*/
+    });
+}
 /**
  * Render JSON data to datalist
  */
