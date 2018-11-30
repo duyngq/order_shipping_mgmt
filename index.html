@@ -662,6 +662,13 @@
                 $ ('#printOrderModal').show();
                 return false;
             });
+
+            $('btnBack').onkeydown = function() {
+                var key = event.keyCode || event.charCode;
+                if( key == 8 || key == 46 )
+                    returnBack();
+                return false;
+            }
         });
     </script>
 </head>
@@ -790,6 +797,8 @@
     function returnBack() {
         $ ('#mainContent').show();
         $ ('#mainTab').show();
+        // Remove order details after back
+        $ ('#printOrderModal').find ('#printFeeTable').nextAll('div#details').remove();
         $ ('#printOrderModal').hide();
     }
 </script>
@@ -967,15 +976,15 @@
                     <tr>
                         <td class="meta-head" style="border: 1px solid black; padding: 5px">
                             <p><strong>Sender (Người gửi)</strong></br></p> 
-                            <p id="senderName">Name: A Chinh</p>
-                            <p id="senderAddr">Address: 1229 Jacklin Rd, Milpitas, CA 95035</p>
-                            <p id="senderPhone">Phone: 4080980298</p>
+                            <p id="senderName"></p>
+                            <p id="senderAddr"></p>
+                            <p id="senderPhone"></p>
                         </td>
                         <td class="meta-head" style="border: 1px solid black; padding: 5px">
                             <p> <strong>Receiver (Người nhận)</strong></br></p> 
-                            <p id="recvName">Name: NGUYEN NGOC TRAM ANH</p>
-                            <p id="recvAddr">Address: 202 LO T CHUNG CU NGO GIA TU, PHUONG 2 QUAN 10</p>
-                            <p id="recvPhone">Phone: 01237818335</p>
+                            <p id="recvName"></p>
+                            <p id="recvAddr"></p>
+                            <p id="recvPhone"></p>
                         </td>
                     </tr>
                 </table>
@@ -986,23 +995,16 @@
                 <tr>
                     <td contenteditable='true'>
                         <p id="underline"><strong>DESCRIPTION OF CONTENTS: </strong></p>
+                        <p id="productDesc"></p>
                         <div class="rTable">
-                            <div class="rTableRow">
+                            <div class="rTableRow" id="printFeeTable">
                                 <div class="rTableHead" style="width:70%"><strong>Description</strong></div>
                                 <div class="rTableHead" style="width:5%"><strong>Weight(lbs)</strong></div>
-                                <div class="rTableHead" style="width:5%"><strong>Price</strong></div>
-                                <div class="rTableHead" style="width:5%"><strong>Unit</strong></div>
+                                <div class="rTableHead" style="width:5%"><strong>Qty</strong></div>
                                 <div class="rTableHead" style="width:5%"><strong>Price</strong></div>
                                 <div class="rTableHead" style="width:10%"><strong>Total</strong></div>
                             </div>
-                            <div class="rTableRow">
-                                <div class="rTableCell" style="width:70%"><!--php echo $orderDetails['p_desc'];--></div>
-                                <div class="rTableCell" style="width:5%"><!--php echo $orderDetails['weight'];--></div>
-                                <div class="rTableCell" style="width:5%"><!--php echo $orderDetails['price_weight'];--></div>
-                                <div class="rTableCell" style="width:5%"><!--php echo $orderDetails['unit'];--></div>
-                                <div class="rTableCell" style="width:5%"><!--php echo $orderDetails['price_unit'];--></div>
-                                <div class="rTableCell" style="width:10%"><!--php echo ($orderDetails['weight'] * $orderDetails['price_weight']) + ($orderDetails['unit'] * $orderDetails['price_unit']);--></div>
-                            </div>
+							<!-- fee details - by each row -->
                             <br/><br/>
                             <!-- Additional fee and total -->
                             <div class="rTableRow">
@@ -1010,28 +1012,14 @@
                                 <div class="rTableCell" style="border:0"></div>
                                 <div class="rTableCell" style="border:0"></div>
                                 <div class="rTableCell" style="border:0"></div>
-                                <div class="rTableCell" style="border:0"></div>
-                                <div id="vnFee" class="rTableCell"><!--php echo $orderArray['fee'];--></div>
+                                <div id="vnFee" class="rTableCell"></div>
                             </div>
                             <div class="rTableRow">
                                     <div class="rTableCell" style="border:0">Total (*)</div>
-                                    <div class="rTableCell" style="border:0"><input name="weight_sum" type="text" id="weight_sum" class="weight_sum" value="<!--php
-                                    $weightSum = 0;
-                                    foreach ($oldProducts as $orderDetails) {
-                                        $weightSum += $orderDetails[3];
-                                    }
-                                    echo $weightSum;
-                                    -->" size="10" style="border:0" readonly="readonly"/></div>
+                                    <div class="rTableCell" style="border:0"><input name="weight_sum" type="text" id="weight_sum" class="weight_sum" value="0" size="10" style="border:0" readonly="readonly"/></div>
+                                    <div class="rTableCell" style="border:0"><input name="unit_sum" type="text" id="unit_sum" class="unit_sum" value="0" size="5" style="border:0" readonly="readonly"/></div>
                                     <div class="rTableCell" style="border:0"></div>
-                                    <div class="rTableCell" style="border:0"><input name="unit_sum" type="text" id="unit_sum" class="unit_sum" value="<!--
-                                    $unitSum = 0;
-                                    foreach ($oldProducts as $orderDetails) {
-                                        $unitSum += $orderDetails[5];
-                                    }
-                                    echo $unitSum;
-                                    -->" size="5" style="border:0" readonly="readonly"/></div>
-                                    <div class="rTableCell" style="border:0"></div>
-                                    <div class="rTableCell" style="border:0" id="printTotalAmount"><!-- echo $orderArray['total'];--></div>
+                                    <div class="rTableCell" style="border:0" id="printTotalAmount"></div>
                             </div>
                         </div>
                     </td>
@@ -1040,11 +1028,11 @@
             <table id="tablenoborder" class="nothing">
                 <tr>
                     <td contenteditable='true'><strong>Weight:(lbs)</strong></td>
-                    <td><!-- echo $weightSum;--></td>
+                    <td id="printWeightLb"><!-- echo $weightSum;--></td>
                     <td contenteditable='true'><strong>Weight:(kgs)</strong></td>
-                    <td><!-- echo $weightSum*0.4535924;--></td>
+                    <td id="printWeightKg"><!-- echo $weightSum*0.4535924;--></td>
                     <td><strong>Date:</strong></td>
-                    <td><!-- echo $orderArray["date"];--></td>
+                    <td id="printDate"><!-- echo $orderArray["date"];--></td>
                     <td><strong>No.oBox:</strong></td>
                     <td contenteditable='true'>1</td>
                 </tr>
@@ -1052,7 +1040,7 @@
             <table id="tablenoborder" class="nothing">
                 <tr>
                     <td><strong>TOTAL:</strong></td>
-                    <td contenteditable='true'><p class="solid" id="total"><!-- echo "$".$orderArray["total"];--></p></td>
+                    <td contenteditable='true'><p class="solid" id="total"></p></td>
                 </tr>
             </table>
         </div>

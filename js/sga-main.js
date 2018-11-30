@@ -4,11 +4,14 @@
 
 //For wamp, there is an issue, so the host should be as:
 // refer this link: https://stackoverflow.com/questions/29945153/php-slim-api-404-not-found
-var HOST = "localhost/saigonair"
+// And Enable apache mod_rewrite in Ubuntu 14.04 LTS to refer link to REST call
+// http://www.iasptk.com/enable-apache-mod_rewrite-ubuntu-14-04-lts/
+var HOST = "localhost/order"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-// var rootURL = "http://192.168.81.23:8808/api"
-var rootURL = "http://" + HOST + "/api";
+//var rootURL = "http://192.168.81.23:8808/api"
+// var rootURL = "http://" + HOST + "/api";
+var rootURL = "http://localhost/api";
 var currentOrder;
 var sCustomers;
 var rCustomers;
@@ -674,6 +677,40 @@ function renderPrintOrder(data) {
         $ ( '#printOrderModal' ).find("#phone2").html (phone2);
         
         $ ( '#printOrderModal' ).find("#orderId").html ("</br> RECEIPT </br> SP: " + order.id);
+
+        $ ( '#printOrderModal' ).find("#senderName").text ("Name: " + order.s_name);
+        $ ( '#printOrderModal' ).find("#senderAddr").text ("Address: " + order.s_address);
+        $ ( '#printOrderModal' ).find("#senderPhone").text ("Phone: " + order.s_phone);
+
+        $ ( '#printOrderModal' ).find("#recvName").text ("Name: " + order.r_name);
+        $ ( '#printOrderModal' ).find("#recvAddr").text ("Address: " + order.r_address);
+        $ ( '#printOrderModal' ).find("#recvPhone").text ("Phone: " + order.r_phone);
+
+        $ ( '#printOrderModal' ).find("#productDesc").html (order.product_desc.replace(/(\r\n|\n|\r)/gm, '<br />'));
+
+        var productDetails = order.orderDetails;
+        var weight=0, unit=0;
+        productDetails.forEach (function (product) {
+            weight += parseFloat(product.weight);
+            unit += parseFloat(product.unit);
+            var fee = '<div class="rTableRow" id="details">\
+            <div class="rTableCell" style="width:70%">'+product.p_desc+'</div>\
+            <div class="rTableCell" style="width:5%">'+product.weight+'</div>\
+            <div class="rTableCell" style="width:5%">'+product.unit+'</div>\
+            <div class="rTableCell" style="width:5%">'+product.price+'</div>\
+            <div class="rTableCell" style="width:10%">'+product.total+'</div>';
+            $ ('#printOrderModal').find ('#printFeeTable').after(fee);
+        });
+        $ ('#printOrderModal').find ('#weight_sum').val (weight);
+        $ ('#printOrderModal').find ('#unit_sum').val (unit);
+        $ ('#printOrderModal').find ('#vnFee').text (order.fee);
+        $ ('#printOrderModal').find ('#printTotalAmount').text (order.total);
+
+        $ ('#printOrderModal').find ('#printWeightLb').html (weight);
+        $ ('#printOrderModal').find ('#printWeightKg').html (weight*0.4535924);
+        $ ('#printOrderModal').find ('#printDate').html (order.date);
+        $ ('#printOrderModal').find ('#total').html (order.total);
+        
 /*
         $ ('#orderForm').find ('#sendPhone').val (order.s_phone);
         $ ('#orderForm').find ('#sendName').val (order.s_name);
