@@ -25,3 +25,4 @@ Steps to enable rewrite URL:
 
 - Existing code is good for php 5.6.8
 - If using php 7.2, please add session_start() at the begining of the index file
+- Update htaccess to allow override url for REST API

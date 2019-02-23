@@ -115,12 +115,12 @@ class DbOperation {
             $deleteOrderDetails->execute ();
 
             // update shipping
-            $updateOrder = $this->con->prepare ( "UPDATE orders SET user_id=:userId, date=:date, status=:status, code=:code, product_desc=:desc, weight=:weight, total=:total, file_name=:fileName WHERE id=:id" );
+            $updateOrder = $this->con->prepare ( "UPDATE orders SET user_id=:userId, date=:date, status=:status, product_desc=:desc, weight=:weight, total=:total, file_name=:fileName WHERE id=:id" );
             $updateOrder->bindParam ( ":id", $order->id );
             $updateOrder->bindParam ( ":date", $order->date );
             $updateOrder->bindParam ( ":userId", $order->userId );
             $updateOrder->bindParam ( ":status", $order->status);
-            $updateOrder->bindParam ( ":code", $order->code );
+            //$updateOrder->bindParam ( ":code", $order->code );
             $updateOrder->bindParam ( ":desc", $order->productDesc );
             $updateOrder->bindParam ( ":weight", $order->weight );
             $updateOrder->bindParam ( ":total", $order->amount );
@@ -153,10 +153,14 @@ class DbOperation {
 	public function addOrder ( $order ) {
 		$this->con->beginTransaction ();
 		try {
+			//convert input date to format d/m/Y to parse to timestamp for cal current week number of month
+			$dates = explode ("-", $order->date);
+			$ordDate = strtotime($dates[0]."/".$dates[1]."/".$dates[2]);
+			$code = date("n", $ordDate).$this->weekOfMonth($ordDate);
 			//Query 1: Attempt to insert order
 			$sql = "INSERT INTO orders(send_cust_id, recv_cust_id, user_id, status, date, code, product_desc, weight, total, file_name) VALUES (?,?,?,?,?,?,?,?,?,?)"; //VALUES (:sendId, :recvIid, :userId, :status, :date, :code, :productDesc, :weight, :total, :file_name)";
 			$stmt = $this->con->prepare ( $sql );
-			$stmt->execute ( array ( $order->sendId, $order->recvId, $order->userId, 0, $order->date, 'test', $order->productDesc, $order->weight, $order->amount, $order->fileNames ) );
+			$stmt->execute ( array ( $order->sendId, $order->recvId, $order->userId, 0, $order->date, $code, $order->productDesc, $order->weight, $order->amount, $order->fileNames ) );
 			//			$stmt->bindParam ("sendId", $order->sendId);
 			//			$stmt->bindParam ("recvId", $order->recvId);
 			//			$stmt->bindParam ("userId", $order->userId);
@@ -189,6 +193,26 @@ class DbOperation {
 			//Rollback the transaction.
 			$this->con->rollBack ();
 			throw $e;
+		}
+	}
+
+	// get the week number of the month for input date
+	function weekOfMonth($date) {
+		//Get the first day of the month.
+		$firstOfMonth = strtotime(date("Y-m-01", $date));
+		//Apply above formula.
+		$weekNumber = intval(date("W", $date)) - intval(date("W", $firstOfMonth)) + 1;
+		switch ($weekNumber) {
+		case 1:
+			return "a";
+		case 2:
+			return "b";
+		case 3:
+			return "c";
+		case 4:
+			return "d";
+		case 5:
+			return "e";
 		}
 	}
 

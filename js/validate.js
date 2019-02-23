@@ -55,17 +55,17 @@ function validation () {
         alert ("Please enter sender address.");
         document.getElementById ("sendAddr").focus ();
         return false;
-    } else if (document.getElementById ("recvName").value.length == 0) {
+    } else if (document.getElementById ("receiverName").value.length == 0) {
         alert ("Please enter receiver name.");
-        document.getElementById ("recvName").focus ();
+        document.getElementById ("receiverName").focus ();
         return false;
-    } else if (document.getElementById ("recvPhone").value.length == 0) {
+    } else if (document.getElementById ("receiverPhone").value.length == 0) {
         alert ("Please enter receiver phone.");
-        document.getElementById ("recvPhone").focus ();
+        document.getElementById ("receiverPhone").focus ();
         return false;
-    } else if (document.getElementById ("recvAddr").value.length == 0) {
+    } else if (document.getElementById ("receiverAddr").value.length == 0) {
         alert ("Please enter receiver address.");
-        document.getElementById ("recvAddr").focus ();
+        document.getElementById ("receiverAddr").focus ();
         return false;
         // check date later
     // } else if (document.getElementById ("datepicker").value.length == 0) {

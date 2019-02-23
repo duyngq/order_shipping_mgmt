@@ -90,15 +90,16 @@
                             typeof i === 'number' ?
                                 i : 0;
                     };
-
+                    // format total number
+                    var numFormat = $.fn.dataTable.render.number( '\,', '.', 2 ).display;
                     // Total over all pages
                     totalWeight = api.column (8).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                        return numFormat(intVal (a) + intVal (b));
                     }, 0);
 
                     // Total over this page
                     totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                        return numFormat(intVal (a) + intVal (b));
                     }, 0);
 
                     // Update footer
@@ -108,12 +109,12 @@
 
                     // Total amount
                     totalAmount = api.column (9).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                        return numFormat(intVal (a) + intVal (b));
                     }, 0);
 
                     // Total over this page
                     totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
-                        return intVal (a) + intVal (b);
+                        return numFormat(intVal (a) + intVal (b));
                     }, 0);
 
                     // Update footer
@@ -629,6 +630,7 @@
                 //used with edit button
                 //var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
                 //used with select row and edit
+                $ ('#orderForm').find ('#oType').val ("delivered");
                 var selectedRow = $ ('#deliveredTbl').DataTable ().row (this);
                 fillOrder (selectedRow);
                 $ ('#updateOrderBtn').removeClass ("hidden");
@@ -995,7 +997,7 @@
                 <tr>
                     <td contenteditable='true'>
                         <p id="underline"><strong>DESCRIPTION OF CONTENTS: </strong></p>
-                        <p id="productDesc"></p>
+                        <p id="productDescPrint"></p>
                         <div class="rTable">
                             <div class="rTableRow" id="printFeeTable">
                                 <div class="rTableHead" style="width:70%"><strong>Description</strong></div>
@@ -1212,7 +1214,7 @@
                         <!-- sender phone number-->
                         <td><label>Phone</label></td>
                         <td><input name="sendPhone" type="text" id="sendPhone" size="45"
-                                   list="sendPhoneList" required/>
+                                   list="sendPhoneList" required disabled/>
                             <!-- drop down list that can be search/add new text -->
                             <script type="text/javascript">
                                 $ ("input[name=sendPhone]").focusout (function () {
@@ -1227,32 +1229,32 @@
                         </td>
                         <!-- Receiver phone number -->
                         <td><label>Phone</label></td>
-                        <td><input name="recvPhone" type="text" id="recvPhone" size="45"
-                                   list="recvPhoneList" required/>
+                        <td><input name="receiverPhone" type="text" id="receiverPhone" size="45"
+                                   list="receiverPhoneList" required disabled/>
                             <!-- drop down list that can be search/add new text -->
                             <script type="text/javascript">
-                                $ ("input[name=recvPhone]").focusout (function () {
+                                $ ("input[name=receiverPhone]").focusout (function () {
                                     var recvs = JSON.parse (getCustomersAsJson (rCustomers));
                                     var recvPhone = $ (this).val ();
-                                    $ ('input[name="recvName"]').val (recvs[recvPhone]['cust_name']);
-                                    $ ('input[name="recvAddr"]').val (recvs[recvPhone]['address']);
+                                    $ ('input[name="receiverName"]').val (recvs[recvPhone]['cust_name']);
+                                    $ ('input[name="receiverAddr"]').val (recvs[recvPhone]['address']);
                                 });
                             </script>
-                            <datalist id="recvPhoneList">
+                            <datalist id="receiverPhoneList">
                             </datalist>
                         </td>
                     </tr>
                     <tr>
                         <td class=" sub-element"><label>Name</label></td>
-                        <td><input name="sendName" id="sendName" size="45"/></td>
+                        <td><input name="sendName" id="sendName" size="45" disabled/></td>
                         <td><label>Name</label></td>
-                        <td><input name="recvName" id="recvName" size="45"/></td>
+                        <td><input name="receiverName" id="receiverName" size="45" disabled/></td>
                     </tr>
                     <tr>
                         <td><label>Address</label></td>
-                        <td><input name="sendAddr" type="text" id="sendAddr" size="45" required/></td>
+                        <td><input name="sendAddr" type="text" id="sendAddr" size="45" required disabled/></td>
                         <td><label>Address</label></td>
-                        <td><input name="recvAddr" type="text" id="recvAddr" size="45" required/></td>
+                        <td><input name="receiverAddr" type="text" id="receiverAddr" size="45" required disabled/></td>
                     </tr>
                     <tr>
                         <!-- sender name-->
@@ -1419,10 +1421,10 @@
                                 }
                             });
 
-                            $ ("#productDesc").on ("click", function () {
-                                productDescDlg.dialog ("open");
-                                $ ("#productDescDlg").val ($ ("#productDesc").val ());
-                            });
+                            //$ ("#productDesc").on ("click", function () {
+                            //    productDescDlg.dialog ("open");
+                            //    $ ("#productDescDlg").val ($ ("#productDesc").val ());
+                            //});
                         });
                     </script>
                 </table>

@@ -6,12 +6,12 @@
 // refer this link: https://stackoverflow.com/questions/29945153/php-slim-api-404-not-found
 // And Enable apache mod_rewrite in Ubuntu 14.04 LTS to refer link to REST call
 // http://www.iasptk.com/enable-apache-mod_rewrite-ubuntu-14-04-lts/
-var HOST = "localhost/order"
+var HOST = "localhost/saigonair"
 var PORT = "";
 // var rootURL = "http://" + HOST + ":" + PORT + "/api";
-//var rootURL = "http://192.168.81.23:8808/api"
-// var rootURL = "http://" + HOST + "/api";
-var rootURL = "http://localhost/api";
+// var rootURL = "http://192.168.81.23:8808/api"
+var rootURL = "http://" + HOST + "/api";
+// var rootURL = "https://nqduy-it.000webhostapp.com/api";
 var currentOrder;
 var sCustomers;
 var rCustomers;
@@ -19,6 +19,7 @@ var customerTypes = {
     SENDER: 'sender',
     RECEIVER: 'receiver',
 };
+
 
 /**
  * Config action for button/event
@@ -136,7 +137,7 @@ function editOrder (table) {
                 return [value];
             });
             updateOrderTableData (updatedShippingData, table, $ ("#oRow").val ());
-            alert ('Shipping edited successfully');
+            alert ('Order edited successfully');
             //Only close modal if edited successfully
             $ ("#orderModal").modal ('hide');
         },
@@ -305,7 +306,7 @@ function getRCustomers () {
         dataType: "json", // data type of response
         success: function (data) {
             rCustomers = data;
-            rederDataList (rCustomers, 'recvPhoneList');
+            rederDataList (rCustomers, 'receiverPhoneList');
         },
         error: function (data) {
             console.log ("failed to load or render receivers", data);
@@ -462,9 +463,9 @@ function renderOrderEditData (data) {
         $ ('#orderForm').find ('#sendName').val (order.s_name);
         $ ('#orderForm').find ('#sendAddr').val (order.s_address);
 
-        $ ('#orderForm').find ('#recvPhone').val (order.r_phone);
-        $ ('#orderForm').find ('#recvName').val (order.r_name);
-        $ ('#orderForm').find ('#recvAddr').val (order.r_address);
+        $ ('#orderForm').find ('#receiverPhone').val (order.r_phone);
+        $ ('#orderForm').find ('#receiverName').val (order.r_name);
+        $ ('#orderForm').find ('#receiverAddr').val (order.r_address);
 
         var orderDate = order.date.split ("-");
         $ ('#orderForm').find ('#day').val (orderDate[2]);
@@ -474,23 +475,25 @@ function renderOrderEditData (data) {
         $ ('#orderForm').find ('#productDesc').val (order.product_desc);
         if (order.status == 0) {
             $ ('input:radio[name=status]')[0].checked = true;
-        }
-
-        if (order.status == 1) {
+        } else if (order.status == 1) {
             $ ('input:radio[name=status]')[1].checked= true;
         }
 
         var productDetails = order.orderDetails;
         var i = 1;
+        var totalUnit = 0;
         productDetails.forEach (function (product) {
             $ ('#orderForm').find ('#productDesc' + i).val (product.p_desc);
             $ ('#orderForm').find ('#weight' + i).val (product.weight);
             $ ('#orderForm').find ('#unit' + i).val (product.unit);
             $ ('#orderForm').find ('#price' + i).val (product.price);
             $ ('#orderForm').find ('#total' + i).val (product.total);
+            totalUnit+=parseFloat(product.unit);
+            i++;
         });
-        $ ('#orderForm').find ('#weight').val (order.weight);
-        $ ('#orderForm').find ('#amount').val (order.total);
+        $ ('#orderForm').find ('#weight').html(order.weight);
+        $ ('#orderForm').find ('#unit').html(totalUnit.toFixed(4));
+        $ ('#orderForm').find ('#amount').html(order.total);
 
     });
 }
@@ -561,16 +564,16 @@ function formToJSON () {
         "sendName": $ ('#sendName').val (),
         "sendPhone": $ ('#sendPhone').val (),
         "sendAddr": $ ('#sendAddr').val (),
-        "recvName": $ ('#recvName').val (),
-        "recvPhone": $ ('#recvPhone').val (),
-        "recvAddr": $ ('#recvAddr').val (),
+        "recvName": $ ('#receiverName').val (),
+        "recvPhone": $ ('#receiverPhone').val (),
+        "recvAddr": $ ('#receiverAddr').val (),
         "weight": $ ('#weight').html (),
         "amount": $ ('#amount').html (),
         "productDesc": $ ('#productDesc').val (),
         "fileNames": $ ('#uploaded').val (),
         "status": $('input:radio[name=status]:checked').val(),
         "userId": "5", //TODO: temp value to pass request, need to put real value
-        "recvId": $ ("#recvPhoneList option[value='" + $ ('#recvPhone').val () + "']").attr ('data-id'),
+        "recvId": $ ("#receiverPhoneList option[value='" + $ ('#receiverPhone').val () + "']").attr ('data-id'),
         "sendId": $ ("#sendPhoneList option[value='" + $ ('#sendPhone').val () + "']").attr ('data-id'),
         "productDetails": productDetails
     });
@@ -584,9 +587,9 @@ function formToJSON () {
  */
 function updateOrderTableData (data, table, rowId) {
     if (table.row (rowId).length > 0) {
-        var totalColumn = orderTable.columns ().count ();
+        var totalColumn = table.columns ().count ();
         for (var i = 0; i < totalColumn - 1; i++) {
-            orderTable.cell (rowId, i).data (data[i]);
+            table.cell (rowId, i).data (data[i]);
         }
         // table.row (rowId).data ([data[0],data[1],data[2],data[3]]).invalidate ();
     } else {
@@ -686,7 +689,7 @@ function renderPrintOrder(data) {
         $ ( '#printOrderModal' ).find("#recvAddr").text ("Address: " + order.r_address);
         $ ( '#printOrderModal' ).find("#recvPhone").text ("Phone: " + order.r_phone);
 
-        $ ( '#printOrderModal' ).find("#productDesc").html (order.product_desc.replace(/(\r\n|\n|\r)/gm, '<br />'));
+        $ ( '#printOrderModal' ).find("#productDescPrint").html (order.product_desc.replace(/(\r\n|\n|\r)/gm, '<br />'));
 
         var productDetails = order.orderDetails;
         var weight=0, unit=0;
