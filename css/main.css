@@ -251,3 +251,10 @@ li a:hover:not(.active) {
 .active {
     background-color: #4CAF50;
 }*/
+
+.padding_search td, th {
+    padding-top: 3px;
+    padding-right: 20px;
+    padding-bottom: 3px;
+    padding-left: 20px;
+}
