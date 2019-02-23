@@ -665,6 +665,15 @@
                 return false;
             });
 
+            $ ('#deliveredTbl').on ('click', '#printDelivered', function(e) {
+                e.preventDefault ();
+                fillPrintOrder($ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr')));
+                $ ('#mainContent').hide();
+                $ ('#mainTab').hide();
+                $ ('#printOrderModal').show();
+                return false;
+            });
+
             $('btnBack').onkeydown = function() {
                 var key = event.keyCode || event.charCode;
                 if( key == 8 || key == 46 )
