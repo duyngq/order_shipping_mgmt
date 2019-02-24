@@ -161,6 +161,15 @@ function findAllCustomers (custType) {
         dataType: "json", // data type of response
         success: function (data, textStatus, jqXHR) {
             renderCustomerTableData (null, data, custType);
+            var datalist="";
+            if (custType=="senders") {
+                sCustomers = data;
+                datalist="sendPhoneList";
+            } else if (custType =="receivers") {
+                rCustomers = data;
+                datalist="receiverPhoneList";
+            }
+            rederDataList (data, datalist);   
         },
         error: function (data) {
             console.log ("failed", data);
@@ -952,6 +961,34 @@ function fillShippingDataForUpdating (selectedData) {
     });
 }
 
+/**
+ * Search order with creteria
+ */
+function searchOrder() {
+    console.log ('search orders');
+    $.ajax ({
+        type: 'GET',
+        url: rootURL + "/search",
+        dataType: "json", // data type of response
+        data: searchJsonData(),
+        success: renderTableData,
+        error: function (data, jqXHR, textStatus, errorThrown) {
+            console.log ("failed to search order", data);
+        }
+    });
+}
+
+// Helper function to serialize all the form fields into a JSON string
+function searchJsonData () {
+    var json = JSON.stringify ({
+        "id":$('#orderNo').val(),
+        "sendPhone": $ ('#searchSenderPhone').val (),
+        "recvPhone": $ ('#searchReceiverPhone').val (),
+        "from": $ ('#fromDate').val (),
+        "to": $ ('#toDate').val ()
+    });
+    return json;
+}
 
 //TODO List:
 // #1. loss icon in all tables

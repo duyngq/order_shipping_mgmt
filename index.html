@@ -52,10 +52,10 @@
             findAllOrders ();
             findAllCustomers ('senders');
             findAllCustomers ('receivers');
-            findAllShippings ();
+            // findAllShippings ();
 
-            getSCustomers ();
-            getRCustomers ();
+            //getSCustomers ();
+            //getRCustomers ();
 
             addOrderDetails ();
 
@@ -685,6 +685,12 @@
                     returnBack();
                 return false;
             }
+
+            $('#searchOrder').on('click', function() {
+                e.preventDefault ();
+                searchOrder();
+                return false;
+            });
         });
     </script>
 </head>
@@ -965,24 +971,24 @@
             <div class="tabbable">
                 <div class="tab-content">
                     <!-- search input-->
-                    <table width="1024px" border="0" id="searchOrder" class="padding_search">
+                    <table width="1024px" border="0" id="searchOrderTable" class="padding_search">
                         <tr style="padding-top:20px;padding-bottom:20px;">
                             <td>Order Number:</td>
                             <td><input name="orderNo" type="text" id="orderNo" size="60" onkeydown="if (event.keyCode == 13) return false;"/></td>
                         </tr>
                         <tr>
                             <td>Sender Phone Number:</td>
-                            <td><input name="searchSenderPhone" type="text" id="searchSerPhone" size="60" list="searchSenderPhoneList"/></td>
-                            <datalist id="searchSenderPhoneList">
-                                <!-- add data for customer phone -->
-                            </datalist>
+                            <td><input name="searchSenderPhone" type="text" id="searchSenderPhone" size="60" list="sendPhoneList"/>
+                                <datalist id="sendPhoneList">
+                                </datalist>
+                            </td>
                         </tr>
                         <tr>
                             <td>Receiver Phone Number:</td>
-                            <td><input name="searchReceiverPhone" type="text" id="searchReceiverPhone" size="60" list=searchReceiverPhoneeList"/></td>
-                            <datalist id="searchReceiverPhoneeList">
-                                <!-- add data for receiver phone -->
-                            </datalist>
+                            <td><input name="searchReceiverPhone" type="text" id="searchReceiverPhone" size="60" list=receiverPhoneList"/>
+                                <datalist id="receiverPhoneList">
+                                </datalist>
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Date</strong></td>
@@ -992,6 +998,7 @@
                             <td><div align="left">To<input name="toDate" type="date" id="toDate" class="datepicker" size="30" /></div></td>
                         </tr>
                     </table>
+                    <p align="center"><input type="button" name="searchOrder" id="searchOrder" value="Search" /></p>
                     
                     <!-- search result--> 
                     <table id="searchResult" class="table table-striped table-bordered" cellspacing="0" >
@@ -1284,7 +1291,7 @@
                         <!-- sender phone number-->
                         <td><label>Phone</label></td>
                         <td><input name="sendPhone" type="text" id="sendPhone" size="45"
-                                   list="sendPhoneList" required disabled/>
+                                   list="sendPhoneList" required/>
                             <!-- drop down list that can be search/add new text -->
                             <script type="text/javascript">
                                 $ ("input[name=sendPhone]").focusout (function () {
@@ -1300,7 +1307,7 @@
                         <!-- Receiver phone number -->
                         <td><label>Phone</label></td>
                         <td><input name="receiverPhone" type="text" id="receiverPhone" size="45"
-                                   list="receiverPhoneList" required disabled/>
+                                   list="receiverPhoneList" required/>
                             <!-- drop down list that can be search/add new text -->
                             <script type="text/javascript">
                                 $ ("input[name=receiverPhone]").focusout (function () {
@@ -1316,15 +1323,15 @@
                     </tr>
                     <tr>
                         <td class=" sub-element"><label>Name</label></td>
-                        <td><input name="sendName" id="sendName" size="45" disabled/></td>
+                        <td><input name="sendName" id="sendName" size="45"/></td>
                         <td><label>Name</label></td>
-                        <td><input name="receiverName" id="receiverName" size="45" disabled/></td>
+                        <td><input name="receiverName" id="receiverName" size="45"/></td>
                     </tr>
                     <tr>
                         <td><label>Address</label></td>
-                        <td><input name="sendAddr" type="text" id="sendAddr" size="45" required disabled/></td>
+                        <td><input name="sendAddr" type="text" id="sendAddr" size="45" required/></td>
                         <td><label>Address</label></td>
-                        <td><input name="receiverAddr" type="text" id="receiverAddr" size="45" required disabled/></td>
+                        <td><input name="receiverAddr" type="text" id="receiverAddr" size="45" required/></td>
                     </tr>
                     <tr>
                         <!-- sender name-->
