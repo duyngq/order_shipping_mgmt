@@ -457,6 +457,46 @@ class DbOperation {
 
 	}
 
+	/**
+     * Search orders details with criteria
+     */
+	function searchOrders($criteria) {
+		$searchQuery = "select * from orders ";
+		//validate input and create query;
+		if (isValueSet($criteria->id)) {
+			$searchQuery.="where id=".$criteria->id;
+		} else if (isValueSet($senderPhone)) {
+			$searchQuery.="where send_cust_id = (select id from sendcustomers where phone like '%".$senderPhone."%')";
+		} else if (isValueSet($receiverPhone)) {
+			$searchQuery.="where recv_cust_id = (select id from recvcustomers where phone like '%".$receiverPhone."%')";
+		} else if (isValueSet($fromDate) && isValueSet($toDate)) {
+			$dates = explode ("/",$fromDate);
+			if (count($dates) > 1) {
+				$fromDate= $dates[2]."-".$dates[1]."-".$dates[0];
+			}
+			$toDate = $_POST ["toDate"];
+			$dates = explode ("/",$toDate);
+			if (count($dates) > 1) {
+				$toDate= $dates[2]."-".$dates[1]."-".$dates[0];
+			}
+			$searchQuery.="where date >= '".$fromDate."' and date <= '".$toDate."'";
+		}
+
+		$searchQuery.=" ORDER BY id";
+		if ( isset($_SESSION['user_id']) && !($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 5 || $_SESSION['username'] == 'khoa')) { // apply full role with user khoa - id = 5
+			$searchQuery.=" AND user_id = ".$criteria->user_id;
+		}
+
+        $ordersQuery = $this->con->query ( "select sh.* from shippings sh" );
+        return $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
+	}
+	
+	function isValueSet($value) {
+		if (isset($value) && !is_null($value) && !empty($value)) {
+			return true;
+		}
+		return false;
+	}
 	//Method to register a new student
 	public function createStudent ( $name, $username, $pass ) {
 		if ( !$this->isStudentExists ( $username ) ) {

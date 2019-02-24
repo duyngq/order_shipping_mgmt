@@ -985,7 +985,8 @@ function searchJsonData () {
         "sendPhone": $ ('#searchSenderPhone').val (),
         "recvPhone": $ ('#searchReceiverPhone').val (),
         "from": $ ('#fromDate').val (),
-        "to": $ ('#toDate').val ()
+        "to": $ ('#toDate').val (),
+        "user_id":"1" // temporary fix, will add real user
     });
     return json;
 }
