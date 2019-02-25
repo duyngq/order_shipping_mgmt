@@ -123,6 +123,7 @@
                     );
                 }
             });
+
             /**
              * Shipping details data table for input
              */
@@ -685,11 +686,78 @@
                     returnBack();
                 return false;
             }
+            // Search order component
+            // Search result tables
+            $ ('#searchResult').DataTable ({
+                "columnDefs": [{
+                    "data": null,
+                    "orderable": false,
+                }],
+                "footerCallback": function (row, data, start, end, display) {
+                    var api = this.api (), data;
 
-            $('#searchOrder').on('click', function() {
-                e.preventDefault ();
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ?
+                            i.replace (/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+                    // format total number
+                    var numFormat = $.fn.dataTable.render.number( '\,', '.', 2 ).display;
+                    // Total over all pages
+                    totalWeight = api.column (8).data ().reduce (function (a, b) {
+                        return numFormat(intVal (a) + intVal (b));
+                    }, 0);
+
+                    // Total over this page
+                    totalWeightPerPage = api.column (8, {page: 'current'}).data ().reduce (function (a, b) {
+                        return numFormat(intVal (a) + intVal (b));
+                    }, 0);
+
+                    // Update footer
+                    $ (api.column (8).footer ()).html (
+                        +totalWeightPerPage + ' ( ' + totalWeight + ' total)'
+                    );
+
+                    // Total amount
+                    totalAmount = api.column (9).data ().reduce (function (a, b) {
+                        return numFormat(intVal (a) + intVal (b));
+                    }, 0);
+
+                    // Total over this page
+                    totalAmountPerPage = api.column (9, {page: 'current'}).data ().reduce (function (a, b) {
+                        return numFormat(intVal (a) + intVal (b));
+                    }, 0);
+
+                    // Update footer
+                    $ (api.column (9).footer ()).html (
+                        '$' + totalAmountPerPage + ' ( $' + totalAmount + ' total)'
+                    );
+                }
+            });
+
+            $('#searchOrder').on('click', function(e) {
                 searchOrder();
-                return false;
+            });
+
+            $ ('#searchResult').on('click', 'tbody tr', function (e) {
+                e.preventDefault ();
+
+                var selected = $(this).hasClass("highlight");
+                $("#searchResult tr").removeClass("highlight");
+                if(!selected) {
+                   $(this).addClass("highlight");
+                }
+                //used with edit button
+                //var selectedRow = $ ('#deliveredTbl').DataTable ().row ($ (this).parents ('tr'));
+                //used with select row and edit
+                var selectedRow = $ ('#searchResult').DataTable ().row (this);
+                fillOrder (selectedRow);
+                $ ('#updateOrderBtn').removeClass ("hidden");
+                $ ('#addOrderBtn').addClass ("hidden");
+                $ ('#status').removeClass ('hidden');
+                $ ("#orderModal").modal ('show');
             });
         });
     </script>
@@ -1014,7 +1082,6 @@
                             <th>Address</th>
                             <th>Weight</th>
                             <th>Amount</th>
-                            <th></th>
                         </tr>
                         </thead>
                     </table>

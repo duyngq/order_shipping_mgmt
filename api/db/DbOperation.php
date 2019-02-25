@@ -454,7 +454,13 @@ class DbOperation {
 			$this->con->rollBack ();
 			throw $e;
 		}
-
+	}	
+	
+	function isValueSet($value) {
+		if (isset($value) && !is_null($value) && !empty($value)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -463,19 +469,19 @@ class DbOperation {
 	function searchOrders($criteria) {
 		$searchQuery = "select * from orders ";
 		//validate input and create query;
-		if (isValueSet($criteria->id)) {
+		if ($this->isValueSet($criteria->id)) {
 			$searchQuery.="where id=".$criteria->id;
-		} else if (isValueSet($senderPhone)) {
-			$searchQuery.="where send_cust_id = (select id from sendcustomers where phone like '%".$senderPhone."%')";
-		} else if (isValueSet($receiverPhone)) {
-			$searchQuery.="where recv_cust_id = (select id from recvcustomers where phone like '%".$receiverPhone."%')";
-		} else if (isValueSet($fromDate) && isValueSet($toDate)) {
-			$dates = explode ("/",$fromDate);
+		} else if ($this->isValueSet($criteria->sendPhone)) {
+			$searchQuery.="where send_cust_id = (select id from sendcustomers where phone like '%".$criteria->sendPhone."%')";
+		} else if ($this->isValueSet($criteria->recvPhone)) {
+			$searchQuery.="where recv_cust_id = (select id from recvcustomers where phone like '%".$criteria->recvPhone."%')";
+		} else if ($this->isValueSet($criteria->fromDate) && $this->isValueSet($criteria->toDate)) {
+			$dates = explode ("/",$criteria->fromDate);
 			if (count($dates) > 1) {
 				$fromDate= $dates[2]."-".$dates[1]."-".$dates[0];
 			}
 			$toDate = $_POST ["toDate"];
-			$dates = explode ("/",$toDate);
+			$dates = explode ("/",$criteria->toDate);
 			if (count($dates) > 1) {
 				$toDate= $dates[2]."-".$dates[1]."-".$dates[0];
 			}
@@ -486,16 +492,42 @@ class DbOperation {
 		if ( isset($_SESSION['user_id']) && !($_SESSION['user_id'] == 1 || $_SESSION['user_id'] == 5 || $_SESSION['username'] == 'khoa')) { // apply full role with user khoa - id = 5
 			$searchQuery.=" AND user_id = ".$criteria->user_id;
 		}
+		$ordersQuery = $this->con->query($searchQuery);
+		$orders = $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
+		
+		$result = array();
+		$i = 1;
+		foreach ($orders as $order) {
+			//Sender
+			$senderQuery = "select * from sendcustomers where id=".$order->send_cust_id;
+			$senderQueryResult = $this->con->query($senderQuery);
+			$sender = $senderQueryResult->fetchAll ( PDO::FETCH_OBJ );
+			
+			//Receiver
+			$receiverQuery = "select * from recvcustomers where id=".$order->recv_cust_id;
+			$receiverQueryResult = $this->con->query($receiverQuery);
+			$receiver = $receiverQueryResult->fetchAll( PDO::FETCH_OBJ );
 
-        $ordersQuery = $this->con->query ( "select sh.* from shippings sh" );
-        return $ordersQuery->fetchAll ( PDO::FETCH_OBJ );
-	}
-	
-	function isValueSet($value) {
-		if (isset($value) && !is_null($value) && !empty($value)) {
-			return true;
+			$orderDate = $order->date;
+			if ($this->isValueSet($orderDate)) {
+				$dates = explode ("-",$orderDate);
+				$orderDate= $dates[2]."/".$dates[1]."/".$dates[0];
+			}
+
+			array_push($result, array(
+				'id' => $order->id,
+				'date' => $orderDate,
+				'sender_name' => $sender[0]->cust_name,
+				'sender_phone' => $sender[0]->phone,
+				'sender_address' => $sender[0]->address,
+				'recv_name' => $receiver[0]->cust_name,
+				'recv_phone' => $receiver[0]->phone,
+				'recv_address' => $receiver[0]->address,
+				'weight' => $order->weight,
+				'total' => $order->total
+			));
 		}
-		return false;
+        return $result;
 	}
 	//Method to register a new student
 	public function createStudent ( $name, $username, $pass ) {

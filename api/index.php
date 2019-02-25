@@ -61,7 +61,8 @@ $app->post ( '/shipping/delete', 'deleteShipping' );
 $app->post ( '/shipping/update', 'updateShipping' );
 $app->post ( '/shipping/add', 'addShipping' );
 $app->get ( '/shipping/all', 'getAllShippings' );
-$app->get ( '/search', 'searchOrders' );
+
+$app->post ( '/search', 'searchOrders' );
 
 $app->post ( '/login/:username/:pass', function ( $name, $pass ) use ( $app ) {
 	try {
@@ -574,11 +575,10 @@ function validateNumber ( $validatedValue, $stringName ) {
 function searchOrders() {
     //	error_log ( 'addOrder\n', 3, '/var/tmp/php.log' );
     $request = Slim::getInstance ()->request ();
-    $criteria = json_decode ( $request->getBody () );
+	$criteria = json_decode ( $request->getBody () );
     try {
         $db = new DbOperation();
-        $db->searchOrders ( $criteria );
-		$orders = $db->getAllShippings ( );
+        $orders = $db->searchOrders ( $criteria );
         if ( $orders != null ) {
             echo '{"orders":' . json_encode ( $orders ) . '}';
         } else {

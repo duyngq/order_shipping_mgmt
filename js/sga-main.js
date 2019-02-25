@@ -552,6 +552,32 @@ function renderTableData (data) {
         orderDetailsTable.row.add ([order.id, order.id, order.date, order.s_name, order.r_name, weight, amount]).draw ();
     });
 }
+// Render search table
+function renderSearchTable (data) {
+    // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
+    var list = data == null ? [] : (data.orders instanceof Array ? data.orders : [data.orders]);
+    var table = $ ('#searchResult').DataTable ();
+    table.clear ().draw ();
+    
+    // var weight = order.weight;
+    $.each (list, function (index, order) {
+        var weight = order.weight;
+        var amount = order.total;
+        /* this will validate if value is not:
+            null
+            undefined
+            NaN
+            empty string ("")
+            false
+            0
+        */
+        if (!weight)
+            weight = 0;
+        if (!amount)
+            amount = 0;
+        table.row.add ([order.id, order.date, order.sender_name, order.sender_phone, order.sender_address, order.recv_name, order.recv_phone, order.recv_address, weight, amount]).draw ();
+   });
+}
 
 // Helper function to serialize all the form fields into a JSON string
 function formToJSON () {
@@ -967,11 +993,12 @@ function fillShippingDataForUpdating (selectedData) {
 function searchOrder() {
     console.log ('search orders');
     $.ajax ({
-        type: 'GET',
+        type: "POST",
+        contentType: "application/json",
         url: rootURL + "/search",
         dataType: "json", // data type of response
         data: searchJsonData(),
-        success: renderTableData,
+        success: renderSearchTable,
         error: function (data, jqXHR, textStatus, errorThrown) {
             console.log ("failed to search order", data);
         }
