@@ -476,11 +476,12 @@ class DbOperation {
 		} else if ($this->isValueSet($criteria->recvPhone)) {
 			$searchQuery.="where recv_cust_id = (select id from recvcustomers where phone like '%".$criteria->recvPhone."%')";
 		} else if ($this->isValueSet($criteria->fromDate) && $this->isValueSet($criteria->toDate)) {
+			$fromDate = $criteria->fromDate;
 			$dates = explode ("/",$criteria->fromDate);
 			if (count($dates) > 1) {
 				$fromDate= $dates[2]."-".$dates[1]."-".$dates[0];
 			}
-			$toDate = $_POST ["toDate"];
+			$toDate = $criteria->toDate;
 			$dates = explode ("/",$criteria->toDate);
 			if (count($dates) > 1) {
 				$toDate= $dates[2]."-".$dates[1]."-".$dates[0];

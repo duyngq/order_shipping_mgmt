@@ -624,7 +624,7 @@
              * Edit and edlete delivered order
              *
              */
-            // Edit shipping
+            // Edit shipped data
             $ ('#deliveredTbl').on('click', 'tbody tr', function (e) {
                 e.preventDefault ();
 
@@ -644,6 +644,11 @@
                 $ ('#status').removeClass ('hidden');
                 $ ("#orderModal").modal ('show');
             });
+
+            // TODO: Clean order form after adding/updating
+            function clearOrderForm() {
+                
+            }
 
             $ ('#deliveredTbl').on ('click', '#printOrder', function(e) {
                 e.preventDefault ();
@@ -686,6 +691,7 @@
                     returnBack();
                 return false;
             }
+
             // Search order component
             // Search result tables
             $ ('#searchResult').DataTable ({
@@ -759,6 +765,24 @@
                 $ ('#status').removeClass ('hidden');
                 $ ("#orderModal").modal ('show');
             });
+
+            $('#searchOrderTab').on('click', function(e) {
+                // $( "#tabOrder" ).removeClass('active');
+                // $( "#tabCustomers" ).removeClass('active');
+                // $( "#tabSearch" ).addClass('active');//tabs({ active: searchTab });
+                
+                $('a[href="#searchTab"]').click();
+            });
+            //clean up data when moving tab or after adding/removing data
+            $('#tabSearch a').click(function(e){
+                $('#orderNo').val("");
+                $('#searchSenderPhone').val("");
+                $('#searchReceiverPhone').val("");
+                $('#fromDate').val("");
+                $('#toDate').val("");
+                //remove datatable data
+                $('#searchResult').dataTable().fnClearTable();
+            });
         });
     </script>
 </head>
@@ -815,7 +839,7 @@
                             <li><a href="Javascript:void(0);" id="addRecv">Receiver</a></li>
                         </ul>
                     </li>
-                    <li><a href=""><span>Search</span></a></li>
+                    <li><a href="Javascript:void(0);" id="searchOrderTab"><span>Search</span></a></li>
                     <li><a href=""><span>Logout</span></a></li>
                 </ul>
                 <!--<ul class="nav navbar-nav navbar-right sga-nav-color">-->
@@ -894,9 +918,9 @@
 </script>
     <!-- main tab -->
     <ul class="nav nav-tabs" id="mainTab">
-        <li class="active"><a href="#ordersTab" data-toggle="tab">Orders</a></li>
-        <li><a href="#customersTab" data-toggle="tab">Customers</a></li>
-        <li><a href="#searchTab" data-toggle="tab">Search</a></li>
+        <li id="tabOrder" class="active"><a href="#ordersTab" data-toggle="tab">Orders</a></li>
+        <li id="tabCustomers" ><a href="#customersTab" data-toggle="tab">Customers</a></li>
+        <li id="tabSearch"><a href="#searchTab" data-toggle="tab">Search</a></li>
     </ul>
     <!-- main tab content -->
     <div id="mainContent" class="tab-content">
@@ -1390,9 +1414,33 @@
                     </tr>
                     <tr>
                         <td class=" sub-element"><label>Name</label></td>
-                        <td><input name="sendName" id="sendName" size="45"/></td>
+                        <td><input name="sendName" id="sendName" size="45" list="sendNameList" />
+                            <!-- drop down list that can be search/add new text -->
+                            <script type="text/javascript">
+                                $ ("input[name=sendName]").focusout (function () {
+                                    var senders = JSON.parse (getCustomersNameAsJson (sCustomers));
+                                    var sendName = $ (this).val ();
+                                    $ ('input[name="sendPhone"]').val (senders[sendName]['phone']);
+                                    $ ('input[name="sendAddr"]').val (senders[sendName]['address']);
+                                });
+                            </script>
+                            <datalist id="sendNameList">
+                            </datalist>
+                        </td>
                         <td><label>Name</label></td>
-                        <td><input name="receiverName" id="receiverName" size="45"/></td>
+                        <td><input name="receiverName" id="receiverName" size="45" list="receiverNameList" />
+                            <!-- drop down list that can be search/add new text -->
+                            <script type="text/javascript">
+                                $ ("input[name=receiverName]").focusout (function () {
+                                    var recvs = JSON.parse (getCustomersNameAsJson (rCustomers));
+                                    var recvName = $ (this).val ();
+                                    $ ('input[name="receiverPhone"]').val (recvs[recvName]['phone']);
+                                    $ ('input[name="receiverAddr"]').val (recvs[recvName]['address']);
+                                });
+                            </script>
+                            <datalist id="receiverNameList">
+                            </datalist>
+                        </td>
                     </tr>
                     <tr>
                         <td><label>Address</label></td>

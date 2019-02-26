@@ -161,15 +161,18 @@ function findAllCustomers (custType) {
         dataType: "json", // data type of response
         success: function (data, textStatus, jqXHR) {
             renderCustomerTableData (null, data, custType);
-            var datalist="";
+            var phonelist="";
+            var namelist="";
             if (custType=="senders") {
                 sCustomers = data;
-                datalist="sendPhoneList";
+                phonelist="sendPhoneList";
+                namelist="sendNameList";
             } else if (custType =="receivers") {
                 rCustomers = data;
-                datalist="receiverPhoneList";
+                phonelist="receiverPhoneList";
+                namelist="receiverNameList";
             }
-            rederDataList (data, datalist);   
+            rederDataList (data, phonelist, namelist);
         },
         error: function (data) {
             console.log ("failed", data);
@@ -296,7 +299,7 @@ function getSCustomers () {
         dataType: "json", // data type of response
         success: function (data) {
             sCustomers = data;
-            rederDataList (sCustomers, 'sendPhoneList');
+            rederDataList (sCustomers, 'sendPhoneList', "sendNameList");
         },
         error: function (data) {
             console.log ("failed to load or render senders", data);
@@ -315,7 +318,7 @@ function getRCustomers () {
         dataType: "json", // data type of response
         success: function (data) {
             rCustomers = data;
-            rederDataList (rCustomers, 'receiverPhoneList');
+            rederDataList (rCustomers, 'receiverPhoneList', 'receiverNameList');
         },
         error: function (data) {
             console.log ("failed to load or render receivers", data);
@@ -789,11 +792,12 @@ function renderPrintOrder(data) {
 /**
  * Render JSON data to datalist
  */
-function rederDataList (data, datalist) {
+function rederDataList (data, phonelist, namelist) {
     // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
     $.each (list, function (index, customer) {
-        $ ('#' + datalist + '').append ("<option data-id='" + customer.id + "'value='" + customer.phone + "'>"); // Not working.
+        $ ('#' + phonelist + '').append ("<option data-id='" + customer.id + "'value='" + customer.phone + "'>"); // Not working.
+        $ ('#' + namelist + '').append ("<option data-id='" + customer.id + "'value='" + customer.cust_name + "'>"); // Not working.
     });
 }
 
@@ -830,6 +834,15 @@ function getCustomersAsJson (data) {
     var returnMap = {};
     $.each (list, function (index, customer) {
         returnMap[customer.phone] = customer;
+    });
+    return JSON.stringify (returnMap);
+}
+
+function getCustomersNameAsJson (data) {
+    var list = data == null ? [] : (data.customers instanceof Array ? data.customers : [data.customers]);
+    var returnMap = {};
+    $.each (list, function (index, customer) {
+        returnMap[customer.cust_name] = customer;
     });
     return JSON.stringify (returnMap);
 }
@@ -1011,8 +1024,8 @@ function searchJsonData () {
         "id":$('#orderNo').val(),
         "sendPhone": $ ('#searchSenderPhone').val (),
         "recvPhone": $ ('#searchReceiverPhone').val (),
-        "from": $ ('#fromDate').val (),
-        "to": $ ('#toDate').val (),
+        "fromDate": $ ('#fromDate').val (),
+        "toDate": $ ('#toDate').val (),
         "user_id":"1" // temporary fix, will add real user
     });
     return json;
